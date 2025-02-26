@@ -16,6 +16,7 @@ import { QuickStats } from "./Sidebar/QuickStats";
 import { Collapse } from "./Sidebar/Collapse";
 import { Header } from "./Header";
 import { cn } from "@/app/lib/utils";
+import { PageTransition } from "./PageTransition";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -70,7 +71,9 @@ export function Shell({ children }: ShellProps) {
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
         <Header />
-        <div className="flex-1 p-8">{children}</div>
+        <div className="flex-1 p-8">
+          <PageTransition>{children}</PageTransition>
+        </div>
       </main>
     </div>
   );
