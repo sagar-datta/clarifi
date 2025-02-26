@@ -12,6 +12,7 @@ import { ScrollArea } from "../ui/scroll-area/ScrollArea";
 import { Separator } from "../ui/separator/Separator";
 import { Button } from "../ui/button/Button";
 import { MainNav } from "./Sidebar/MainNav";
+import { QuickStats } from "./Sidebar/QuickStats";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -59,6 +60,8 @@ function MobileSidebar() {
     <ScrollArea className="h-[calc(100vh-4rem)]">
       <div className="flex flex-col gap-4 p-6">
         <MainNav />
+        <Separator />
+        <QuickStats />
       </div>
     </ScrollArea>
   );
@@ -69,6 +72,8 @@ function DesktopSidebar() {
     <ScrollArea className="flex-1">
       <div className="flex flex-col gap-4 p-6">
         <MainNav />
+        <Separator />
+        <QuickStats />
       </div>
     </ScrollArea>
   );
