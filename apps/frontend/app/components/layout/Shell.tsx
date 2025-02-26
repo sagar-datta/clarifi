@@ -30,7 +30,7 @@ export function Shell({ children }: ShellProps) {
   const pathname = usePathname();
 
   return (
-    <div className="relative flex min-h-screen">
+    <div className="relative flex min-h-screen transition-colors duration-300">
       {/* Mobile Trigger */}
       <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <SheetTrigger asChild className="lg:hidden">
@@ -78,7 +78,7 @@ export function Shell({ children }: ShellProps) {
       {/* Main content area */}
       <main
         className={cn(
-          "flex-1 flex flex-col transition-all duration-300",
+          "flex-1 flex flex-col transition-all duration-300 bg-background",
           "lg:ml-[80px]",
           !isDesktopCollapsed && "lg:ml-72"
         )}
@@ -91,7 +91,7 @@ export function Shell({ children }: ShellProps) {
         >
           <Header className="border-b-0" />
         </div>
-        <div className="mt-[64px] flex-1">
+        <div className="mt-[64px] flex-1 transition-colors duration-300">
           <div className="p-4 md:p-8">
             <AnimatePresence mode="wait" initial={false}>
               {children}
