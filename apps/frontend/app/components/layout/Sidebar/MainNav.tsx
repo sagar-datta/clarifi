@@ -78,7 +78,7 @@ export function MainNav({ className, isCollapsed }: MainNavProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center rounded-lg py-2 text-sm transition-all",
+              "flex items-center rounded-lg py-2 text-sm transition-all duration-300",
               "hover:bg-accent hover:text-accent-foreground",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               isCollapsed ? "justify-center px-2" : "px-3 gap-3",
@@ -100,7 +100,7 @@ export function MainNav({ className, isCollapsed }: MainNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center rounded-lg py-2 text-sm transition-all",
+                "flex items-center rounded-lg py-2 text-sm transition-all duration-300",
                 "text-muted-foreground",
                 "hover:bg-accent hover:text-accent-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

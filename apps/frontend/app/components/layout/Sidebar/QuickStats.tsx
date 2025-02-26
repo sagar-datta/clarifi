@@ -70,7 +70,7 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
 
 function StatCard({ label, value, change, icon: Icon }: QuickStat) {
   return (
-    <Card className="p-4 hover:bg-accent/50 transition-colors">
+    <Card className="p-4 hover:bg-accent/50 transition-colors duration-300">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-sm font-medium text-muted-foreground leading-none">

@@ -14,7 +14,7 @@ export function Collapse({ isCollapsed, onToggle, className }: CollapseProps) {
     <button
       onClick={onToggle}
       className={cn(
-        "absolute right-[-12px] top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-all hover:bg-accent",
+        "absolute right-[-12px] top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm transition-all duration-300 hover:bg-accent",
         className
       )}
       aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}

@@ -57,7 +57,7 @@ export function Shell({ children }: ShellProps) {
         <div className="relative border-b px-6 py-4">
           <h2
             className={cn(
-              "text-lg font-semibold transition-opacity",
+              "text-lg font-semibold transition-opacity duration-300",
               isDesktopCollapsed ? "opacity-0" : "opacity-100"
             )}
           >
