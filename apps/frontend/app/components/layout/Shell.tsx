@@ -8,10 +8,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet/Sheet";
-import { NavigationMenu } from "../ui/navigation-menu/NavigationMenu";
 import { ScrollArea } from "../ui/scroll-area/ScrollArea";
 import { Separator } from "../ui/separator/Separator";
 import { Button } from "../ui/button/Button";
+import { MainNav } from "./Sidebar/MainNav";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -31,21 +31,24 @@ export function Shell({ children }: ShellProps) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="px-6 pt-6">
-            <SheetTitle>ClariFi Menu</SheetTitle>
+          <SheetHeader className="border-b px-6 py-4">
+            <SheetTitle>ClariFi</SheetTitle>
           </SheetHeader>
           <MobileSidebar />
         </SheetContent>
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-72 flex-col border-r">
+      <aside className="hidden lg:flex w-72 flex-col border-r bg-background">
+        <div className="border-b px-6 py-4">
+          <h2 className="text-lg font-semibold">ClariFi</h2>
+        </div>
         <DesktopSidebar />
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 p-8">{children}</div>
       </main>
     </div>
   );
@@ -53,14 +56,9 @@ export function Shell({ children }: ShellProps) {
 
 function MobileSidebar() {
   return (
-    <ScrollArea className="h-full py-6">
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold">ClariFi</h2>
-          <NavigationMenu />
-        </div>
-        <Separator />
-        <div className="px-3 py-2">{/* Quick stats will go here */}</div>
+    <ScrollArea className="h-[calc(100vh-4rem)]">
+      <div className="flex flex-col gap-4 p-6">
+        <MainNav />
       </div>
     </ScrollArea>
   );
@@ -68,14 +66,9 @@ function MobileSidebar() {
 
 function DesktopSidebar() {
   return (
-    <ScrollArea className="flex-1 py-6">
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold">ClariFi</h2>
-          <NavigationMenu />
-        </div>
-        <Separator />
-        <div className="px-3 py-2">{/* Quick stats will go here */}</div>
+    <ScrollArea className="flex-1">
+      <div className="flex flex-col gap-4 p-6">
+        <MainNav />
       </div>
     </ScrollArea>
   );
