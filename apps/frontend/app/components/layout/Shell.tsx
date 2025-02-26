@@ -16,7 +16,9 @@ import { QuickStats } from "./Sidebar/QuickStats";
 import { Collapse } from "./Sidebar/Collapse";
 import { Header } from "./Header";
 import { cn } from "@/app/lib/utils";
-import { PageTransition } from "./PageTransition";
+import { AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -25,6 +27,7 @@ interface ShellProps {
 export function Shell({ children }: ShellProps) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = React.useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="relative flex min-h-screen">
@@ -72,7 +75,9 @@ export function Shell({ children }: ShellProps) {
       <main className="flex-1 flex flex-col">
         <Header />
         <div className="flex-1 p-8">
-          <PageTransition>{children}</PageTransition>
+          <AnimatePresence mode="wait" initial={false}>
+            {children}
+          </AnimatePresence>
         </div>
       </main>
     </div>
