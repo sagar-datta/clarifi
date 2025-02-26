@@ -15,10 +15,9 @@ app/
 │   │   │   ├── MainNav.tsx     # Main navigation links
 │   │   │   ├── QuickStats.tsx  # Mini financial overview
 │   │   │   └── Collapse.tsx    # Sidebar collapse control
-│   │   ├── Dashboard/     # Dashboard-specific layouts
-│   │   │   ├── WidgetGrid.tsx  # Responsive grid for dashboard widgets
-│   │   │   └── Widgets/        # Individual widget layouts
-│   │   └── Footer.tsx          # App footer (could be minimal for webapp)
+│   │   └── Dashboard/     # Dashboard-specific layouts
+│   │       ├── WidgetGrid.tsx  # Responsive grid for dashboard widgets
+│   │       └── Widgets/        # Individual widget layouts
 │   ├── ui/              # Reusable UI components
 │   │   ├── buttons/     # Button variants
 │   │   ├── forms/       # Form components (planned)
