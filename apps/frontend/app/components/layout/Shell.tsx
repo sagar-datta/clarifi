@@ -78,13 +78,13 @@ export function Shell({ children }: ShellProps) {
       {/* Main content area */}
       <main
         className={cn(
-          "flex-1 flex flex-col",
+          "flex-1 flex flex-col transition-all duration-300",
           "lg:ml-[80px]",
           !isDesktopCollapsed && "lg:ml-72"
         )}
       >
         <div
-          className="fixed top-0 right-0 z-30 border-b bg-background w-full lg:pl-0 h-16"
+          className="fixed top-0 right-0 z-30 border-b bg-background h-16 transition-all duration-300"
           style={{
             width: `calc(100% - ${isDesktopCollapsed ? "80px" : "288px"})`,
           }}
