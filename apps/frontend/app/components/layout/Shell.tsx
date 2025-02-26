@@ -34,7 +34,11 @@ export function Shell({ children }: ShellProps) {
       {/* Mobile Trigger */}
       <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <SheetTrigger asChild className="lg:hidden">
-          <Button variant="ghost" size="icon" className="absolute left-4 top-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed left-4 top-4 z-50"
+          >
             <MenuIcon className="h-6 w-6" />
             <span className="sr-only">Toggle menu</span>
           </Button>
@@ -50,11 +54,11 @@ export function Shell({ children }: ShellProps) {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col border-r bg-background transition-all duration-300",
+          "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background transition-all duration-300 z-40",
           isDesktopCollapsed ? "w-[80px]" : "w-72"
         )}
       >
-        <div className="relative border-b px-6 py-4">
+        <div className="relative border-b px-6 py-4 h-16">
           <h2
             className={cn(
               "text-lg font-semibold transition-opacity duration-300",
@@ -71,13 +75,28 @@ export function Shell({ children }: ShellProps) {
         <DesktopSidebar isCollapsed={isDesktopCollapsed} />
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col">
-        <Header />
-        <div className="flex-1 p-8">
-          <AnimatePresence mode="wait" initial={false}>
-            {children}
-          </AnimatePresence>
+      {/* Main content area */}
+      <main
+        className={cn(
+          "flex-1 flex flex-col",
+          "lg:ml-[80px]",
+          !isDesktopCollapsed && "lg:ml-72"
+        )}
+      >
+        <div
+          className="fixed top-0 right-0 z-30 border-b bg-background w-full lg:pl-0 h-16"
+          style={{
+            width: `calc(100% - ${isDesktopCollapsed ? "80px" : "288px"})`,
+          }}
+        >
+          <Header className="border-b-0" />
+        </div>
+        <div className="mt-[64px] flex-1">
+          <div className="p-4 md:p-8">
+            <AnimatePresence mode="wait" initial={false}>
+              {children}
+            </AnimatePresence>
+          </div>
         </div>
       </main>
     </div>

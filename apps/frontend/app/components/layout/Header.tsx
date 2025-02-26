@@ -22,7 +22,7 @@ export function Header({ className }: HeaderProps) {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className={cn("border-b bg-background px-6 py-3", className)}>
+    <header className={cn("bg-background px-6 py-3", className)}>
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
         <div className="flex items-center gap-2">
