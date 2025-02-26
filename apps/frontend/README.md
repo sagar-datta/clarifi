@@ -13,7 +13,7 @@ app/
 │   │   ├── buttons/     # Button variants
 │   │   ├── forms/       # Form components (planned)
 │   │   ├── cards/       # Card components
-│   │   └── charts/      # Data visualization (planned)
+│   │   └── charts/      # Data visualization
 │   └── shared/          # Shared feature components
 ├── lib/
 │   └── redux/           # Redux state management
