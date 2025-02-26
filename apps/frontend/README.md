@@ -39,7 +39,6 @@ app/
 │   ├── index.tsx       # Combined providers
 │   ├── ThemeProvider.tsx # Theme management
 │   └── ReduxProvider.tsx # Redux store provider
-└── styles/             # Global styles and themes
 ```
 
 ## Planned Features
