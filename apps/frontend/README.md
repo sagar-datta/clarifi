@@ -10,7 +10,7 @@ app/
 │   │   ├── Footer.tsx   # Site footer (planned)
 │   │   └── Shell.tsx    # Main layout wrapper (planned)
 │   ├── ui/              # Reusable UI components
-│   │   ├── buttons/     # Button variants (planned)
+│   │   ├── buttons/     # Button variants
 │   │   ├── forms/       # Form components (planned)
 │   │   ├── cards/       # Card components (planned)
 │   │   └── charts/      # Data visualization (planned)

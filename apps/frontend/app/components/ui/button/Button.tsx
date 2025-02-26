@@ -1,54 +1,50 @@
-"use client";
-
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { type VariantProps } from "class-variance-authority";
-import { cn } from "@/app/lib/utils";
-import { buttonVariants } from "./variants";
+import { cva, type VariantProps } from "class-variance-authority";
 
-/**
- * Props for the Button component
- * Combines:
- * - HTML button attributes (like onClick, disabled, etc.)
- * - Variant props from our button styles (variant and size)
- * - asChild prop for composition
- */
+import { cn } from "@/app/lib/utils";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
-/**
- * Button component with theme support and variants
- *
- * Features:
- * - Multiple style variants (default, destructive, outline, etc.)
- * - Size variations (sm, default, lg, icon)
- * - Can be rendered as any element using asChild
- * - Fully typed props with TypeScript
- * - Automatic theme handling (light/dark mode)
- *
- * @example
- * // Default button
- * <Button>Click me</Button>
- *
- * // Destructive large button
- * <Button variant="destructive" size="lg">Delete</Button>
- *
- * // As a link
- * <Button asChild variant="link">
- *   <a href="/somewhere">Navigate</a>
- * </Button>
- */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    // Use Radix Slot for composition, otherwise render as button
     const Comp = asChild ? Slot : "button";
-
     return (
       <Comp
-        // Combine variant styles with any additional classes
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
@@ -56,8 +52,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-
-// For React DevTools
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
