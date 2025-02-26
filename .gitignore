@@ -35,3 +35,5 @@ yarn-error.log*
 .vercel 
 .cursor/rules/project-stack.mdc
 .cursor/rules/rules.mdc
+apps/frontend/.cursor/rules/project-stack.mdc
+apps/frontend/.cursor/rules/rules.mdc

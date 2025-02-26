@@ -13,6 +13,8 @@ import { Separator } from "../ui/separator/Separator";
 import { Button } from "../ui/button/Button";
 import { MainNav } from "./Sidebar/MainNav";
 import { QuickStats } from "./Sidebar/QuickStats";
+import { Collapse } from "./Sidebar/Collapse";
+import { cn } from "@/app/lib/utils";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -20,6 +22,7 @@ interface ShellProps {
 
 export function Shell({ children }: ShellProps) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = React.useState(false);
 
   return (
     <div className="relative flex min-h-screen">
@@ -40,11 +43,27 @@ export function Shell({ children }: ShellProps) {
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-72 flex-col border-r bg-background">
-        <div className="border-b px-6 py-4">
-          <h2 className="text-lg font-semibold">ClariFi</h2>
+      <aside
+        className={cn(
+          "hidden lg:flex flex-col border-r bg-background transition-all duration-300",
+          isDesktopCollapsed ? "w-[80px]" : "w-72"
+        )}
+      >
+        <div className="relative border-b px-6 py-4">
+          <h2
+            className={cn(
+              "text-lg font-semibold transition-opacity",
+              isDesktopCollapsed ? "opacity-0" : "opacity-100"
+            )}
+          >
+            ClariFi
+          </h2>
+          <Collapse
+            isCollapsed={isDesktopCollapsed}
+            onToggle={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
+          />
         </div>
-        <DesktopSidebar />
+        <DesktopSidebar isCollapsed={isDesktopCollapsed} />
       </aside>
 
       {/* Main Content */}
@@ -67,13 +86,13 @@ function MobileSidebar() {
   );
 }
 
-function DesktopSidebar() {
+function DesktopSidebar({ isCollapsed }: { isCollapsed: boolean }) {
   return (
     <ScrollArea className="flex-1">
-      <div className="flex flex-col gap-4 p-6">
-        <MainNav />
+      <div className={cn("flex flex-col gap-4", isCollapsed ? "p-2" : "p-6")}>
+        <MainNav isCollapsed={isCollapsed} />
         <Separator />
-        <QuickStats />
+        <QuickStats isCollapsed={isCollapsed} />
       </div>
     </ScrollArea>
   );

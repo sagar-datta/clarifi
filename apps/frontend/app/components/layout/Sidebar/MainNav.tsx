@@ -64,9 +64,10 @@ const secondaryNavItems: NavItem[] = [
 
 interface MainNavProps {
   className?: string;
+  isCollapsed?: boolean;
 }
 
-export function MainNav({ className }: MainNavProps) {
+export function MainNav({ className, isCollapsed }: MainNavProps) {
   const pathname = usePathname();
 
   return (
@@ -86,7 +87,7 @@ export function MainNav({ className }: MainNavProps) {
             )}
           >
             <item.icon className="h-4 w-4" />
-            <span>{item.title}</span>
+            {!isCollapsed && <span>{item.title}</span>}
           </Link>
         ))}
       </div>
@@ -108,7 +109,7 @@ export function MainNav({ className }: MainNavProps) {
               )}
             >
               <item.icon className="h-4 w-4" />
-              <span>{item.title}</span>
+              {!isCollapsed && <span>{item.title}</span>}
             </Link>
           ))}
         </div>

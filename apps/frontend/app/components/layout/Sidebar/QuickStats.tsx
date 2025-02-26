@@ -24,9 +24,10 @@ interface QuickStat {
 
 interface QuickStatsProps {
   className?: string;
+  isCollapsed?: boolean;
 }
 
-export function QuickStats({ className }: QuickStatsProps) {
+export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
   // This would come from your Redux store or API in a real app
   const stats: QuickStat[] = [
     {
@@ -48,6 +49,10 @@ export function QuickStats({ className }: QuickStatsProps) {
       icon: PiggyBank,
     },
   ];
+
+  if (isCollapsed) {
+    return null; // Hide stats when collapsed
+  }
 
   return (
     <div className={cn("space-y-4", className)}>
