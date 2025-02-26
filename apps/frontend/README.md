@@ -12,7 +12,7 @@ app/
 │   ├── ui/              # Reusable UI components
 │   │   ├── buttons/     # Button variants
 │   │   ├── forms/       # Form components (planned)
-│   │   ├── cards/       # Card components (planned)
+│   │   ├── cards/       # Card components
 │   │   └── charts/      # Data visualization (planned)
 │   └── shared/          # Shared feature components
 ├── lib/
