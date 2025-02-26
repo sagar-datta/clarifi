@@ -10,7 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu/DropdownMenu";
-import { Bell, Plus, User } from "lucide-react";
+import { Bell, Plus, User, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 
 interface HeaderProps {
@@ -18,11 +19,24 @@ interface HeaderProps {
 }
 
 export function Header({ className }: HeaderProps) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <header className={cn("border-b bg-background px-6 py-3", className)}>
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
         <div className="flex items-center gap-2">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            <Moon className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Sun className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
           {/* Quick Actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
