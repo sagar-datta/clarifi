@@ -14,6 +14,7 @@ import { Button } from "../ui/button/Button";
 import { MainNav } from "./Sidebar/MainNav";
 import { QuickStats } from "./Sidebar/QuickStats";
 import { Collapse } from "./Sidebar/Collapse";
+import { Header } from "./Header";
 import { cn } from "@/app/lib/utils";
 
 interface ShellProps {
@@ -68,6 +69,7 @@ export function Shell({ children }: ShellProps) {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
+        <Header />
         <div className="flex-1 p-8">{children}</div>
       </main>
     </div>
