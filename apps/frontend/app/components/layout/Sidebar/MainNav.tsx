@@ -78,9 +78,10 @@ export function MainNav({ className, isCollapsed }: MainNavProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+              "flex items-center rounded-lg py-2 text-sm transition-all",
               "hover:bg-accent hover:text-accent-foreground",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              isCollapsed ? "justify-center px-2" : "px-3 gap-3",
               pathname === item.href
                 ? "bg-accent text-accent-foreground"
                 : "transparent"
@@ -99,10 +100,11 @@ export function MainNav({ className, isCollapsed }: MainNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                "flex items-center rounded-lg py-2 text-sm transition-all",
                 "text-muted-foreground",
                 "hover:bg-accent hover:text-accent-foreground",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isCollapsed ? "justify-center px-2" : "px-3 gap-3",
                 pathname === item.href
                   ? "bg-accent text-accent-foreground"
                   : "transparent"
