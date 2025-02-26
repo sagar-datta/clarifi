@@ -6,9 +6,19 @@
 app/
 ├── components/
 │   ├── layout/           # Layout components
-│   │   ├── Header.tsx   # Main navigation and theme toggle (planned)
-│   │   ├── Footer.tsx   # Site footer (planned)
-│   │   └── Shell.tsx    # Main layout wrapper (planned)
+│   │   ├── Shell.tsx    # Main layout wrapper (includes persistent sidebar)
+│   │   ├── Header.tsx   # App header with:
+│   │   │   ├── Profile dropdown
+│   │   │   ├── Notifications
+│   │   │   └── Quick actions (add transaction, etc)
+│   │   ├── Sidebar/     # Separate directory for sidebar components
+│   │   │   ├── MainNav.tsx     # Main navigation links
+│   │   │   ├── QuickStats.tsx  # Mini financial overview
+│   │   │   └── Collapse.tsx    # Sidebar collapse control
+│   │   ├── Dashboard/     # Dashboard-specific layouts
+│   │   │   ├── WidgetGrid.tsx  # Responsive grid for dashboard widgets
+│   │   │   └── Widgets/        # Individual widget layouts
+│   │   └── Footer.tsx          # App footer (could be minimal for webapp)
 │   ├── ui/              # Reusable UI components
 │   │   ├── buttons/     # Button variants
 │   │   ├── forms/       # Form components (planned)
