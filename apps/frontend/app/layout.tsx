@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import { Shell } from "./components/layout/Shell";
+import { ThemeProvider } from "./providers/ThemeProvider";
+import { ReduxProvider } from "./providers/ReduxProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ClariFi",
-  description: "Your personal finance clarity tool",
+  title: "ClariFi - Personal Finance Management",
+  description:
+    "Track your finances, set budgets, and achieve your financial goals",
 };
 
 export default function RootLayout({
@@ -18,7 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <ThemeProvider>
+          <ReduxProvider>
+            <Shell>{children}</Shell>
+          </ReduxProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
