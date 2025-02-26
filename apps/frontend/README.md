@@ -1,3 +1,87 @@
+# ClariFi Frontend
+
+## Directory Structure
+
+```
+app/
+├── components/
+│   ├── layout/           # Layout components
+│   │   ├── Header.tsx   # Main navigation and theme toggle (planned)
+│   │   ├── Footer.tsx   # Site footer (planned)
+│   │   └── Shell.tsx    # Main layout wrapper (planned)
+│   ├── ui/              # Reusable UI components
+│   │   ├── buttons/     # Button variants (planned)
+│   │   ├── forms/       # Form components (planned)
+│   │   ├── cards/       # Card components (planned)
+│   │   └── charts/      # Data visualization (planned)
+│   └── shared/          # Shared feature components
+├── lib/
+│   └── redux/           # Redux state management
+│       ├── store/       # Redux store configuration
+│       ├── hooks/       # Typed Redux hooks
+│       └── slices/      # Redux slices (planned)
+│           ├── auth/    # Authentication state
+│           ├── transactions/ # Financial transactions
+│           ├── budgets/ # Budget tracking
+│           ├── goals/   # Financial goals
+│           └── ui/      # UI state management
+├── providers/           # App providers
+│   ├── index.tsx       # Combined providers
+│   ├── ThemeProvider.tsx # Theme management
+│   └── ReduxProvider.tsx # Redux store provider
+└── styles/             # Global styles and themes
+```
+
+## Planned Features
+
+### Authentication (with Clerk)
+
+- Sign in/Sign up
+- Profile management
+- Session handling
+
+### Dashboard
+
+- Overview of financial status
+- Recent transactions
+- Budget progress
+- Goal tracking
+
+### Transactions
+
+- Transaction list/grid view
+- Transaction categories
+- Search and filtering
+- Add/Edit transactions
+
+### Budgeting
+
+- Budget creation
+- Category-based budgets
+- Budget vs actual tracking
+- Budget alerts
+
+### Financial Goals
+
+- Goal setting
+- Progress tracking
+- Goal categories
+- Timeline projections
+
+### Theme Support
+
+- Light/Dark mode
+- System preference detection
+- Consistent colour scheme
+
+## Tech Stack
+
+- Next.js 14 with App Router
+- TypeScript for type safety
+- Redux Toolkit for state management
+- Tailwind CSS for styling
+- Next-themes for theme management
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
