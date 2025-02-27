@@ -7,7 +7,8 @@ import config from '../config/env.js';
  * This is used for type safety in protected routes after authentication.
  * The auth property is guaranteed to exist after passing through requireAuth middleware.
  */
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest<TBody = any, TParams = any>
+  extends Request<TParams, any, TBody> {
   auth: {
     userId: string; // Clerk's unique user identifier
     sessionId: string; // Clerk's session identifier for token refresh
@@ -46,6 +47,15 @@ export const requireAuth: RequestHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    // Development bypass with X-Dev-User-Id header
+    if (config.nodeEnv === 'development' && req.headers['x-dev-user-id']) {
+      (req as AuthenticatedRequest).auth = {
+        userId: req.headers['x-dev-user-id'] as string,
+        sessionId: 'dev-session',
+      };
+      return next();
+    }
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       throw new AuthError('No token provided');
@@ -58,13 +68,11 @@ export const requireAuth: RequestHandler = async (
 
     const session = await verifyToken(token, {
       secretKey: config.clerk.secretKey,
-      authorizedParties: config.cors.allowedOrigins,
     });
     if (!session) {
       throw new AuthError('Invalid token');
     }
 
-    // Cast to AuthenticatedRequest to add strongly-typed auth property
     (req as AuthenticatedRequest).auth = {
       userId: session.sub,
       sessionId: session.sid,
@@ -72,11 +80,7 @@ export const requireAuth: RequestHandler = async (
 
     next();
   } catch (error) {
-    // Normalize errors to prevent information leakage
-    if (error instanceof AuthError) {
-      next(error);
-    } else {
-      next(new AuthError('Authentication failed'));
-    }
+    console.error('Auth error:', error);
+    next(new AuthError('Authentication failed'));
   }
 };

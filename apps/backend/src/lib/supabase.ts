@@ -24,12 +24,17 @@ export const supabase = createClient<Database>(
     },
     // Global error handler for database operations
     global: {
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: config.supabase.anonKey,
+      },
       fetch: async (url, options = {}) => {
         const response = await fetch(url, {
           ...options,
           headers: {
             ...options.headers,
-            'x-custom-timestamp': new Date().toISOString(),
+            'Content-Type': 'application/json',
+            apikey: config.supabase.anonKey,
           },
         });
 

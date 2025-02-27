@@ -24,6 +24,7 @@ import {
   AuthError,
   AuthenticatedRequest,
 } from './middleware/auth.js';
+import transactionsRouter from './routes/transactions.js';
 
 // Initialize Clerk client globally for connection reuse
 createClerkClient({ secretKey: config.clerk.secretKey });
@@ -33,23 +34,37 @@ const app = express();
 /**
  * Middleware Stack
  * Order is critical for security and functionality:
- * 1. helmet - Sets security headers before any response
- * 2. cors - Must run before any route handling
- * 3. json parsing - Required for POST/PUT requests
+ * 1. cors - Must run first to handle preflight
+ * 2. json parsing - Required for POST/PUT requests
+ * 3. helmet - Sets security headers
  *
  * Note: Additional middleware like rate limiting should
  * be added here before route handlers.
  */
-app.use(helmet());
+
 app.use(
   cors({
     origin: config.cors.allowedOrigins,
-    credentials: true, // Required for cookies/auth headers
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Dev-User-Id'],
   }),
 );
+
 app.use(express.json());
+app.use(helmet());
+
+// Debug middleware
+app.use((req, _res, next) => {
+  if (config.nodeEnv === 'development') {
+    console.log('=== Request Debug Info ===');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Body:', req.body);
+  }
+  next();
+});
 
 /**
  * Environment-aware Logger
@@ -108,6 +123,9 @@ app.get('/me', requireAuth, (req, res) => {
     message: 'Protected route accessed successfully',
   });
 });
+
+// Mount transactions routes (all protected)
+app.use('/transactions', requireAuth, transactionsRouter);
 
 /**
  * Global Error Handler
