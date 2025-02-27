@@ -6,16 +6,12 @@
  *
  * Usage:
  * import { supabase } from '@/lib/supabase'
- * const { data, error } = await supabase.from('table').select()
+ * const { data, error } = await supabase.from('transactions').select()
  */
 
 import { createClient } from '@supabase/supabase-js';
 import config from '../config/env.js';
-
-// Type-safe database schema definition
-export type Database = {
-  // We'll add table definitions here as we create them
-};
+import type { Database } from '../types/database.js';
 
 // Create a single instance of Supabase client
 export const supabase = createClient<Database>(
