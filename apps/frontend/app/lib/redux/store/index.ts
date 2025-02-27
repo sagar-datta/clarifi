@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { uiSlice } from "../slices/ui/slice";
+import { transactionsReducer } from "../slices/transactions";
 
 export const store = configureStore({
   reducer: {
     ui: uiSlice.reducer,
+    transactions: transactionsReducer,
   },
   // Adding middleware for development tools
   devTools: process.env.NODE_ENV !== "production",
