@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "outDir": "dist",
+    "rootDir": "src",
 
     /* Strict Type-Checking Options */
     "strict": true,
@@ -24,14 +25,14 @@
     "noUncheckedIndexedAccess": true,
 
     /* Module Resolution */
-    "moduleResolution": "node",
-    "baseUrl": "./src",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-
-    /* Advanced */
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
 
     /* Source Map */
     "sourceMap": true

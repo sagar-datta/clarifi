@@ -1,18 +1,21 @@
-import express from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { createClerkClient } from '@clerk/backend';
-import { config } from './config/env';
-import { requireAuth } from './middleware/auth';
+import config from './config/env.js';
+import {
+  requireAuth,
+  AuthError,
+  AuthenticatedRequest,
+} from './middleware/auth.js';
+
+// Initialize Clerk client
+createClerkClient({ secretKey: config.clerk.secretKey });
 
 const app = express();
 
-// Initialize Clerk client
-const clerk = createClerkClient({
-  secretKey: config.clerk.secretKey,
-});
-
-// Configure CORS with allowed origins
+// Middleware
+app.use(helmet());
 app.use(
   cors({
     origin: config.cors.allowedOrigins,
@@ -21,58 +24,52 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   }),
 );
-
-// Security middleware
-app.use(helmet());
 app.use(express.json());
+
+// Logger
+const logger = {
+  info: (message: string, ...args: unknown[]): void => {
+    if (config.nodeEnv !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log(message, ...args);
+    }
+  },
+  error: (message: string, ...args: unknown[]): void => {
+    if (config.nodeEnv !== 'production') {
+      // eslint-disable-next-line no-console
+      console.error(message, ...args);
+    }
+  },
+};
 
 // Public routes
 app.get('/health', (_req, res) => {
-  res.status(200).json({
+  res.json({
     status: 'healthy',
-    environment: config.server.nodeEnv,
+    environment: config.nodeEnv,
+  });
+});
+// Protected routes
+app.get('/me', requireAuth, (req, res) => {
+  const authReq = req as AuthenticatedRequest;
+  res.json({
+    userId: authReq.auth.userId,
+    message: 'Protected route accessed successfully',
   });
 });
 
-// Protected routes
-app.get('/me', requireAuth(), async (req, res, next) => {
-  try {
-    const user = await clerk.users.getUser(req.auth.userId);
-    res.json({ user });
-  } catch (error) {
-    next(error);
-  }
-});
-
 // Global error handler
-type ApiError = Error & { status?: number };
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  logger.error('Error:', err);
 
-app.use(
-  (
-    err: ApiError,
-    _req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction,
-  ) => {
-    console.error(err.stack);
+  res.status(err instanceof AuthError ? 401 : 500).json({
+    status: 'error',
+    message: err.message || 'Internal server error',
+  });
+};
 
-    const statusCode = err.status || 500;
-    const message =
-      config.server.nodeEnv === 'production'
-        ? 'An error occurred'
-        : err.message;
+app.use(errorHandler);
 
-    res.status(statusCode).json({
-      status: 'error',
-      message,
-      ...(config.server.nodeEnv !== 'production' && { stack: err.stack }),
-    });
-  },
-);
-
-// Start server
-app.listen(config.server.port, () => {
-  console.log(
-    `Server running in ${config.server.nodeEnv} mode on port ${config.server.port}`,
-  );
+app.listen(config.port, () => {
+  logger.info(`Server running on port ${config.port}`);
 });

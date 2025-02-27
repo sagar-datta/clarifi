@@ -1,45 +1,47 @@
-import dotenv from 'dotenv';
+import { cleanEnv, str, port, url } from 'envalid';
+import { config as dotenvConfig } from 'dotenv';
 
-// Load environment variables
-dotenv.config();
+// Load environment variables from .env file
+dotenvConfig();
 
-type NodeEnv = 'development' | 'production' | 'test';
+export type NodeEnv = 'development' | 'production' | 'test';
 
-const requireEnv = (key: string): string => {
-  const value = process.env[key];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
-  return value;
-};
+export const config = cleanEnv(process.env, {
+  NODE_ENV: str({
+    choices: ['development', 'production', 'test'],
+    default: 'development',
+  }),
+  PORT: port({ default: 3001 }),
 
-const validateNodeEnv = (env: string | undefined): NodeEnv => {
-  if (env && ['development', 'production', 'test'].includes(env)) {
-    return env as NodeEnv;
-  }
-  return 'development';
-};
+  // Clerk
+  CLERK_SECRET_KEY: str(),
+  CLERK_PUB_KEY: str(),
 
-export const config = {
-  server: {
-    port: parseInt(process.env.PORT || '3001', 10),
-    nodeEnv: validateNodeEnv(process.env.NODE_ENV),
-  },
+  // Supabase
+  SUPABASE_URL: url(),
+  SUPABASE_ANON_KEY: str(),
+  SUPABASE_SERVICE_ROLE_KEY: str(),
+
+  // CORS
+  FRONTEND_URL: url({ default: 'http://localhost:3000' }),
+});
+
+export default {
+  nodeEnv: config.NODE_ENV as NodeEnv,
+  port: config.PORT,
+
   clerk: {
-    secretKey: requireEnv('CLERK_SECRET_KEY'),
-    pubKey: requireEnv('CLERK_PUB_KEY'),
+    secretKey: config.CLERK_SECRET_KEY,
+    pubKey: config.CLERK_PUB_KEY,
   },
+
   supabase: {
-    url: requireEnv('SUPABASE_URL'),
-    anonKey: requireEnv('SUPABASE_ANON_KEY'),
-    serviceRoleKey: requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    url: config.SUPABASE_URL,
+    anonKey: config.SUPABASE_ANON_KEY,
+    serviceRoleKey: config.SUPABASE_SERVICE_ROLE_KEY,
   },
+
   cors: {
-    allowedOrigins: (
-      process.env.ALLOWED_ORIGINS || 'http://localhost:3000'
-    ).split(','),
+    allowedOrigins: Array.from([config.FRONTEND_URL]),
   },
 } as const;
-
-// Type for the entire config object
-export type Config = typeof config;
