@@ -1,10 +1,25 @@
 "use client";
 
-import { SignUpButton } from "@clerk/nextjs";
+import { SignUpButton, useAuth } from "@clerk/nextjs";
 import { Button } from "./components/ui/button/Button";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace("/dashboard");
+    }
+  }, [isSignedIn, router]);
+
+  if (isSignedIn) {
+    return null; // Prevent flash of landing page while redirecting
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px)] p-4 text-center">
       <div className="max-w-3xl space-y-6">
@@ -19,7 +34,15 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <SignUpButton mode="modal">
+          <SignUpButton
+            mode="modal"
+            appearance={{
+              elements: {
+                formFieldInput: "bg-[#1F1F23] text-white",
+                formFieldLabel: "text-gray-300",
+              },
+            }}
+          >
             <Button size="lg" className="gap-2">
               Get Started <ArrowRight className="h-4 w-4" />
             </Button>
