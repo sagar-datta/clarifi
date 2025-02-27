@@ -42,6 +42,8 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
+import { FiltersPopover } from "@/app/components/ui/filters/FiltersPopover";
+import type { Filters } from "@/app/components/ui/filters/FiltersPopover";
 
 export default function TransactionsPage() {
   const { getToken } = useAuth();
@@ -55,30 +57,60 @@ export default function TransactionsPage() {
     to: new Date(),
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [filters, setFilters] = useState<Filters>({
+    categories: [],
+    type: "all",
+    amountRange: {},
+  });
 
-  // Filter transactions based on search term and date range
+  // Get unique categories from transactions
+  const availableCategories = useMemo(() => {
+    const uniqueCategories = new Set(transactions.map((t) => t.category));
+    return Array.from(uniqueCategories).sort();
+  }, [transactions]);
+
+  // Filter transactions based on all filters
   const filteredTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
+      // Category filter
+      if (
+        filters.categories.length > 0 &&
+        !filters.categories.includes(transaction.category)
+      ) {
+        return false;
+      }
+
+      // Type filter
+      if (filters.type !== "all" && transaction.type !== filters.type) {
+        return false;
+      }
+
+      // Amount range filter
+      if (
+        filters.amountRange.min !== undefined &&
+        transaction.amount < filters.amountRange.min
+      ) {
+        return false;
+      }
+      if (
+        filters.amountRange.max !== undefined &&
+        transaction.amount > filters.amountRange.max
+      ) {
+        return false;
+      }
+
       // Search term filter
       if (searchTerm.trim()) {
         const search = searchTerm.toLowerCase().trim();
-        const matchesSearch =
+        return (
           transaction.description.toLowerCase().includes(search) ||
-          transaction.category.toLowerCase().includes(search);
-        if (!matchesSearch) return false;
-      }
-
-      // Date range filter
-      if (dateRange?.from && dateRange?.to) {
-        const transactionDate = new Date(transaction.date);
-        const isInRange =
-          transactionDate >= dateRange.from && transactionDate <= dateRange.to;
-        if (!isInRange) return false;
+          transaction.category.toLowerCase().includes(search)
+        );
       }
 
       return true;
     });
-  }, [transactions, searchTerm, dateRange]);
+  }, [transactions, filters, searchTerm]);
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -90,20 +122,6 @@ export default function TransactionsPage() {
   // Handler for search input
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-  };
-
-  // Quick date range options
-  const dateRangeOptions = [
-    { label: "7d", days: 7 },
-    { label: "30d", days: 30 },
-    { label: "90d", days: 90 },
-  ];
-
-  const handleQuickDateRange = (days: number) => {
-    setDateRange({
-      from: addDays(new Date(), -days),
-      to: new Date(),
-    });
   };
 
   return (
@@ -130,24 +148,28 @@ export default function TransactionsPage() {
           {/* Filter Section */}
           <CardHeader className="border-b px-6 pb-4">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="relative flex items-center">
+              <div className="relative flex items-center transition-all duration-300 ease-in-out">
                 <Search className="absolute left-2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search transactions..."
-                  className="w-full pl-8 md:w-[300px]"
+                  className="w-full pl-8 md:w-[300px] transition-all duration-300 ease-in-out"
                   value={searchTerm}
                   onChange={handleSearch}
                 />
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <DateRangePicker
-                  dateRange={dateRange}
-                  onDateRangeChange={setDateRange}
-                />
-                <Button variant="outline" size="sm">
-                  <SlidersHorizontal className="mr-2 h-4 w-4" />
-                  Filters
-                </Button>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center transition-all duration-300 ease-in-out">
+                <div className="transition-transform duration-300 ease-in-out">
+                  <DateRangePicker
+                    dateRange={dateRange}
+                    onDateRangeChange={setDateRange}
+                  />
+                </div>
+                <div className="transition-transform duration-300 ease-in-out">
+                  <FiltersPopover
+                    categories={availableCategories}
+                    onFiltersChange={setFilters}
+                  />
+                </div>
               </div>
             </div>
           </CardHeader>
