@@ -37,3 +37,5 @@ yarn-error.log*
 .cursor/rules/rules.mdc
 apps/frontend/.cursor/rules/project-stack.mdc
 apps/frontend/.cursor/rules/rules.mdc
+apps/backend/.cursor/rules/project-stack.mdc
+apps/backend/.cursor/rules/rules.mdc
