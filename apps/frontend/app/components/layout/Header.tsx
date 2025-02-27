@@ -14,6 +14,7 @@ import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 interface HeaderProps {
   className?: string;
@@ -76,9 +77,7 @@ export function Header({ className }: HeaderProps) {
               {/* User Button */}
               <UserButton
                 appearance={{
-                  elements: {
-                    avatarBox: "w-9 h-9",
-                  },
+                  baseTheme: theme === "dark" ? dark : undefined,
                 }}
               />
             </>
