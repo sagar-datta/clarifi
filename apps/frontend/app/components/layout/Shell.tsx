@@ -19,6 +19,7 @@ import { cn } from "@/app/lib/utils";
 import { AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -28,66 +29,82 @@ export function Shell({ children }: ShellProps) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = React.useState(false);
   const pathname = usePathname();
+  const { isLoaded, isSignedIn } = useUser();
+
+  // Don't show anything while loading auth state
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <div className="relative flex min-h-screen transition-colors duration-300">
-      {/* Mobile Trigger */}
-      <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
-        <SheetTrigger asChild className="lg:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="fixed left-4 top-4 z-50"
-          >
-            <MenuIcon className="h-6 w-6" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="border-b px-6 py-4">
-            <SheetTitle>ClariFi</SheetTitle>
-          </SheetHeader>
-          <MobileSidebar />
-        </SheetContent>
-      </Sheet>
+      {isSignedIn && (
+        <>
+          {/* Mobile Trigger */}
+          <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+            <SheetTrigger asChild className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="fixed left-4 top-4 z-50"
+              >
+                <MenuIcon className="h-6 w-6" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 p-0">
+              <SheetHeader className="border-b px-6 py-4">
+                <SheetTitle>ClariFi</SheetTitle>
+              </SheetHeader>
+              <MobileSidebar />
+            </SheetContent>
+          </Sheet>
 
-      {/* Desktop Sidebar */}
-      <aside
-        className={cn(
-          "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background transition-all duration-300 z-40",
-          isDesktopCollapsed ? "w-[80px]" : "w-72"
-        )}
-      >
-        <div className="relative border-b px-6 py-4 h-16">
-          <h2
+          {/* Desktop Sidebar */}
+          <aside
             className={cn(
-              "text-lg font-semibold transition-opacity duration-300",
-              isDesktopCollapsed ? "opacity-0" : "opacity-100"
+              "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background transition-all duration-300 z-40",
+              isDesktopCollapsed ? "w-[80px]" : "w-72"
             )}
           >
-            ClariFi
-          </h2>
-          <Collapse
-            isCollapsed={isDesktopCollapsed}
-            onToggle={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-          />
-        </div>
-        <DesktopSidebar isCollapsed={isDesktopCollapsed} />
-      </aside>
+            <div className="relative border-b px-6 py-4 h-16">
+              <h2
+                className={cn(
+                  "text-lg font-semibold transition-opacity duration-300",
+                  isDesktopCollapsed ? "opacity-0" : "opacity-100"
+                )}
+              >
+                ClariFi
+              </h2>
+              <Collapse
+                isCollapsed={isDesktopCollapsed}
+                onToggle={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
+              />
+            </div>
+            <DesktopSidebar isCollapsed={isDesktopCollapsed} />
+          </aside>
+        </>
+      )}
 
       {/* Main content area */}
       <main
         className={cn(
           "flex-1 flex flex-col transition-all duration-300 bg-background",
-          "lg:ml-[80px]",
-          !isDesktopCollapsed && "lg:ml-72"
+          isSignedIn && ["lg:ml-[80px]", !isDesktopCollapsed && "lg:ml-72"]
         )}
       >
         <div
-          className="fixed top-0 right-0 z-30 border-b bg-background h-16 transition-all duration-300"
-          style={{
-            width: `calc(100% - ${isDesktopCollapsed ? "80px" : "288px"})`,
-          }}
+          className={cn(
+            "fixed top-0 right-0 z-30 border-b bg-background h-16 transition-all duration-300",
+            isSignedIn ? "left-0 lg:left-auto" : "left-0"
+          )}
+          style={
+            isSignedIn
+              ? {
+                  width: `calc(100% - ${isDesktopCollapsed ? "80px" : "288px"})`,
+                }
+              : undefined
+          }
         >
           <Header className="border-b-0" />
         </div>
