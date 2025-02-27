@@ -41,6 +41,7 @@ import {
 } from "@/app/lib/redux/slices/transactions/selectors";
 import { useAuth } from "@clerk/nextjs";
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
+import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
 
 export default function TransactionsPage() {
   const { getToken } = useAuth();
@@ -55,17 +56,29 @@ export default function TransactionsPage() {
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  // Filter transactions based on search term
+  // Filter transactions based on search term and date range
   const filteredTransactions = useMemo(() => {
-    if (!searchTerm.trim()) return transactions;
+    return transactions.filter((transaction) => {
+      // Search term filter
+      if (searchTerm.trim()) {
+        const search = searchTerm.toLowerCase().trim();
+        const matchesSearch =
+          transaction.description.toLowerCase().includes(search) ||
+          transaction.category.toLowerCase().includes(search);
+        if (!matchesSearch) return false;
+      }
 
-    const search = searchTerm.toLowerCase().trim();
-    return transactions.filter(
-      (transaction) =>
-        transaction.description.toLowerCase().includes(search) ||
-        transaction.category.toLowerCase().includes(search)
-    );
-  }, [transactions, searchTerm]);
+      // Date range filter
+      if (dateRange?.from && dateRange?.to) {
+        const transactionDate = new Date(transaction.date);
+        const isInRange =
+          transactionDate >= dateRange.from && transactionDate <= dateRange.to;
+        if (!isInRange) return false;
+      }
+
+      return true;
+    });
+  }, [transactions, searchTerm, dateRange]);
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -77,6 +90,20 @@ export default function TransactionsPage() {
   // Handler for search input
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+  };
+
+  // Quick date range options
+  const dateRangeOptions = [
+    { label: "7d", days: 7 },
+    { label: "30d", days: 30 },
+    { label: "90d", days: 90 },
+  ];
+
+  const handleQuickDateRange = (days: number) => {
+    setDateRange({
+      from: addDays(new Date(), -days),
+      to: new Date(),
+    });
   };
 
   return (
@@ -113,44 +140,10 @@ export default function TransactionsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={cn(
-                        "justify-start text-left font-normal",
-                        !dateRange && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange?.from ? (
-                        dateRange.to ? (
-                          <>
-                            {format(dateRange.from, "d MMM")} -{" "}
-                            {format(dateRange.to, "d MMM, yyyy")}
-                          </>
-                        ) : (
-                          format(dateRange.from, "d MMM, yyyy")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="end">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={dateRange?.from}
-                      selected={dateRange}
-                      onSelect={(range: any) => {
-                        setDateRange(range);
-                        setIsCalendarOpen(false);
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <DateRangePicker
+                  dateRange={dateRange}
+                  onDateRangeChange={setDateRange}
+                />
                 <Button variant="outline" size="sm">
                   <SlidersHorizontal className="mr-2 h-4 w-4" />
                   Filters

@@ -18,13 +18,7 @@ import {
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 import { Button } from "@/app/components/ui/button/Button";
-import { Calendar } from "@/app/components/ui/calendar/Calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/app/components/ui/popover/Popover";
-import { ChevronDown, CalendarIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -38,6 +32,7 @@ import {
   isWithinInterval,
   startOfDay,
 } from "date-fns";
+import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
 
 // Helper function to format dates
 const formatDate = (dateString: string) => {
@@ -133,7 +128,6 @@ export function TransactionsWidget() {
     from: addDays(new Date(), -7),
     to: new Date(),
   });
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Filter and sort transactions by date
   const filteredAndSortedTransactions = useMemo(() => {
@@ -188,67 +182,10 @@ export function TransactionsWidget() {
             Your financial activity at a glance
           </p>
         </div>
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "h-8 w-[240px] justify-center text-center text-xs font-normal",
-                !dateRange && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-3 w-3" />
-              {dateRange?.from ? (
-                dateRange.to ? (
-                  <>
-                    {format(dateRange.from, "d MMM")} -{" "}
-                    {format(dateRange.to, "d MMM, yyyy")}
-                  </>
-                ) : (
-                  format(dateRange.from, "d MMM, yyyy")
-                )
-              ) : (
-                <span>Pick a date range</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <div className="space-y-4 p-3">
-              <div className="flex justify-center gap-2">
-                {datePresets.map((preset) => (
-                  <Button
-                    key={preset.days}
-                    variant="outline"
-                    className="h-7 text-xs"
-                    onClick={() => {
-                      const to = new Date();
-                      const from = addDays(to, -preset.days);
-                      setDateRange({ from, to });
-                      setIsCalendarOpen(false);
-                    }}
-                  >
-                    {preset.label}
-                  </Button>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={dateRange?.from}
-                  selected={{ from: dateRange?.from, to: dateRange?.to }}
-                  onSelect={(range) => {
-                    setDateRange({
-                      from: range?.from || dateRange.from,
-                      to: range?.to || range?.from || dateRange.to,
-                    });
-                  }}
-                  numberOfMonths={2}
-                />
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+        <DateRangePicker
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+        />
       </CardHeader>
       <Separator className="mb-2" />
       <CardContent className="p-0">
