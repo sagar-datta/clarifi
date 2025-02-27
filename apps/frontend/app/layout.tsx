@@ -4,6 +4,7 @@ import "./globals.css";
 import { Shell } from "./components/layout/Shell";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ReduxProvider } from "./providers/ReduxProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +20,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider>
-          <ReduxProvider>
-            <Shell>{children}</Shell>
-          </ReduxProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
+          <ThemeProvider>
+            <ReduxProvider>
+              <Shell>{children}</Shell>
+            </ReduxProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
