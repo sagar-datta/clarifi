@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu/DropdownMenu";
-import { Bell, Plus, User, Moon, Sun } from "lucide-react";
+import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
+import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 
 interface HeaderProps {
   className?: string;
@@ -20,6 +21,7 @@ interface HeaderProps {
 
 export function Header({ className }: HeaderProps) {
   const { theme, setTheme } = useTheme();
+  const { isSignedIn } = useUser();
 
   return (
     <header className={cn("bg-background px-6 py-3", className)}>
@@ -37,55 +39,56 @@ export function Header({ className }: HeaderProps) {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {/* Quick Actions */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Plus className="h-5 w-5" />
-                <span className="sr-only">Quick actions</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Add Transaction</DropdownMenuItem>
-              <DropdownMenuItem>Create Budget</DropdownMenuItem>
-              <DropdownMenuItem>Set New Goal</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {isSignedIn ? (
+            <>
+              {/* Quick Actions */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Plus className="h-5 w-5" />
+                    <span className="sr-only">Quick actions</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Add Transaction</DropdownMenuItem>
+                  <DropdownMenuItem>Create Budget</DropdownMenuItem>
+                  <DropdownMenuItem>Set New Goal</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-                <span className="sr-only">Notifications</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>No new notifications</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Notifications */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Bell className="h-5 w-5" />
+                    <span className="sr-only">Notifications</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>No new notifications</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Profile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-                <span className="sr-only">User menu</span>
+              {/* User Button */}
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-9 h-9",
+                  },
+                }}
+              />
+            </>
+          ) : (
+            <SignInButton>
+              <Button variant="default" size="sm">
+                Sign in
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </SignInButton>
+          )}
         </div>
       </div>
     </header>
