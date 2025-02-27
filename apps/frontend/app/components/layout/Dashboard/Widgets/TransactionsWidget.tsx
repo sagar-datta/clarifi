@@ -7,13 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card/Card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select/Select";
 import { ScrollArea } from "@/app/components/ui/scroll-area/ScrollArea";
 import { Separator } from "@/app/components/ui/separator/Separator";
 import {
@@ -25,13 +18,26 @@ import {
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 import { Button } from "@/app/components/ui/button/Button";
-import { ChevronDown } from "lucide-react";
+import { Calendar } from "@/app/components/ui/calendar/Calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/popover/Popover";
+import { ChevronDown, CalendarIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/app/components/ui/collapsible/Collapsible";
 import { cn } from "@/app/lib/utils";
+import {
+  addDays,
+  format,
+  isSameDay,
+  isWithinInterval,
+  startOfDay,
+} from "date-fns";
 
 // Helper function to format dates
 const formatDate = (dateString: string) => {
@@ -111,24 +117,41 @@ const groupTransactions = (transactions: Transaction[]): TransactionGroups => {
   );
 };
 
+const datePresets = [
+  { label: "Last 7 days", days: 7 },
+  { label: "Last 30 days", days: 30 },
+  { label: "Last 90 days", days: 90 },
+] as const;
+
 export function TransactionsWidget() {
   const transactions = useTransactions() || [];
   const isLoading = useTransactionsLoading();
   const error = useTransactionsError();
   const { fetchAll, seedDummyData } = useTransactionActions();
   const [isSeedingData, setIsSeedingData] = useState(false);
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
+    from: addDays(new Date(), -7),
+    to: new Date(),
+  });
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  // Sort transactions by date
-  const sortedTransactions = useMemo(() => {
-    return [...transactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-  }, [transactions]);
+  // Filter and sort transactions by date
+  const filteredAndSortedTransactions = useMemo(() => {
+    const start = startOfDay(dateRange.from);
+    const end = startOfDay(dateRange.to);
 
-  // Group sorted transactions
+    return [...transactions]
+      .filter((transaction) => {
+        const date = startOfDay(new Date(transaction.date));
+        return isWithinInterval(date, { start, end });
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions, dateRange]);
+
+  // Group filtered transactions
   const groupedTransactions = useMemo(
-    () => groupTransactions(sortedTransactions),
-    [sortedTransactions]
+    () => groupTransactions(filteredAndSortedTransactions),
+    [filteredAndSortedTransactions]
   );
 
   useEffect(() => {
@@ -165,16 +188,67 @@ export function TransactionsWidget() {
             Your financial activity at a glance
           </p>
         </div>
-        <Select defaultValue="7d">
-          <SelectTrigger className="h-8 w-[100px] text-xs">
-            <SelectValue placeholder="Select range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7d">Last 7 days</SelectItem>
-            <SelectItem value="30d">Last 30 days</SelectItem>
-            <SelectItem value="90d">Last 90 days</SelectItem>
-          </SelectContent>
-        </Select>
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "h-8 w-[240px] justify-center text-center text-xs font-normal",
+                !dateRange && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-3 w-3" />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "d MMM")} -{" "}
+                    {format(dateRange.to, "d MMM, yyyy")}
+                  </>
+                ) : (
+                  format(dateRange.from, "d MMM, yyyy")
+                )
+              ) : (
+                <span>Pick a date range</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <div className="space-y-4 p-3">
+              <div className="flex justify-center gap-2">
+                {datePresets.map((preset) => (
+                  <Button
+                    key={preset.days}
+                    variant="outline"
+                    className="h-7 text-xs"
+                    onClick={() => {
+                      const to = new Date();
+                      const from = addDays(to, -preset.days);
+                      setDateRange({ from, to });
+                      setIsCalendarOpen(false);
+                    }}
+                  >
+                    {preset.label}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={{ from: dateRange?.from, to: dateRange?.to }}
+                  onSelect={(range) => {
+                    setDateRange({
+                      from: range?.from || dateRange.from,
+                      to: range?.to || range?.from || dateRange.to,
+                    });
+                  }}
+                  numberOfMonths={2}
+                />
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </CardHeader>
       <Separator className="mb-2" />
       <CardContent className="p-0">
@@ -204,25 +278,29 @@ export function TransactionsWidget() {
                   </div>
                 </div>
               ))
-            ) : sortedTransactions.length === 0 ? (
+            ) : filteredAndSortedTransactions.length === 0 ? (
               <div className="flex h-[300px] flex-col items-center justify-center gap-4 text-center">
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    No transactions found
+                    {transactions.length === 0
+                      ? "No transactions found"
+                      : `No transactions in the last ${dateRange.to.toLocaleDateString().split("T")[0] === dateRange.from.toLocaleDateString().split("T")[0] ? dateRange.to.toLocaleDateString().split("T")[1].split(":")[0] + " hours" : dateRange.to.toLocaleDateString().split("T")[0] + " days"}`}
                   </p>
                   {error && (
                     <p className="text-sm text-red-500">Error: {error}</p>
                   )}
                 </div>
-                <Button
-                  onClick={handleSeedData}
-                  variant="outline"
-                  size="sm"
-                  disabled={isLoadingState}
-                  className="h-8 text-xs"
-                >
-                  Add Sample Transactions
-                </Button>
+                {transactions.length === 0 && (
+                  <Button
+                    onClick={handleSeedData}
+                    variant="outline"
+                    size="sm"
+                    disabled={isLoadingState}
+                    className="h-8 text-xs"
+                  >
+                    Add Sample Transactions
+                  </Button>
+                )}
               </div>
             ) : (
               <>
