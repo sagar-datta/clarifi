@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/app/lib/utils";
 import { addDays, format } from "date-fns";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PageLayout } from "@/app/components/layout/PageLayout";
 import { useTransactionActions } from "@/app/lib/redux/hooks/transactions";
 import { useAppSelector } from "@/app/lib/redux/hooks";
@@ -48,11 +48,24 @@ export default function TransactionsPage() {
   const transactions = (useAppSelector(selectTransactions) ??
     []) as Transaction[];
   const isLoading = useAppSelector(selectTransactionsLoading);
+  const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: addDays(new Date(), -30),
     to: new Date(),
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // Filter transactions based on search term
+  const filteredTransactions = useMemo(() => {
+    if (!searchTerm.trim()) return transactions;
+
+    const search = searchTerm.toLowerCase().trim();
+    return transactions.filter(
+      (transaction) =>
+        transaction.description.toLowerCase().includes(search) ||
+        transaction.category.toLowerCase().includes(search)
+    );
+  }, [transactions, searchTerm]);
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -60,6 +73,11 @@ export default function TransactionsPage() {
     };
     loadTransactions();
   }, [fetchAll]);
+
+  // Handler for search input
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <PageLayout>
@@ -90,6 +108,8 @@ export default function TransactionsPage() {
                 <Input
                   placeholder="Search transactions..."
                   className="w-full pl-8 md:w-[300px]"
+                  value={searchTerm}
+                  onChange={handleSearch}
                 />
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -176,13 +196,15 @@ export default function TransactionsPage() {
                       </TableCell>
                     </TableRow>
                   ))
-                ) : transactions.length === 0 ? (
+                ) : filteredTransactions.length === 0 ? (
                   // Empty state
                   <TableRow>
                     <TableCell colSpan={5} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <p className="text-sm text-muted-foreground">
-                          No transactions found
+                          {searchTerm.trim()
+                            ? "No transactions match your search"
+                            : "No transactions found"}
                         </p>
                         <Button variant="outline" size="sm">
                           Add Transaction
@@ -192,7 +214,7 @@ export default function TransactionsPage() {
                   </TableRow>
                 ) : (
                   // Actual transactions
-                  transactions.map((transaction) => (
+                  filteredTransactions.map((transaction) => (
                     <TableRow key={transaction.id} className="group">
                       <TableCell className="pl-0 font-medium">
                         {transaction.description}
