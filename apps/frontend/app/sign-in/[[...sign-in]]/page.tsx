@@ -1,5 +1,5 @@
-import { SignIn } from "@clerk/nextjs";
 import { Metadata } from "next";
+import { SignInClient } from "./SignInClient";
 
 export const metadata: Metadata = {
   title: "Sign In | ClariFi",
@@ -7,16 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignInPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <SignIn
-        appearance={{
-          elements: {
-            formButtonPrimary: "bg-primary hover:bg-primary/90",
-            footerActionLink: "text-primary hover:text-primary/90",
-          },
-        }}
-      />
-    </div>
-  );
+  return <SignInClient />;
 }

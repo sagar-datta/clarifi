@@ -23,6 +23,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.12.1
         version: 6.12.1(next@15.1.7)(react-dom@19.0.0)(react@19.0.0)
+      '@clerk/themes':
+        specifier: ^2.2.20
+        version: 2.2.20
       '@radix-ui/react-dialog':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@19.0.4)(@types/react@19.0.10)(react-dom@19.0.0)(react@19.0.0)
@@ -210,6 +213,14 @@ packages:
       react-dom: 19.0.0(react@19.0.0)
       std-env: 3.8.0
       swr: 2.3.2(react@19.0.0)
+    dev: false
+
+  /@clerk/themes@2.2.20:
+    resolution: {integrity: sha512-ck93Yjpef8LQLXbMuVHYYbbZK+iESGvboT0zvR4Z8vmSePiNpFCvKHpl22hVdUxUPum4QhocuuOYFqxJ2nVSyQ==}
+    engines: {node: '>=18.17.0'}
+    dependencies:
+      '@clerk/types': 4.47.0
+      tslib: 2.4.1
     dev: false
 
   /@clerk/types@4.47.0:
