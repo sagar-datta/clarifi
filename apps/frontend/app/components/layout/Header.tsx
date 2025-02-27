@@ -14,13 +14,8 @@ import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
-interface HeaderProps {
-  className?: string;
-}
-
-export function Header({ className }: HeaderProps) {
+export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
   const { isSignedIn } = useUser();
 
@@ -75,11 +70,7 @@ export function Header({ className }: HeaderProps) {
               </DropdownMenu>
 
               {/* User Button */}
-              <UserButton
-                appearance={{
-                  baseTheme: theme === "dark" ? dark : undefined,
-                }}
-              />
+              <UserButton />
             </>
           ) : (
             <SignInButton>
