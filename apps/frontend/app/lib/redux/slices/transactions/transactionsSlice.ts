@@ -5,6 +5,7 @@ import {
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  seedDummyData,
 } from "./thunks";
 
 interface TransactionsState {
@@ -36,6 +37,20 @@ export const transactionsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Seed transactions
+    builder.addCase(seedDummyData.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(seedDummyData.fulfilled, (state, action) => {
+      state.loading = false;
+      state.items = action.payload;
+    });
+    builder.addCase(seedDummyData.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to seed transactions";
+    });
+
     // Fetch transactions
     builder.addCase(fetchTransactions.pending, (state) => {
       state.loading = true;
@@ -47,7 +62,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchTransactions.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to fetch transactions";
+      state.error = action.payload || "Failed to fetch transactions";
     });
 
     // Create transaction
@@ -61,7 +76,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(createTransaction.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to create transaction";
+      state.error = action.payload || "Failed to create transaction";
     });
 
     // Update transaction
@@ -80,7 +95,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(updateTransaction.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to update transaction";
+      state.error = action.payload || "Failed to update transaction";
     });
 
     // Delete transaction
@@ -96,7 +111,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(deleteTransaction.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to delete transaction";
+      state.error = action.payload || "Failed to delete transaction";
     });
   },
 });

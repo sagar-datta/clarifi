@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { useAppDispatch, useAppSelector } from "./";
 import {
   Transaction,
@@ -9,6 +10,7 @@ import {
   updateTransaction,
   deleteTransaction,
   setSelectedTransaction,
+  seedDummyData,
 } from "../slices/transactions";
 
 // Selectors
@@ -24,30 +26,35 @@ export const useSelectedTransaction = () =>
 // Action hooks
 export const useTransactionActions = () => {
   const dispatch = useAppDispatch();
+  const { getToken } = useAuth();
 
-  const fetchAll = useCallback(() => {
-    return dispatch(fetchTransactions());
-  }, [dispatch]);
+  const fetchAll = useCallback(async () => {
+    const token = await getToken();
+    return dispatch(fetchTransactions(token));
+  }, [dispatch, getToken]);
 
   const create = useCallback(
-    (data: CreateTransactionDTO) => {
-      return dispatch(createTransaction(data));
+    async (data: CreateTransactionDTO) => {
+      const token = await getToken();
+      return dispatch(createTransaction({ token, data }));
     },
-    [dispatch]
+    [dispatch, getToken]
   );
 
   const update = useCallback(
-    (id: string, data: UpdateTransactionDTO) => {
-      return dispatch(updateTransaction({ id, data }));
+    async (id: string, data: UpdateTransactionDTO) => {
+      const token = await getToken();
+      return dispatch(updateTransaction({ token, id, data }));
     },
-    [dispatch]
+    [dispatch, getToken]
   );
 
   const remove = useCallback(
-    (id: string) => {
-      return dispatch(deleteTransaction(id));
+    async (id: string) => {
+      const token = await getToken();
+      return dispatch(deleteTransaction({ token, id }));
     },
-    [dispatch]
+    [dispatch, getToken]
   );
 
   const select = useCallback(
@@ -57,11 +64,17 @@ export const useTransactionActions = () => {
     [dispatch]
   );
 
+  const seed = useCallback(async () => {
+    const token = await getToken();
+    return dispatch(seedDummyData(token));
+  }, [dispatch, getToken]);
+
   return {
     fetchAll,
     create,
     update,
     remove,
     select,
+    seedDummyData: seed,
   };
 };

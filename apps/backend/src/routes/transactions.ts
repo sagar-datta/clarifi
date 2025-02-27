@@ -154,6 +154,69 @@ const deleteTransaction: RequestHandler = async (
   }
 };
 
+// Test endpoint to create dummy data
+router.post(
+  '/seed',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { auth } = req as AuthenticatedRequest;
+      const dummyData = [
+        {
+          amount: 2500.0,
+          description: 'Monthly Salary',
+          category: 'Income',
+          type: 'income' as TransactionType,
+          date: new Date().toISOString(),
+        },
+        {
+          amount: 800.0,
+          description: 'Rent Payment',
+          category: 'Housing',
+          type: 'expense' as TransactionType,
+          date: new Date().toISOString(),
+        },
+        {
+          amount: 120.5,
+          description: 'Grocery Shopping',
+          category: 'Food',
+          type: 'expense' as TransactionType,
+          date: new Date().toISOString(),
+        },
+        {
+          amount: 45.0,
+          description: 'Netflix Subscription',
+          category: 'Entertainment',
+          type: 'expense' as TransactionType,
+          date: new Date().toISOString(),
+        },
+        {
+          amount: 300.0,
+          description: 'Freelance Work',
+          category: 'Income',
+          type: 'income' as TransactionType,
+          date: new Date().toISOString(),
+        },
+      ];
+
+      // Create transactions in sequence
+      const createdTransactions = await Promise.all(
+        dummyData.map((transaction) =>
+          TransactionsService.create(auth.userId, transaction),
+        ),
+      );
+
+      res.json({
+        status: 'success',
+        message: 'Dummy data created successfully',
+        userId: auth.userId,
+        data: createdTransactions,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // Mount routes
 router.get('/', listTransactions);
 router.get('/:id', getTransaction);

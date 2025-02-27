@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchWithAuth } from "@/app/lib/api";
 import type {
   Transaction,
   CreateTransactionDTO,
@@ -7,7 +8,10 @@ import type {
   TransactionsResponse,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+interface ThunkConfig {
+  state: unknown;
+  rejectValue: string;
+}
 
 // Helper function to handle API errors
 const handleApiError = (error: any): never => {
@@ -17,67 +21,97 @@ const handleApiError = (error: any): never => {
   throw new Error("An unexpected error occurred");
 };
 
-export const fetchTransactions = createAsyncThunk<Transaction[]>(
-  "transactions/fetchTransactions",
-  async () => {
+export const seedDummyData = createAsyncThunk<
+  Transaction[],
+  string | null,
+  ThunkConfig
+>("transactions/seedDummyData", async (token, { rejectWithValue }) => {
+  try {
+    const data = await fetchWithAuth("/transactions/seed", token, {
+      method: "POST",
+    });
+    return data.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to seed dummy data");
+  }
+});
+
+export const fetchTransactions = createAsyncThunk<
+  Transaction[],
+  string | null,
+  ThunkConfig
+>("transactions/fetchTransactions", async (token, { rejectWithValue }) => {
+  try {
+    const data: TransactionsResponse = await fetchWithAuth(
+      "/transactions",
+      token
+    );
+    return data.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to fetch transactions");
+  }
+});
+
+export const createTransaction = createAsyncThunk<
+  Transaction,
+  { token: string | null; data: CreateTransactionDTO },
+  ThunkConfig
+>(
+  "transactions/createTransaction",
+  async ({ token, data }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/transactions`);
-      const data: TransactionsResponse = await response.json();
-      return data.data;
-    } catch (error) {
-      return handleApiError(error);
+      const response: TransactionResponse = await fetchWithAuth(
+        "/transactions",
+        token,
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to create transaction");
     }
   }
 );
 
-export const createTransaction = createAsyncThunk<
-  Transaction,
-  CreateTransactionDTO
->("transactions/createTransaction", async (transaction) => {
-  try {
-    const response = await fetch(`${API_URL}/transactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(transaction),
-    });
-    const data: TransactionResponse = await response.json();
-    return data.data;
-  } catch (error) {
-    return handleApiError(error);
-  }
-});
-
 export const updateTransaction = createAsyncThunk<
   Transaction,
-  { id: string; data: UpdateTransactionDTO }
->("transactions/updateTransaction", async ({ id, data }) => {
-  try {
-    const response = await fetch(`${API_URL}/transactions/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const responseData: TransactionResponse = await response.json();
-    return responseData.data;
-  } catch (error) {
-    return handleApiError(error);
-  }
-});
-
-export const deleteTransaction = createAsyncThunk<string, string>(
-  "transactions/deleteTransaction",
-  async (id) => {
+  { token: string | null; id: string; data: UpdateTransactionDTO },
+  ThunkConfig
+>(
+  "transactions/updateTransaction",
+  async ({ token, id, data }, { rejectWithValue }) => {
     try {
-      await fetch(`${API_URL}/transactions/${id}`, {
+      const responseData: TransactionResponse = await fetchWithAuth(
+        `/transactions/${id}`,
+        token,
+        {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }
+      );
+      return responseData.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to update transaction");
+    }
+  }
+);
+
+export const deleteTransaction = createAsyncThunk<
+  string,
+  { token: string | null; id: string },
+  ThunkConfig
+>(
+  "transactions/deleteTransaction",
+  async ({ token, id }, { rejectWithValue }) => {
+    try {
+      await fetchWithAuth(`/transactions/${id}`, token, {
         method: "DELETE",
       });
       return id;
-    } catch (error) {
-      return handleApiError(error);
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to delete transaction");
     }
   }
 );
