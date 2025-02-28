@@ -87,7 +87,7 @@ export default function TransactionsPage() {
     <TransactionsErrorBoundary>
       <div className="relative min-h-screen bg-background">
         <div className="mx-auto w-full max-w-7xl px-6">
-          <div className="flex flex-col gap-6 py-8">
+          <div className="flex flex-col gap-6">
             <TransactionsHeader filteredTransactions={filteredTransactions} />
             <div className="relative rounded-lg border bg-card">
               <TransactionsFilters

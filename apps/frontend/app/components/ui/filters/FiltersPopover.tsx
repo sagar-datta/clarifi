@@ -165,11 +165,6 @@ export function FiltersPopover({
     }
   };
 
-  const formatAmount = (value: number | undefined) => {
-    if (value === undefined) return "";
-    return value.toFixed(2);
-  };
-
   const hasActiveFilters =
     filters.categories.length > 0 ||
     filters.type !== "all" ||
@@ -261,7 +256,7 @@ export function FiltersPopover({
                   placeholder="Search categories..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
-                  className="h-9 text-sm"
+                  className="h-9 text-sm border-none focus:ring-0 focus:border-none focus-visible:ring-0 focus-visible:ring-offset-0 active:border-none"
                 />
                 {filters.categories.length > 0 && (
                   <div className="border-t px-2 py-2">
