@@ -5,6 +5,7 @@ import { Shell } from "./components/layout/Shell";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ReduxProvider } from "./providers/ReduxProvider";
 import { ClerkThemeProvider } from "./providers/ClerkThemeProvider";
+import { Toaster } from "@/app/components/ui/toast/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             </ReduxProvider>
           </ClerkThemeProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
