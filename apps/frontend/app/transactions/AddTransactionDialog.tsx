@@ -45,7 +45,10 @@ import { cn } from "@/app/lib/utils";
 // Form validation schema
 const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
-  amount: z.number().min(0.01, "Amount must be greater than 0"),
+  amount: z.coerce
+    .number()
+    .min(0.01, "Amount must be greater than 0")
+    .transform((val) => Number(val.toFixed(2))),
   category: z.string().min(1, "Category is required"),
   type: z.enum(["expense", "income"]),
   date: z.date(),
@@ -63,7 +66,7 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
-      amount: undefined,
+      amount: 0,
       category: "",
       type: "expense",
       date: new Date(),
@@ -114,28 +117,71 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
               <FormField
                 control={form.control}
                 name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Amount</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                          $
-                        </span>
-                        <Input
-                          type="number"
-                          placeholder="0.00"
-                          className="pl-7"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value))
-                          }
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const [displayValue, setDisplayValue] = React.useState("");
+
+                  React.useEffect(() => {
+                    if (field.value === 0) {
+                      setDisplayValue("");
+                    } else {
+                      setDisplayValue(field.value.toString());
+                    }
+                  }, [field.value]);
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                            $
+                          </span>
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            placeholder="0.00"
+                            className="pl-7"
+                            value={displayValue}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              // Allow only numbers and at most one decimal point
+                              if (!/^\d*\.?\d*$/.test(value)) return;
+
+                              // Prevent more than 2 decimal places
+                              if (
+                                value.includes(".") &&
+                                value.split(".")[1]?.length > 2
+                              )
+                                return;
+
+                              setDisplayValue(value);
+                              const numValue = parseFloat(value);
+                              if (!isNaN(numValue)) {
+                                field.onChange(numValue);
+                              } else {
+                                field.onChange(0);
+                              }
+                            }}
+                            onBlur={() => {
+                              if (!displayValue || displayValue === "") {
+                                setDisplayValue("");
+                                field.onChange(0);
+                                return;
+                              }
+                              const numValue = parseFloat(displayValue);
+                              if (!isNaN(numValue)) {
+                                const formatted = numValue.toFixed(2);
+                                setDisplayValue(formatted);
+                                field.onChange(parseFloat(formatted));
+                              }
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
