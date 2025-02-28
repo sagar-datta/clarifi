@@ -12,7 +12,7 @@ import { TransactionsHeader } from "./components/TransactionsHeader";
 import { TransactionsFilters } from "./components/TransactionsFilters";
 import { TransactionsTable } from "./components/TransactionsTable";
 import { Filters } from "@/app/components/ui/filters/FiltersPopover";
-import { endOfDay, startOfDay, isWithinInterval } from "date-fns";
+import { endOfDay, startOfDay, isWithinInterval, addDays } from "date-fns";
 import { TransactionsErrorBoundary } from "./components/ErrorBoundary";
 
 export default function TransactionsPage() {
@@ -21,7 +21,7 @@ export default function TransactionsPage() {
   const { fetchAll } = useTransactionActions();
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: new Date(new Date().getFullYear(), 0, 1), // Start of current year
+    from: addDays(new Date(), -30), // Last 30 days
     to: new Date(),
   });
   const [activeFilters, setActiveFilters] = useState<Filters>({
@@ -94,7 +94,7 @@ export default function TransactionsPage() {
 
   return (
     <TransactionsErrorBoundary>
-      <div className="relative min-h-screen bg-background">
+      <div className="relative bg-background">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="flex flex-col gap-6">
             <TransactionsHeader filteredTransactions={filteredTransactions} />
