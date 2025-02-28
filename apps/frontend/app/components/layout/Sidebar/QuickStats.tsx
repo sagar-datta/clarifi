@@ -16,6 +16,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../../ui/tooltip/Tooltip";
+import { useTransactions } from "@/app/lib/redux/hooks";
+import { formatCurrency } from "@/app/lib/utils";
 
 interface QuickStat {
   label: string;
@@ -33,24 +35,74 @@ interface QuickStatsProps {
 }
 
 export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
-  // This would come from your Redux store or API in a real app
+  const transactions = useTransactions() ?? [];
+
+  // Calculate total balance (all time income - expenses)
+  const totalBalance = transactions.reduce((acc, transaction) => {
+    if (!transaction) return acc;
+    return transaction.type === "income"
+      ? acc + transaction.amount
+      : acc - transaction.amount;
+  }, 0);
+
+  // Calculate monthly spend (last 30 days expenses)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const monthlySpend = transactions.reduce((acc, transaction) => {
+    if (!transaction || transaction.type !== "expense") return acc;
+    const transactionDate = new Date(transaction.date);
+    return transactionDate >= thirtyDaysAgo ? acc + transaction.amount : acc;
+  }, 0);
+
+  // Calculate month-over-month change for monthly spend
+  const sixtyDaysAgo = new Date();
+  sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+  const previousMonthSpend = transactions.reduce((acc, transaction) => {
+    if (!transaction || transaction.type !== "expense") return acc;
+    const transactionDate = new Date(transaction.date);
+    return transactionDate >= sixtyDaysAgo && transactionDate < thirtyDaysAgo
+      ? acc + transaction.amount
+      : acc;
+  }, 0);
+
+  const monthlySpendChange =
+    previousMonthSpend === 0
+      ? 0
+      : ((monthlySpend - previousMonthSpend) / previousMonthSpend) * 100;
+
+  // Calculate savings goal progress
+  const savingsGoal = 5000; // This could come from user settings in the future
+  const currentSavings =
+    transactions
+      .filter((t) => t?.type === "income" && new Date(t.date) >= thirtyDaysAgo)
+      .reduce((acc, t) => acc + (t?.amount || 0), 0) - monthlySpend;
+
+  const savingsProgress = (currentSavings / savingsGoal) * 100;
+
   const stats: QuickStat[] = [
     {
       label: "Total Balance",
-      value: "$12,450",
-      change: { value: 12.5, trend: "up" },
+      value: formatCurrency(totalBalance),
       icon: Wallet,
     },
     {
       label: "Monthly Spend",
-      value: "$2,840",
-      change: { value: 4.2, trend: "down" },
+      value: formatCurrency(monthlySpend),
+      change: {
+        value: Math.round(Math.abs(monthlySpendChange)),
+        trend: monthlySpend > previousMonthSpend ? "up" : "down",
+      },
       icon: CreditCard,
     },
     {
       label: "Savings Goal",
-      value: "$5,000",
-      change: { value: 28, trend: "up" },
+      value: formatCurrency(currentSavings),
+      change: {
+        value: Math.min(100, Math.max(0, Math.round(savingsProgress))),
+        trend: "up",
+      },
       icon: PiggyBank,
     },
   ];
@@ -80,9 +132,21 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                       {stat.change && (
                         <div>
                           {stat.change.trend === "up" ? (
-                            <ArrowUpIcon className="h-3 w-3 text-green-500" />
+                            <ArrowUpIcon
+                              className={cn("h-3 w-3", {
+                                "text-red-500": stat.label === "Monthly Spend",
+                                "text-green-500":
+                                  stat.label !== "Monthly Spend",
+                              })}
+                            />
                           ) : (
-                            <ArrowDownIcon className="h-3 w-3 text-red-500" />
+                            <ArrowDownIcon
+                              className={cn("h-3 w-3", {
+                                "text-green-500":
+                                  stat.label === "Monthly Spend",
+                                "text-red-500": stat.label !== "Monthly Spend",
+                              })}
+                            />
                           )}
                         </div>
                       )}
@@ -105,16 +169,34 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                         {stat.change && (
                           <div className="flex items-center gap-1">
                             {stat.change.trend === "up" ? (
-                              <ArrowUpIcon className="h-3 w-3 text-green-500" />
+                              <ArrowUpIcon
+                                className={cn("h-3 w-3", {
+                                  "text-red-500":
+                                    stat.label === "Monthly Spend",
+                                  "text-green-500":
+                                    stat.label !== "Monthly Spend",
+                                })}
+                              />
                             ) : (
-                              <ArrowDownIcon className="h-3 w-3 text-red-500" />
+                              <ArrowDownIcon
+                                className={cn("h-3 w-3", {
+                                  "text-green-500":
+                                    stat.label === "Monthly Spend",
+                                  "text-red-500":
+                                    stat.label !== "Monthly Spend",
+                                })}
+                              />
                             )}
                             <span
                               className={cn(
                                 "text-xs font-medium",
-                                stat.change.trend === "up"
-                                  ? "text-green-500"
-                                  : "text-red-500"
+                                stat.label === "Monthly Spend"
+                                  ? stat.change.trend === "up"
+                                    ? "text-red-500"
+                                    : "text-green-500"
+                                  : stat.change.trend === "up"
+                                    ? "text-green-500"
+                                    : "text-red-500"
                               )}
                             >
                               {stat.change.value}%
@@ -135,9 +217,13 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                       <p
                         className={cn(
                           "text-xs mt-1",
-                          stat.change.trend === "up"
-                            ? "text-green-500"
-                            : "text-red-500"
+                          stat.label === "Monthly Spend"
+                            ? stat.change.trend === "up"
+                              ? "text-red-500"
+                              : "text-green-500"
+                            : stat.change.trend === "up"
+                              ? "text-green-500"
+                              : "text-red-500"
                         )}
                       >
                         {stat.change.trend === "up" ? "↑" : "↓"}{" "}
