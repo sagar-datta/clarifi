@@ -31,13 +31,13 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/app/lib/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/app/components/ui/popover/Popover";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/app/lib/utils";
 
 // Form validation schema
 const formSchema = z.object({
@@ -254,6 +254,30 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                 name="date"
                 render={({ field }) => {
                   const [showCalendar, setShowCalendar] = React.useState(false);
+                  const calendarRef = React.useRef<HTMLDivElement>(null);
+                  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+                  React.useEffect(() => {
+                    const handleClickOutside = (event: MouseEvent) => {
+                      if (
+                        calendarRef.current &&
+                        buttonRef.current &&
+                        !calendarRef.current.contains(event.target as Node) &&
+                        !buttonRef.current.contains(event.target as Node)
+                      ) {
+                        setShowCalendar(false);
+                      }
+                    };
+
+                    document.addEventListener("mousedown", handleClickOutside);
+                    return () => {
+                      document.removeEventListener(
+                        "mousedown",
+                        handleClickOutside
+                      );
+                    };
+                  }, []);
+
                   return (
                     <FormItem className="col-span-2">
                       <FormLabel>Date</FormLabel>
@@ -263,12 +287,14 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                           variant="outline"
                           className="w-full"
                           onClick={() => setShowCalendar(!showCalendar)}
+                          ref={buttonRef}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {format(field.value, "PPP")}
                         </Button>
                         {showCalendar && (
                           <div
+                            ref={calendarRef}
                             className={cn(
                               "absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 z-50",
                               "animate-pop-in",
@@ -279,8 +305,10 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                               mode="single"
                               selected={field.value}
                               onSelect={(date) => {
-                                field.onChange(date);
-                                setShowCalendar(false);
+                                if (date) {
+                                  field.onChange(date);
+                                  setShowCalendar(false);
+                                }
                               }}
                               disabled={(date) =>
                                 date > new Date() ||
