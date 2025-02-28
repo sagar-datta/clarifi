@@ -16,12 +16,6 @@ import {
   TableRow,
 } from "@/app/components/ui/table/Table";
 import { Button } from "@/app/components/ui/button/Button";
-import { Calendar } from "@/app/components/ui/calendar/Calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/app/components/ui/popover/Popover";
 import { Badge } from "@/app/components/ui/badge/Badge";
 import {
   CalendarIcon,
@@ -29,7 +23,6 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
-import { cn } from "@/app/lib/utils";
 import { addDays, format } from "date-fns";
 import { useState, useEffect, useMemo } from "react";
 import { PageLayout } from "@/app/components/layout/PageLayout";
@@ -56,7 +49,6 @@ export default function TransactionsPage() {
     from: addDays(new Date(), -30),
     to: new Date(),
   });
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     categories: [],
     type: "all",
