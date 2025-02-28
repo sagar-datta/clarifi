@@ -67,6 +67,17 @@ export default function TransactionsPage() {
     return transactions.filter((transaction) => {
       if (!transaction) return false;
 
+      // Date range filter
+      const transactionDate = new Date(transaction.date);
+      const startOfDay = new Date(dateRange.from);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(dateRange.to);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      if (transactionDate < startOfDay || transactionDate > endOfDay) {
+        return false;
+      }
+
       // Category filter
       if (
         filters.categories.length > 0 &&
@@ -105,7 +116,7 @@ export default function TransactionsPage() {
 
       return true;
     });
-  }, [transactions, filters, searchTerm]);
+  }, [transactions, filters, searchTerm, dateRange]);
 
   useEffect(() => {
     const loadTransactions = async () => {
