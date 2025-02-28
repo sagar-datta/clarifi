@@ -26,10 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select/Select";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/app/components/ui/radio-group/RadioGroup";
+import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs/Tabs";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -191,24 +188,28 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                   <FormItem>
                     <FormLabel>Type</FormLabel>
                     <FormControl>
-                      <RadioGroup
+                      <Tabs
+                        value={field.value}
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
+                        className="w-full"
                       >
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="expense" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Expense</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="income" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Income</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger
+                            value="expense"
+                            className="flex items-center gap-2"
+                          >
+                            <span className="h-2 w-2 rounded-full bg-red-500" />
+                            Expense
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="income"
+                            className="flex items-center gap-2"
+                          >
+                            <span className="h-2 w-2 rounded-full bg-green-500" />
+                            Income
+                          </TabsTrigger>
+                        </TabsList>
+                      </Tabs>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
