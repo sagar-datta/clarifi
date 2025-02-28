@@ -14,6 +14,7 @@ import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import { AddTransactionDialog } from "@/app/transactions/AddTransactionDialog";
 
 export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
@@ -48,7 +49,11 @@ export function Header({ className }: { className?: string }) {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Add Transaction</DropdownMenuItem>
+                  <AddTransactionDialog>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      Add Transaction
+                    </DropdownMenuItem>
+                  </AddTransactionDialog>
                   <DropdownMenuItem>Create Budget</DropdownMenuItem>
                   <DropdownMenuItem>Set New Goal</DropdownMenuItem>
                 </DropdownMenuContent>
