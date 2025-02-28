@@ -1,8 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { useAppSelector } from "@/app/lib/redux/hooks";
-import { selectTransactions } from "@/app/lib/redux/slices/transactions/selectors";
+import {
+  selectTransactions,
+  selectTransactionsLoading,
+} from "@/app/lib/redux/slices/transactions/selectors";
+import { useTransactionActions } from "@/app/lib/redux/hooks/transactions";
 import { DateRange } from "./components/types";
 import { TransactionsHeader } from "./components/TransactionsHeader";
 import { TransactionsFilters } from "./components/TransactionsFilters";
@@ -13,7 +17,8 @@ import { TransactionsErrorBoundary } from "./components/ErrorBoundary";
 
 export default function TransactionsPage() {
   const transactions = useAppSelector(selectTransactions);
-  const [isLoading] = useState(false);
+  const isLoading = useAppSelector(selectTransactionsLoading);
+  const { fetchAll } = useTransactionActions();
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
     from: new Date(new Date().getFullYear(), 0, 1), // Start of current year
@@ -24,6 +29,10 @@ export default function TransactionsPage() {
     type: "all",
     amountRange: {},
   });
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   // Get unique categories from transactions
   const availableCategories = useMemo(
