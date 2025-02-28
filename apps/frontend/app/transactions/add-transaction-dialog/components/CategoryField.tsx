@@ -14,7 +14,7 @@ import {
 } from "@/app/components/ui/select/Select";
 import { FormFieldProps } from "../types";
 
-export function CategoryField({ form }: FormFieldProps) {
+export function CategoryField({ form, isSubmitting = false }: FormFieldProps) {
   return (
     <FormField
       control={form.control}
@@ -22,7 +22,11 @@ export function CategoryField({ form }: FormFieldProps) {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-base">Category</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            disabled={isSubmitting}
+          >
             <FormControl>
               <SelectTrigger className="h-12">
                 <SelectValue placeholder="Select a category" />

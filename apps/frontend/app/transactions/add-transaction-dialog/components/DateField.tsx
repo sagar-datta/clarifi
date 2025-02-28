@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import { cn } from "@/app/lib/utils";
 import { FormFieldProps } from "../types";
 
-export function DateField({ form }: FormFieldProps) {
+export function DateField({ form, isSubmitting = false }: FormFieldProps) {
   return (
     <FormField
       control={form.control}
@@ -48,8 +48,9 @@ export function DateField({ form }: FormFieldProps) {
                 type="button"
                 variant="outline"
                 className="w-full h-12 justify-start font-normal"
-                onClick={() => setShowCalendar(!showCalendar)}
+                onClick={() => !isSubmitting && setShowCalendar(!showCalendar)}
                 ref={buttonRef}
+                disabled={isSubmitting}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {format(field.value, "PPP")}

@@ -9,7 +9,7 @@ import {
 import { Input } from "@/app/components/ui/input/Input";
 import { FormFieldProps } from "../types";
 
-export function AmountField({ form }: FormFieldProps) {
+export function AmountField({ form, isSubmitting = false }: FormFieldProps) {
   return (
     <FormField
       control={form.control}
@@ -39,6 +39,7 @@ export function AmountField({ form }: FormFieldProps) {
                   placeholder="0.00"
                   className="pl-7 h-12 text-lg"
                   value={displayValue}
+                  disabled={isSubmitting}
                   onChange={(e) => {
                     const value = e.target.value;
                     // Allow only numbers and at most one decimal point

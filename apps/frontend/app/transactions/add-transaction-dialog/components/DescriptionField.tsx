@@ -8,7 +8,10 @@ import {
 import { Input } from "@/app/components/ui/input/Input";
 import { FormFieldProps } from "../types";
 
-export function DescriptionField({ form }: FormFieldProps) {
+export function DescriptionField({
+  form,
+  isSubmitting = false,
+}: FormFieldProps) {
   return (
     <FormField
       control={form.control}
@@ -21,6 +24,7 @@ export function DescriptionField({ form }: FormFieldProps) {
               placeholder="Groceries, Rent, etc."
               className="h-12"
               {...field}
+              disabled={isSubmitting}
             />
           </FormControl>
           <FormMessage />

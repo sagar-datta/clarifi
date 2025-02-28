@@ -14,4 +14,5 @@ export interface TransactionFormProps {
 
 export interface FormFieldProps {
   form: UseFormReturn<FormValues>;
+  isSubmitting?: boolean;
 }

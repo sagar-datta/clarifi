@@ -19,14 +19,14 @@ export function TransactionForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Type Selection at the top for immediate context */}
         <div className="px-6">
-          <TransactionTypeField form={form} />
+          <TransactionTypeField form={form} isSubmitting={isSubmitting} />
         </div>
 
         <div className="px-6 space-y-6">
-          <AmountField form={form} />
-          <DescriptionField form={form} />
-          <CategoryField form={form} />
-          <DateField form={form} />
+          <AmountField form={form} isSubmitting={isSubmitting} />
+          <DescriptionField form={form} isSubmitting={isSubmitting} />
+          <CategoryField form={form} isSubmitting={isSubmitting} />
+          <DateField form={form} isSubmitting={isSubmitting} />
         </div>
 
         {/* Actions Section */}
