@@ -162,7 +162,7 @@ export function MonthlyOverviewWidget() {
           }
           className="flex flex-1 flex-col overflow-hidden"
         >
-          <div className="px-6 py-3">
+          <div className="px-6 pt-3">
             <TabsList className="h-9 w-full grid grid-cols-2 p-1">
               <TabsTrigger
                 value="income"
