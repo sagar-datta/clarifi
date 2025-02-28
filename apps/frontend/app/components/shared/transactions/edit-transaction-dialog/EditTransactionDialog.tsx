@@ -58,7 +58,7 @@ export function EditTransactionDialog({
 
     try {
       setIsSubmitting(true);
-      const result = await update(transaction.id, {
+      await update(transaction.id, {
         description: data.description,
         amount: data.amount,
         category: data.category,

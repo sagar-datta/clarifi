@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Table,
   TableBody,
@@ -8,13 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/ui/table/Table";
-import { formatCurrency } from "@/app/lib/utils";
 import { TransactionsTableProps } from "./types";
-import { format } from "date-fns";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
-import { Badge } from "@/app/components/ui/badge/Badge";
-import { cn } from "@/app/lib/utils";
-import { DeleteTransactionDialog } from "@/app/components/shared/transactions/delete-transaction-dialog";
+import { TransactionRow } from "./TransactionRow";
 
 export function TransactionsTable({
   transactions,
@@ -91,41 +85,11 @@ export function TransactionsTable({
           </TableHeader>
           <TableBody>
             {transactions.map((transaction) => (
-              <TableRow
+              <TransactionRow
                 key={transaction.id}
-                className="group cursor-pointer transition-colors hover:bg-muted/50"
-                onClick={() => onTransactionClick?.(transaction)}
-              >
-                <TableCell className="font-medium">
-                  {format(new Date(transaction.date), "dd MMM yyyy")}
-                </TableCell>
-                <TableCell>{transaction.description}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary" className="font-normal">
-                    {transaction.category}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  <span
-                    className={cn(
-                      "font-medium",
-                      transaction.type === "expense"
-                        ? "text-red-500 dark:text-red-400"
-                        : "text-green-500 dark:text-green-400"
-                    )}
-                  >
-                    {transaction.type === "expense" ? "-" : "+"}
-                    {formatCurrency(transaction.amount)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-end">
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <DeleteTransactionDialog transaction={transaction} />
-                    </div>
-                  </div>
-                </TableCell>
-              </TableRow>
+                transaction={transaction}
+                onClick={onTransactionClick}
+              />
             ))}
           </TableBody>
         </Table>
