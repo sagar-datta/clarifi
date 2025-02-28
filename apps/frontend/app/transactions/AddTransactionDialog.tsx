@@ -70,7 +70,6 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
     },
   });
 
-  // Reset form when dialog closes
   React.useEffect(() => {
     if (!open) {
       form.reset();
@@ -79,38 +78,56 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
 
   function onSubmit(data: FormValues) {
     console.log(data);
-    // We'll implement the submission logic later
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] z-50 max-h-[90vh] overflow-y-auto p-6">
-        <DialogHeader className="mb-6">
-          <DialogTitle className="text-xl font-semibold">
+      <DialogContent className="sm:max-w-[500px] max-h-[85vh] p-0">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle className="text-2xl font-semibold tracking-tight">
             Add Transaction
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              {/* Description Field */}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Type Selection at the top for immediate context */}
+            <div className="px-6">
               <FormField
                 control={form.control}
-                name="description"
+                name="type"
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Groceries, Rent, etc." {...field} />
-                    </FormControl>
-                    <FormMessage />
+                  <FormItem>
+                    <Tabs
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      className="w-full"
+                    >
+                      <TabsList className="grid w-full grid-cols-2 p-1 h-[46px]">
+                        <TabsTrigger
+                          value="expense"
+                          className="flex items-center gap-2 data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-900"
+                        >
+                          <span className="h-2 w-2 rounded-full bg-red-500" />
+                          Expense
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="income"
+                          className="flex items-center gap-2 data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-800"
+                        >
+                          <span className="h-2 w-2 rounded-full bg-green-500" />
+                          Income
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
                   </FormItem>
                 )}
               />
+            </div>
 
-              {/* Amount and Type in same row */}
+            <div className="px-6 space-y-6">
+              {/* Amount Field - Prominent position */}
               <FormField
                 control={form.control}
                 name="amount"
@@ -127,17 +144,17 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
 
                   return (
                     <FormItem>
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel className="text-base">Amount</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">
                             $
                           </span>
                           <Input
                             type="text"
                             inputMode="decimal"
                             placeholder="0.00"
-                            className="pl-7"
+                            className="pl-7 h-12 text-lg"
                             value={displayValue}
                             onChange={(e) => {
                               const value = e.target.value;
@@ -181,35 +198,19 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                 }}
               />
 
+              {/* Description Field */}
               <FormField
                 control={form.control}
-                name="type"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel className="text-base">Description</FormLabel>
                     <FormControl>
-                      <Tabs
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        className="w-full"
-                      >
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger
-                            value="expense"
-                            className="flex items-center gap-2"
-                          >
-                            <span className="h-2 w-2 rounded-full bg-red-500" />
-                            Expense
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="income"
-                            className="flex items-center gap-2"
-                          >
-                            <span className="h-2 w-2 rounded-full bg-green-500" />
-                            Income
-                          </TabsTrigger>
-                        </TabsList>
-                      </Tabs>
+                      <Input
+                        placeholder="Groceries, Rent, etc."
+                        className="h-12"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -221,14 +222,14 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                 control={form.control}
                 name="category"
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Category</FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-base">Category</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
@@ -279,13 +280,13 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
                   }, []);
 
                   return (
-                    <FormItem className="col-span-2">
-                      <FormLabel>Date</FormLabel>
+                    <FormItem>
+                      <FormLabel className="text-base">Date</FormLabel>
                       <div className="flex flex-col items-center gap-2 relative">
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full"
+                          className="w-full h-12 justify-start font-normal"
                           onClick={() => setShowCalendar(!showCalendar)}
                           ref={buttonRef}
                         >
@@ -327,15 +328,19 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
               />
             </div>
 
-            <div className="flex justify-end space-x-4 pt-4">
+            {/* Actions Section */}
+            <div className="flex items-center justify-end gap-4 p-6 pt-4 border-t bg-muted/10">
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 onClick={() => setOpen(false)}
+                className="h-11"
               >
                 Cancel
               </Button>
-              <Button type="submit">Add Transaction</Button>
+              <Button type="submit" className="h-11 px-8">
+                Add Transaction
+              </Button>
             </div>
           </form>
         </Form>
