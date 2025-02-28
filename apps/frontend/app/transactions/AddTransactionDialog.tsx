@@ -58,6 +58,7 @@ interface AddTransactionDialogProps {
 }
 
 export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
+  const [open, setOpen] = React.useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,13 +70,21 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
     },
   });
 
+  // Reset form when dialog closes
+  React.useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
+
   function onSubmit(data: FormValues) {
     console.log(data);
     // We'll implement the submission logic later
+    setOpen(false);
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -234,7 +243,11 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
             />
 
             <div className="flex justify-end space-x-4 pt-4">
-              <Button type="button" variant="outline">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit">Add Transaction</Button>
