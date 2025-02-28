@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -129,18 +129,44 @@ export function TransactionsWidget() {
     to: new Date(),
   });
 
+  const getFilteredTransactions = useCallback(
+    (start: Date, end: Date) => {
+      if (!transactions) return [];
+
+      return [...transactions]
+        .filter(
+          (transaction): transaction is Transaction => transaction !== null
+        )
+        .filter((transaction) => {
+          try {
+            if (!transaction?.date) return false;
+            const date = startOfDay(new Date(transaction.date));
+            return isWithinInterval(date, { start, end });
+          } catch (error) {
+            console.error("Error filtering transaction:", error);
+            return false;
+          }
+        })
+        .sort((a, b) => {
+          try {
+            if (!a?.date || !b?.date) return 0;
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          } catch (error) {
+            console.error("Error sorting transactions:", error);
+            return 0;
+          }
+        });
+    },
+    [transactions]
+  );
+
   // Filter and sort transactions by date
   const filteredAndSortedTransactions = useMemo(() => {
     const start = startOfDay(dateRange.from);
     const end = startOfDay(dateRange.to);
 
-    return [...transactions]
-      .filter((transaction) => {
-        const date = startOfDay(new Date(transaction.date));
-        return isWithinInterval(date, { start, end });
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [transactions, dateRange]);
+    return getFilteredTransactions(start, end);
+  }, [getFilteredTransactions, dateRange]);
 
   // Group filtered transactions
   const groupedTransactions = useMemo(
@@ -172,7 +198,7 @@ export function TransactionsWidget() {
   const isLoadingState = isLoading || isSeedingData;
 
   return (
-    <Card className="h-full">
+    <Card className="flex h-[400px] flex-col">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="space-y-1">
           <CardTitle className="text-base font-semibold">
@@ -188,12 +214,12 @@ export function TransactionsWidget() {
         />
       </CardHeader>
       <Separator className="mb-2" />
-      <CardContent className="p-0">
-        <ScrollArea className="h-[350px] px-4">
-          <div className="space-y-1 py-2">
-            {isLoadingState ? (
-              // Loading skeletons with better visual hierarchy
-              Array.from({ length: 5 }).map((_, i) => (
+      <CardContent className="flex-1 overflow-hidden p-0">
+        <ScrollArea className="h-full px-4">
+          {isLoadingState ? (
+            // Loading skeletons with better visual hierarchy
+            <div className="space-y-4 py-2">
+              {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="mb-6 last:mb-0">
                   <div className="mb-2 flex items-center justify-between">
                     <Skeleton className="h-5 w-[100px]" />
@@ -214,89 +240,89 @@ export function TransactionsWidget() {
                     ))}
                   </div>
                 </div>
-              ))
-            ) : filteredAndSortedTransactions.length === 0 ? (
-              <div className="flex h-[300px] flex-col items-center justify-center gap-4 text-center">
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    {transactions.length === 0
-                      ? "No transactions found"
-                      : `No transactions in the last ${dateRange.to.toLocaleDateString().split("T")[0] === dateRange.from.toLocaleDateString().split("T")[0] ? dateRange.to.toLocaleDateString().split("T")[1].split(":")[0] + " hours" : dateRange.to.toLocaleDateString().split("T")[0] + " days"}`}
-                  </p>
-                  {error && (
-                    <p className="text-sm text-red-500">Error: {error}</p>
-                  )}
-                </div>
-                {transactions.length === 0 && (
-                  <Button
-                    onClick={handleSeedData}
-                    variant="outline"
-                    size="sm"
-                    disabled={isLoadingState}
-                    className="h-8 text-xs"
-                  >
-                    Add Sample Transactions
-                  </Button>
+              ))}
+            </div>
+          ) : filteredAndSortedTransactions.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  {transactions.length === 0
+                    ? "No transactions found"
+                    : `No transactions in the last ${dateRange.to.toLocaleDateString().split("T")[0] === dateRange.from.toLocaleDateString().split("T")[0] ? dateRange.to.toLocaleDateString().split("T")[1].split(":")[0] + " hours" : dateRange.to.toLocaleDateString().split("T")[0] + " days"}`}
+                </p>
+                {error && (
+                  <p className="text-sm text-red-500">Error: {error}</p>
                 )}
               </div>
-            ) : (
-              <>
-                {Object.entries(groupedTransactions).map(
-                  ([group, transactions]) =>
-                    transactions.length > 0 ? (
-                      <Collapsible
-                        key={group}
-                        defaultOpen
-                        className="mb-4 last:mb-0"
-                      >
-                        <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent">
-                          <div className="flex items-center gap-3">
-                            <h4 className="capitalize">{group}</h4>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <span>•</span>
-                              <span>{transactions.length} items</span>
+              {transactions.length === 0 && (
+                <Button
+                  onClick={handleSeedData}
+                  variant="outline"
+                  size="sm"
+                  disabled={isLoadingState}
+                  className="h-8 text-xs"
+                >
+                  Add Sample Transactions
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4 py-2">
+              {Object.entries(groupedTransactions).map(
+                ([group, transactions]) =>
+                  transactions.length > 0 ? (
+                    <Collapsible
+                      key={group}
+                      defaultOpen
+                      className="mb-4 last:mb-0"
+                    >
+                      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent">
+                        <div className="flex items-center gap-3">
+                          <h4 className="capitalize">{group}</h4>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>•</span>
+                            <span>{transactions.length} items</span>
+                          </div>
+                        </div>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-2 pt-2">
+                        {transactions.map((transaction) => (
+                          <div
+                            key={transaction.id}
+                            className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-accent"
+                          >
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium leading-none">
+                                {transaction.description}
+                              </p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{transaction.category}</span>
+                                <span>•</span>
+                                <span className="text-muted-foreground/60">
+                                  {formatDate(transaction.date)}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              className={cn(
+                                "text-sm font-medium tabular-nums",
+                                transaction.type === "expense"
+                                  ? "text-red-500"
+                                  : "text-green-500"
+                              )}
+                            >
+                              {transaction.type === "expense" ? "-" : "+"}$
+                              {transaction.amount.toFixed(2)}
                             </div>
                           </div>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="space-y-2 pt-2">
-                          {transactions.map((transaction) => (
-                            <div
-                              key={transaction.id}
-                              className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-accent"
-                            >
-                              <div className="space-y-1">
-                                <p className="text-sm font-medium leading-none">
-                                  {transaction.description}
-                                </p>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                  <span>{transaction.category}</span>
-                                  <span>•</span>
-                                  <span className="text-muted-foreground/60">
-                                    {formatDate(transaction.date)}
-                                  </span>
-                                </div>
-                              </div>
-                              <div
-                                className={cn(
-                                  "text-sm font-medium tabular-nums",
-                                  transaction.type === "expense"
-                                    ? "text-red-500"
-                                    : "text-green-500"
-                                )}
-                              >
-                                {transaction.type === "expense" ? "-" : "+"}$
-                                {transaction.amount.toFixed(2)}
-                              </div>
-                            </div>
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : null
-                )}
-              </>
-            )}
-          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ) : null
+              )}
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>

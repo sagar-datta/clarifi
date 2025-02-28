@@ -18,7 +18,7 @@ import { EditTransactionDialog } from "@/app/components/shared/transactions/edit
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 
 export default function TransactionsPage() {
-  const transactions = useAppSelector(selectTransactions);
+  const transactions = useAppSelector(selectTransactions) ?? [];
   const isLoading = useAppSelector(selectTransactionsLoading);
   const { fetchAll } = useTransactionActions();
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,44 +41,65 @@ export default function TransactionsPage() {
 
   // Get unique categories from transactions
   const availableCategories = useMemo(
-    () => Array.from(new Set(transactions.map((t) => t.category))),
+    () =>
+      Array.from(
+        new Set(
+          (transactions ?? [])
+            .filter((t): t is Transaction => t !== null)
+            .map((t) => t.category)
+        )
+      ),
     [transactions]
   );
 
   const filteredTransactions = useMemo(
     () =>
-      transactions.filter((transaction) => {
-        const matchesSearch = transaction.description
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
+      (transactions ?? [])
+        .filter(
+          (transaction): transaction is Transaction => transaction !== null
+        )
+        .filter((transaction) => {
+          try {
+            const matchesSearch = transaction?.description
+              ?.toLowerCase()
+              ?.includes(searchTerm.toLowerCase());
 
-        const withinDateRange = isWithinInterval(new Date(transaction.date), {
-          start: startOfDay(dateRange.from),
-          end: endOfDay(dateRange.to),
-        });
+            const withinDateRange = transaction?.date
+              ? isWithinInterval(new Date(transaction.date), {
+                  start: startOfDay(dateRange.from),
+                  end: endOfDay(dateRange.to),
+                })
+              : false;
 
-        const matchesCategories =
-          activeFilters.categories.length === 0 ||
-          activeFilters.categories.includes(transaction.category);
+            const matchesCategories =
+              activeFilters.categories.length === 0 ||
+              (transaction?.category &&
+                activeFilters.categories.includes(transaction.category));
 
-        const matchesType =
-          activeFilters.type === "all" ||
-          activeFilters.type === transaction.type;
+            const matchesType =
+              activeFilters.type === "all" ||
+              activeFilters.type === transaction?.type;
 
-        const matchesAmountRange =
-          (activeFilters.amountRange.min === undefined ||
-            transaction.amount >= activeFilters.amountRange.min) &&
-          (activeFilters.amountRange.max === undefined ||
-            transaction.amount <= activeFilters.amountRange.max);
+            const matchesAmountRange =
+              (activeFilters.amountRange.min === undefined ||
+                (transaction?.amount &&
+                  transaction.amount >= activeFilters.amountRange.min)) &&
+              (activeFilters.amountRange.max === undefined ||
+                (transaction?.amount &&
+                  transaction.amount <= activeFilters.amountRange.max));
 
-        return (
-          matchesSearch &&
-          withinDateRange &&
-          matchesCategories &&
-          matchesType &&
-          matchesAmountRange
-        );
-      }),
+            return (
+              matchesSearch &&
+              withinDateRange &&
+              matchesCategories &&
+              matchesType &&
+              matchesAmountRange
+            );
+          } catch (error) {
+            console.error("Error filtering transaction:", error);
+            return false;
+          }
+        }),
     [transactions, searchTerm, dateRange, activeFilters]
   );
 
