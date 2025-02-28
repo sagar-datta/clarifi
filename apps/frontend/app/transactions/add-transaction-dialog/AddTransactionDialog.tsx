@@ -13,9 +13,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTransactionDialogProps } from "./types";
 import { formSchema, FormValues } from "./schema";
 import { TransactionForm } from "./components/TransactionForm";
+import { useTransactionActions } from "@/app/lib/redux/hooks";
+import { useToast } from "@/app/components/ui/toast/use-toast";
 
 export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
   const [open, setOpen] = React.useState(false);
+  const { create } = useTransactionActions();
+  const { toast } = useToast();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,9 +38,27 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
     }
   }, [open, form]);
 
-  function onSubmit(data: FormValues) {
-    console.log(data);
-    setOpen(false);
+  async function onSubmit(data: FormValues) {
+    try {
+      await create({
+        ...data,
+        date: data.date.toISOString(),
+      });
+
+      toast({
+        title: "Success",
+        description: "Transaction added successfully",
+      });
+
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to add transaction",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
