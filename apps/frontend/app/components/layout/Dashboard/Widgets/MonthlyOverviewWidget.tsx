@@ -163,16 +163,16 @@ export function MonthlyOverviewWidget() {
           className="flex flex-1 flex-col overflow-hidden"
         >
           <div className="px-6 py-3">
-            <TabsList className="h-9 w-full grid grid-cols-2 p-1 rounded-md">
+            <TabsList className="h-9 w-full grid grid-cols-2 p-1">
               <TabsTrigger
                 value="income"
-                className="data-[state=active]:bg-background text-sm rounded"
+                className="data-[state=active]:bg-background text-sm "
               >
                 Income ({currentIncomeTransactions.length})
               </TabsTrigger>
               <TabsTrigger
                 value="expenses"
-                className="data-[state=active]:bg-background text-sm rounded"
+                className="data-[state=active]:bg-background text-sm "
               >
                 Expenses ({currentExpenseTransactions.length})
               </TabsTrigger>
