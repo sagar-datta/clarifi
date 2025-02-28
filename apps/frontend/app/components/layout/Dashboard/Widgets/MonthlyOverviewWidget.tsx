@@ -180,7 +180,7 @@ export function MonthlyOverviewWidget() {
           </div>
           <TabsContent value="income" className="overflow-hidden flex-1">
             <ScrollArea className="h-full px-6">
-              <div className="space-y-3 py-1">
+              <div className="space-y-1">
                 {currentIncomeTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
@@ -204,7 +204,7 @@ export function MonthlyOverviewWidget() {
           </TabsContent>
           <TabsContent value="expenses" className="overflow-hidden flex-1">
             <ScrollArea className="h-full px-6">
-              <div className="space-y-3 py-1">
+              <div className="space-y-1">
                 {currentExpenseTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
