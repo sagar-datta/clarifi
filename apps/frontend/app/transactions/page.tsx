@@ -88,7 +88,7 @@ export default function TransactionsPage() {
       <div className="relative min-h-screen bg-background">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="flex flex-col gap-6 py-8">
-            <TransactionsHeader />
+            <TransactionsHeader filteredTransactions={filteredTransactions} />
             <div className="relative rounded-lg border bg-card">
               <TransactionsFilters
                 searchTerm={searchTerm}
