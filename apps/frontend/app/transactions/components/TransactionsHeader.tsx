@@ -71,7 +71,7 @@ export function TransactionsHeader({
           disabled={filteredTransactions.length === 0}
         >
           <Download className="mr-2 h-4 w-4" />
-          Export
+          Download CSV
         </Button>
         <AddTransactionDialog>
           <Button size="sm" className="w-full sm:w-auto">
