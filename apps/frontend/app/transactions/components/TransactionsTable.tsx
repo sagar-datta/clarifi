@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 import { Badge } from "@/app/components/ui/badge/Badge";
 import { cn } from "@/app/lib/utils";
+import { DeleteTransactionDialog } from "@/app/components/shared/transactions/delete-transaction-dialog";
 
 export function TransactionsTable({
   transactions,
@@ -31,6 +32,7 @@ export function TransactionsTable({
                 <TableHead>Description</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="w-[50px]" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -47,6 +49,9 @@ export function TransactionsTable({
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-5 w-24 ml-auto" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-8 rounded-md" />
                   </TableCell>
                 </TableRow>
               ))}
@@ -80,6 +85,7 @@ export function TransactionsTable({
               <TableHead>Description</TableHead>
               <TableHead>Category</TableHead>
               <TableHead className="text-right w-[120px]">Amount</TableHead>
+              <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,6 +115,11 @@ export function TransactionsTable({
                     {transaction.type === "expense" ? "-" : "+"}
                     {formatCurrency(transaction.amount)}
                   </span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end">
+                    <DeleteTransactionDialog transaction={transaction} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
