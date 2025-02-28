@@ -75,21 +75,29 @@ export default function TransactionsPage() {
 
   return (
     <TransactionsErrorBoundary>
-      <div className="space-y-8">
-        <TransactionsHeader />
-        <TransactionsFilters
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          dateRange={dateRange}
-          onDateRangeChange={handleDateRangeChange}
-          availableCategories={availableCategories}
-          onFiltersChange={handleFiltersChange}
-        />
-        <TransactionsTable
-          transactions={filteredTransactions}
-          isLoading={isLoading}
-          searchTerm={searchTerm}
-        />
+      <div className="relative min-h-screen bg-background">
+        <div className="mx-auto w-full max-w-7xl px-6">
+          <div className="flex flex-col gap-6 py-8">
+            <TransactionsHeader />
+            <div className="relative rounded-lg border bg-card">
+              <TransactionsFilters
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                dateRange={dateRange}
+                onDateRangeChange={handleDateRangeChange}
+                availableCategories={availableCategories}
+                onFiltersChange={handleFiltersChange}
+              />
+              <div className="p-6">
+                <TransactionsTable
+                  transactions={filteredTransactions}
+                  isLoading={isLoading}
+                  searchTerm={searchTerm}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </TransactionsErrorBoundary>
   );
