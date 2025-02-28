@@ -41,8 +41,7 @@ import type { Filters } from "@/app/components/ui/filters/FiltersPopover";
 export default function TransactionsPage() {
   const { getToken } = useAuth();
   const { fetchAll } = useTransactionActions();
-  const transactions = (useAppSelector(selectTransactions) ??
-    []) as Transaction[];
+  const transactions = useAppSelector(selectTransactions) || [];
   const isLoading = useAppSelector(selectTransactionsLoading);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
@@ -57,13 +56,17 @@ export default function TransactionsPage() {
 
   // Get unique categories from transactions
   const availableCategories = useMemo(() => {
-    const uniqueCategories = new Set(transactions.map((t) => t.category));
+    const uniqueCategories = new Set(
+      transactions.map((t) => t?.category || "uncategorized")
+    );
     return Array.from(uniqueCategories).sort();
   }, [transactions]);
 
   // Filter transactions based on all filters
   const filteredTransactions = useMemo(() => {
     return transactions.filter((transaction) => {
+      if (!transaction) return false;
+
       // Category filter
       if (
         filters.categories.length > 0 &&

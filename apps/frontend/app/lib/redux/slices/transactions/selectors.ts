@@ -1,7 +1,7 @@
 import { RootState } from "../../store";
 
 export const selectTransactions = (state: RootState) =>
-  state.transactions.items;
+  state.transactions.items || [];
 export const selectTransactionsLoading = (state: RootState) =>
   state.transactions.loading;
 export const selectTransactionsError = (state: RootState) =>

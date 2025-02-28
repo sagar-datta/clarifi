@@ -15,7 +15,7 @@ import {
 
 // Selectors
 export const useTransactions = () =>
-  useAppSelector((state) => state.transactions.items);
+  useAppSelector((state) => state.transactions.items) ?? [];
 export const useTransactionsLoading = () =>
   useAppSelector((state) => state.transactions.loading);
 export const useTransactionsError = () =>
