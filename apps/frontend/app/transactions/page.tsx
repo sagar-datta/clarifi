@@ -51,8 +51,18 @@ export default function TransactionsPage() {
           activeFilters.type === "all" ||
           activeFilters.type === transaction.type;
 
+        const matchesAmountRange =
+          (activeFilters.amountRange.min === undefined ||
+            transaction.amount >= activeFilters.amountRange.min) &&
+          (activeFilters.amountRange.max === undefined ||
+            transaction.amount <= activeFilters.amountRange.max);
+
         return (
-          matchesSearch && withinDateRange && matchesCategories && matchesType
+          matchesSearch &&
+          withinDateRange &&
+          matchesCategories &&
+          matchesType &&
+          matchesAmountRange
         );
       }),
     [transactions, searchTerm, dateRange, activeFilters]
