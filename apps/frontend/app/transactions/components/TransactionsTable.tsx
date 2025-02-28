@@ -20,6 +20,7 @@ export function TransactionsTable({
   transactions,
   isLoading,
   searchTerm,
+  onTransactionClick,
 }: TransactionsTableProps) {
   if (isLoading) {
     return (
@@ -93,6 +94,7 @@ export function TransactionsTable({
               <TableRow
                 key={transaction.id}
                 className="group cursor-pointer transition-colors hover:bg-muted/50"
+                onClick={() => onTransactionClick?.(transaction)}
               >
                 <TableCell className="font-medium">
                   {format(new Date(transaction.date), "dd MMM yyyy")}
@@ -118,7 +120,9 @@ export function TransactionsTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end">
-                    <DeleteTransactionDialog transaction={transaction} />
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <DeleteTransactionDialog transaction={transaction} />
+                    </div>
                   </div>
                 </TableCell>
               </TableRow>

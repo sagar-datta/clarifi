@@ -13,6 +13,7 @@ export function TransactionForm({
   onSubmit,
   onCancel,
   isSubmitting = false,
+  submitLabel = "Add Transaction",
 }: TransactionFormProps) {
   return (
     <Form {...form}>
@@ -44,10 +45,10 @@ export function TransactionForm({
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Adding...
+                {submitLabel === "Add Transaction" ? "Adding..." : "Saving..."}
               </>
             ) : (
-              "Add Transaction"
+              submitLabel
             )}
           </Button>
         </div>

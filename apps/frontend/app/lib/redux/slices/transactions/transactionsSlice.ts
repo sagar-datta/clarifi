@@ -86,11 +86,13 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(updateTransaction.fulfilled, (state, action) => {
       state.loading = false;
-      const index = state.items.findIndex(
-        (item: Transaction) => item.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.items[index] = action.payload;
+      if (action.payload) {
+        const index = state.items.findIndex(
+          (item: Transaction) => item.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       }
     });
     builder.addCase(updateTransaction.rejected, (state, action) => {

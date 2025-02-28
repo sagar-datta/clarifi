@@ -10,6 +10,7 @@ export interface TransactionFormProps {
   onSubmit: (data: FormValues) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
+  submitLabel?: string;
 }
 
 export interface FormFieldProps {

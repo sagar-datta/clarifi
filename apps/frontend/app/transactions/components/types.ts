@@ -10,6 +10,7 @@ export interface TransactionsTableProps {
   transactions: Transaction[];
   isLoading: boolean;
   searchTerm: string;
+  onTransactionClick?: (transaction: Transaction) => void;
 }
 
 export interface TransactionsFiltersProps {

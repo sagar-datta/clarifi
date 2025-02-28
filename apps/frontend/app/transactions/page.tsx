@@ -14,6 +14,8 @@ import { TransactionsTable } from "./components/TransactionsTable";
 import { Filters } from "@/app/components/ui/filters/FiltersPopover";
 import { endOfDay, startOfDay, isWithinInterval, addDays } from "date-fns";
 import { TransactionsErrorBoundary } from "./components/ErrorBoundary";
+import { EditTransactionDialog } from "@/app/components/shared/transactions/edit-transaction-dialog";
+import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 
 export default function TransactionsPage() {
   const transactions = useAppSelector(selectTransactions);
@@ -29,6 +31,9 @@ export default function TransactionsPage() {
     type: "all",
     amountRange: {},
   });
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchAll();
@@ -92,10 +97,20 @@ export default function TransactionsPage() {
     setActiveFilters(filters);
   }, []);
 
+  const handleTransactionClick = useCallback((transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsEditDialogOpen(true);
+  }, []);
+
+  const handleEditDialogClose = useCallback(() => {
+    setIsEditDialogOpen(false);
+    setSelectedTransaction(null);
+  }, []);
+
   return (
     <TransactionsErrorBoundary>
       <div className="relative bg-background">
-        <div className="mx-auto w-full max-w-7xl px-6">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-6">
           <div className="flex flex-col gap-6">
             <TransactionsHeader filteredTransactions={filteredTransactions} />
             <div className="relative rounded-lg border bg-card">
@@ -112,12 +127,20 @@ export default function TransactionsPage() {
                   transactions={filteredTransactions}
                   isLoading={isLoading}
                   searchTerm={searchTerm}
+                  onTransactionClick={handleTransactionClick}
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
+      {selectedTransaction && (
+        <EditTransactionDialog
+          transaction={selectedTransaction}
+          open={isEditDialogOpen}
+          onOpenChange={handleEditDialogClose}
+        />
+      )}
     </TransactionsErrorBoundary>
   );
 }
