@@ -14,7 +14,7 @@ import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
-import { AddTransactionDialog } from "@/app/transactions/AddTransactionDialog";
+import { AddTransactionDialog } from "@/app/transactions/add-transaction-dialog";
 
 export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
