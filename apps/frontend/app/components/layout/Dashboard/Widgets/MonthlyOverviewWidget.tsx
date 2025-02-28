@@ -180,21 +180,21 @@ export function MonthlyOverviewWidget() {
           </div>
           <TabsContent value="income" className="overflow-hidden flex-1">
             <ScrollArea className="h-full px-6">
-              <div className="space-y-1">
+              <div className="space-y-2 py-2 divide-y divide-border/30">
                 {currentIncomeTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between rounded-lg bg-card/40 hover:bg-accent/50 transition-colors p-3 text-sm"
+                    className="flex items-center justify-between pt-2 first:pt-0"
                   >
                     <div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm">
                         {transaction.description}
                       </div>
-                      <div className="text-xs text-muted-foreground/80">
+                      <div className="text-xs text-muted-foreground/70">
                         {format(new Date(transaction.date), "dd MMM yyyy")}
                       </div>
                     </div>
-                    <div className="font-medium text-green-500/90">
+                    <div className="font-medium text-sm text-green-500/90">
                       +{formatCurrency(transaction.amount)}
                     </div>
                   </div>
@@ -204,21 +204,21 @@ export function MonthlyOverviewWidget() {
           </TabsContent>
           <TabsContent value="expenses" className="overflow-hidden flex-1">
             <ScrollArea className="h-full px-6">
-              <div className="space-y-1">
+              <div className="space-y-2 py-2 divide-y divide-border/30">
                 {currentExpenseTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between rounded-lg bg-card/40 hover:bg-accent/50 transition-colors p-3 text-sm"
+                    className="flex items-center justify-between pt-2 first:pt-0"
                   >
                     <div>
-                      <div className="font-medium">
+                      <div className="font-medium text-sm">
                         {transaction.description}
                       </div>
-                      <div className="text-xs text-muted-foreground/80">
+                      <div className="text-xs text-muted-foreground/70">
                         {format(new Date(transaction.date), "dd MMM yyyy")}
                       </div>
                     </div>
-                    <div className="font-medium text-red-500/90">
+                    <div className="font-medium text-sm text-red-500/90">
                       -{formatCurrency(transaction.amount)}
                     </div>
                   </div>

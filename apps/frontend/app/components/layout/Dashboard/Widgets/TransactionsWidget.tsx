@@ -25,6 +25,7 @@ import {
   CollapsibleTrigger,
 } from "@/app/components/ui/collapsible/Collapsible";
 import { cn } from "@/app/lib/utils";
+
 import {
   addDays,
   format,
@@ -33,6 +34,7 @@ import {
   startOfDay,
 } from "date-fns";
 import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
+import { formatCurrency } from "@/app/lib/utils";
 
 // Helper function to format dates
 const formatDate = (dateString: string) => {
@@ -111,12 +113,6 @@ const groupTransactions = (transactions: Transaction[]): TransactionGroups => {
     }
   );
 };
-
-const datePresets = [
-  { label: "Last 7 days", days: 7 },
-  { label: "Last 30 days", days: 30 },
-  { label: "Last 90 days", days: 90 },
-] as const;
 
 export function TransactionsWidget() {
   const transactions = useTransactions() || [];
@@ -276,7 +272,7 @@ export function TransactionsWidget() {
                       defaultOpen
                       className="mb-4 last:mb-0"
                     >
-                      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent">
+                      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors">
                         <div className="flex items-center gap-3">
                           <h4 className="capitalize">{group}</h4>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -286,37 +282,38 @@ export function TransactionsWidget() {
                         </div>
                         <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="space-y-2 pt-2">
-                        {transactions.map((transaction) => (
-                          <div
-                            key={transaction.id}
-                            className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-accent"
-                          >
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium leading-none">
-                                {transaction.description}
-                              </p>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <span>{transaction.category}</span>
-                                <span>•</span>
-                                <span className="text-muted-foreground/60">
-                                  {formatDate(transaction.date)}
-                                </span>
+                      <CollapsibleContent className="space-y-2 pt-2 pl-2 pr-2">
+                        <div className="space-y-2 divide-y divide-border/30">
+                          {transactions.map((transaction) => (
+                            <div
+                              key={transaction.id}
+                              className="flex items-center justify-between pt-2 first:pt-0"
+                            >
+                              <div>
+                                <div className="font-medium text-sm">
+                                  {transaction.description}
+                                </div>
+                                <div className="text-xs text-muted-foreground/70">
+                                  {format(
+                                    new Date(transaction.date),
+                                    "dd MMM yyyy"
+                                  )}
+                                </div>
+                              </div>
+                              <div
+                                className={cn(
+                                  "font-medium text-sm",
+                                  transaction.type === "expense"
+                                    ? "text-red-500/90"
+                                    : "text-green-500/90"
+                                )}
+                              >
+                                {transaction.type === "expense" ? "-" : "+"}
+                                {formatCurrency(transaction.amount)}
                               </div>
                             </div>
-                            <div
-                              className={cn(
-                                "text-sm font-medium tabular-nums",
-                                transaction.type === "expense"
-                                  ? "text-red-500"
-                                  : "text-green-500"
-                              )}
-                            >
-                              {transaction.type === "expense" ? "-" : "+"}$
-                              {transaction.amount.toFixed(2)}
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </CollapsibleContent>
                     </Collapsible>
                   ) : null
