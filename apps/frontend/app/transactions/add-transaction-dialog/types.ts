@@ -9,6 +9,7 @@ export interface TransactionFormProps {
   form: UseFormReturn<FormValues>;
   onSubmit: (data: FormValues) => void;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
 export interface FormFieldProps {

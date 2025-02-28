@@ -18,6 +18,7 @@ import { useToast } from "@/app/components/ui/toast/use-toast";
 
 export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
   const [open, setOpen] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { create } = useTransactionActions();
   const { toast } = useToast();
 
@@ -35,11 +36,15 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
   React.useEffect(() => {
     if (!open) {
       form.reset();
+      setIsSubmitting(false);
     }
   }, [open, form]);
 
   async function onSubmit(data: FormValues) {
+    if (isSubmitting) return;
+
     try {
+      setIsSubmitting(true);
       await create({
         ...data,
         date: data.date.toISOString(),
@@ -58,6 +63,8 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
           error instanceof Error ? error.message : "Failed to add transaction",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -74,6 +81,7 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
           form={form}
           onSubmit={onSubmit}
           onCancel={() => setOpen(false)}
+          isSubmitting={isSubmitting}
         />
       </DialogContent>
     </Dialog>

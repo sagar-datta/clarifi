@@ -6,11 +6,13 @@ import { AmountField } from "./AmountField";
 import { DescriptionField } from "./DescriptionField";
 import { CategoryField } from "./CategoryField";
 import { DateField } from "./DateField";
+import { Loader2 } from "lucide-react";
 
 export function TransactionForm({
   form,
   onSubmit,
   onCancel,
+  isSubmitting = false,
 }: TransactionFormProps) {
   return (
     <Form {...form}>
@@ -33,12 +35,20 @@ export function TransactionForm({
             type="button"
             variant="ghost"
             onClick={onCancel}
+            disabled={isSubmitting}
             className="h-11"
           >
             Cancel
           </Button>
-          <Button type="submit" className="h-11 px-8">
-            Add Transaction
+          <Button type="submit" className="h-11 px-8" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              "Add Transaction"
+            )}
           </Button>
         </div>
       </form>
