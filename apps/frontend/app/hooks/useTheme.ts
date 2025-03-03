@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 
 export function useTheme() {
@@ -12,9 +12,10 @@ export function useTheme() {
     setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
+  // Memoize the toggle function to prevent unnecessary re-renders
+  const toggleTheme = useCallback(() => {
     setTheme(theme === "dark" ? "light" : "dark");
-  };
+  }, [theme, setTheme]);
 
   return {
     theme: mounted ? theme : undefined,

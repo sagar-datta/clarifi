@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "ClariFi - Personal Finance Management",
   description:
     "Track your finances, set budgets, and achieve your financial goals",
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({
@@ -22,7 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <head>
+        <meta name="color-scheme" content="light dark" />
+      </head>
+      <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
           <ClerkThemeProvider>
             <ReduxProvider>
