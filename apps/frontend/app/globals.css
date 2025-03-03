@@ -77,37 +77,21 @@
     --chart-5: 142 70% 45.8%;
   }
 
-  /* Apply smooth transitions to specific elements */
-  body,
-  div,
-  span,
-  p,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  button,
-  a,
-  input,
-  textarea,
-  select,
-  label,
-  svg {
-    @apply transition-[background-color,border-color,color,fill,stroke] duration-200 ease-out;
+  /* Theme transition at root level only */
+  :root {
+    color-scheme: light dark;
   }
 
   * {
     @apply border-border;
   }
 
-  .theme-aware {
-    @apply transition-[background-color,border-color] duration-200;
-  }
-
   body {
     @apply bg-background text-foreground;
-    color-scheme: light dark;
+  }
+
+  /* Interactive transitions only */
+  .hover-transition {
+    @apply transition-[background-color,transform,opacity] duration-200;
   }
 }

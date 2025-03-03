@@ -20,6 +20,7 @@ import { AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -31,13 +32,21 @@ export function Shell({ children }: ShellProps) {
   const pathname = usePathname();
   const { isLoaded, isSignedIn } = useUser();
 
+  // Animation values
+  const sidebarWidth = isDesktopCollapsed ? 72 : 240;
+  const animationConfig = {
+    type: "spring",
+    stiffness: 200,
+    damping: 25,
+  };
+
   // Don't show anything while loading auth state
   if (!isLoaded) {
     return null;
   }
 
   return (
-    <div className="relative flex min-h-screen transition-colors duration-300">
+    <div className="relative flex min-h-screen">
       {isSignedIn && (
         <>
           {/* Mobile Trigger */}
@@ -61,61 +70,70 @@ export function Shell({ children }: ShellProps) {
           </Sheet>
 
           {/* Desktop Sidebar */}
-          <aside
+          <motion.aside
+            layout
+            animate={{ width: sidebarWidth }}
+            transition={animationConfig}
             className={cn(
-              "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background transition-all duration-300 z-40",
-              isDesktopCollapsed ? "w-[80px]" : "w-72"
+              "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background z-40"
             )}
           >
-            <div className="relative border-b px-6 py-4 h-16">
-              <h2
-                className={cn(
-                  "text-lg font-semibold transition-opacity duration-300",
-                  isDesktopCollapsed ? "opacity-0" : "opacity-100"
-                )}
-              >
-                ClariFi
-              </h2>
-              <Collapse
-                isCollapsed={isDesktopCollapsed}
-                onToggle={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-              />
+            <div className="flex h-16 items-center justify-between border-b px-4">
+              <Link href="/" className={cn("flex items-center")}>
+                <span
+                  className={cn(
+                    "text-lg font-semibold",
+                    isDesktopCollapsed && "opacity-0"
+                  )}
+                >
+                  ClariFi
+                </span>
+              </Link>
             </div>
             <DesktopSidebar isCollapsed={isDesktopCollapsed} />
-          </aside>
+          </motion.aside>
+
+          {/* Collapse button positioned outside the sidebar */}
+          <motion.div
+            className="fixed top-1/2 -translate-y-1/2 z-50 hidden lg:block"
+            animate={{ left: sidebarWidth }}
+            transition={animationConfig}
+          >
+            <Collapse
+              isCollapsed={isDesktopCollapsed}
+              onToggle={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
+            />
+          </motion.div>
         </>
       )}
 
       {/* Main content area */}
-      <main
-        className={cn(
-          "flex-1 flex flex-col transition-all duration-300 bg-background",
-          isSignedIn && ["lg:ml-[80px]", !isDesktopCollapsed && "lg:ml-72"]
-        )}
+      <motion.main
+        layout
+        animate={{
+          paddingLeft: isSignedIn ? `${sidebarWidth}px` : 0,
+        }}
+        transition={animationConfig}
+        className={cn("flex-1 flex flex-col bg-background")}
       >
-        <div
-          className={cn(
-            "fixed top-0 right-0 z-30 border-b bg-background h-16 transition-all duration-300",
-            isSignedIn ? "left-0 lg:left-auto" : "left-0"
-          )}
-          style={
-            isSignedIn
-              ? {
-                  width: `calc(100% - ${isDesktopCollapsed ? "80px" : "288px"})`,
-                }
-              : undefined
-          }
+        <motion.header
+          layout
+          animate={{
+            width: isSignedIn ? `calc(100% - ${sidebarWidth}px)` : "100%",
+          }}
+          transition={animationConfig}
+          className={cn("fixed top-0 right-0 z-30 border-b bg-background h-16")}
         >
           <Header className="border-b-0" />
-        </div>
-        <div className="mt-[64px] flex-1 transition-colors duration-300">
+        </motion.header>
+        <div className="mt-[64px] flex-1">
           <div className="p-4 md:p-8">
             <AnimatePresence mode="wait" initial={false}>
               {children}
             </AnimatePresence>
           </div>
         </div>
-      </main>
+      </motion.main>
     </div>
   );
 }

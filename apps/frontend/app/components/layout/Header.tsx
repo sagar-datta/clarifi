@@ -20,6 +20,10 @@ export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
   const { isSignedIn } = useUser();
 
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   return (
     <header className={cn("bg-background px-6 py-3", className)}>
       <div className="flex items-center justify-between">
@@ -29,10 +33,11 @@ export function Header({ className }: { className?: string }) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={toggleTheme}
+            className="relative"
           >
-            <Moon className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Sun className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <Moon className="absolute h-5 w-5 scale-100 dark:scale-0" />
+            <Sun className="h-5 w-5 scale-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
           </Button>
 
