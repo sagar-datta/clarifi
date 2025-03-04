@@ -21,10 +21,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/app/components/ui/alert-dialog/AlertDialog";
+import { useTransactionActions } from "@/app/lib/redux/hooks/transactions";
+import { useToast } from "@/app/components/ui/toast/use-toast";
 
 export function DatabaseActionsDialog() {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const { seedDummyData, fetchAll } = useTransactionActions();
+  const { toast } = useToast();
+
+  const handlePopulateData = async () => {
+    try {
+      setIsLoading(true);
+      await seedDummyData();
+      await fetchAll();
+      toast({
+        title: "Success",
+        description: "Sample data has been populated successfully",
+      });
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to populate data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -38,7 +64,11 @@ export function DatabaseActionsDialog() {
           <DialogTitle>Database Actions</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
-          <Button onClick={() => {}} disabled={isLoading} className="w-full">
+          <Button
+            onClick={handlePopulateData}
+            disabled={isLoading}
+            className="w-full"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
