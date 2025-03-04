@@ -29,6 +29,14 @@ export function Header({ className }: { className?: string }) {
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
         <div className="flex items-center gap-2">
+          {/* Quick Add Transaction */}
+          <AddTransactionDialog>
+            <Button variant="ghost" size="icon">
+              <Plus className="h-5 w-5" />
+              <span className="sr-only">Add transaction</span>
+            </Button>
+          </AddTransactionDialog>
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -43,42 +51,6 @@ export function Header({ className }: { className?: string }) {
 
           {isSignedIn ? (
             <>
-              {/* Quick Actions */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Plus className="h-5 w-5" />
-                    <span className="sr-only">Quick actions</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <AddTransactionDialog>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      Add Transaction
-                    </DropdownMenuItem>
-                  </AddTransactionDialog>
-                  <DropdownMenuItem>Create Budget</DropdownMenuItem>
-                  <DropdownMenuItem>Set New Goal</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Notifications */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Bell className="h-5 w-5" />
-                    <span className="sr-only">Notifications</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>No new notifications</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               {/* User Button */}
               <UserButton />
             </>
