@@ -25,6 +25,7 @@ import {
 } from "@/app/components/ui/chart/Chart";
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
+import { useTheme } from "next-themes";
 
 const CATEGORY_GROUPS = {
   "Essential Living": ["rent", "utilities", "groceries", "household"],
@@ -52,6 +53,7 @@ type ChartConfigType = {
 export function SpendingByCategoryWidget() {
   const transactions = useTransactions() ?? [];
   const [selectedTab, setSelectedTab] = useState<"month" | "year">("month");
+  const { theme } = useTheme();
 
   // Get category groups that have transactions
   const categoryGroups = useMemo(() => {
@@ -148,13 +150,15 @@ export function SpendingByCategoryWidget() {
 
   // Generate colors for each category group
   const chartConfig = useMemo(() => {
+    const isDark = theme === "dark";
+
     const colors = [
-      "hsl(142 47% 65%)", // sage green
-      "hsl(221 70% 67%)", // soft blue
-      "hsl(349 70% 70%)", // soft pink
-      "hsl(280 65% 70%)", // soft purple
-      "hsl(31 85% 70%)", // soft orange
-      "hsl(187 65% 65%)", // soft cyan
+      isDark ? "hsl(0 70% 45%)" : "hsl(0 70% 55%)", // Pure Red
+      isDark ? "hsl(22 75% 45%)" : "hsl(22 75% 55%)", // Red-Orange
+      isDark ? "hsl(45 75% 45%)" : "hsl(45 75% 55%)", // Orange-Yellow
+      isDark ? "hsl(68 70% 40%)" : "hsl(68 70% 50%)", // Yellow-Green
+      isDark ? "hsl(180 50% 45%)" : "hsl(180 50% 55%)", // Solarized Cyan (Transportation)
+      isDark ? "hsl(240 50% 45%)" : "hsl(240 50% 55%)", // Solarized Blue (Other)
     ];
 
     const config = {} as ChartConfigType;
@@ -165,7 +169,7 @@ export function SpendingByCategoryWidget() {
       };
     });
     return config;
-  }, [categoryGroups]);
+  }, [categoryGroups, theme]);
 
   return (
     <Card className="h-[400px] flex flex-col">
