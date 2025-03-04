@@ -2,19 +2,12 @@
 
 import * as React from "react";
 import { Button } from "../ui/button/Button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu/DropdownMenu";
 import { Bell, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import { AddTransactionDialog } from "@/app/components/shared/transactions/add-transaction-dialog";
+import { DatabaseActionsDialog } from "@/app/components/shared/database/DatabaseActionsDialog";
 
 export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
@@ -36,6 +29,8 @@ export function Header({ className }: { className?: string }) {
               <span className="sr-only">Add transaction</span>
             </Button>
           </AddTransactionDialog>
+
+          {isSignedIn && <DatabaseActionsDialog />}
 
           {/* Theme Toggle */}
           <Button
