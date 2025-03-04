@@ -275,7 +275,7 @@ export function TransactionsWidget() {
                       <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors dark:hover:bg-accent/40">
                         <div className="flex items-center gap-3">
                           <h4 className="capitalize text-foreground">
-                            {group}
+                            {group === "older" ? "Previous Months" : group}
                           </h4>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>•</span>
