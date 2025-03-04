@@ -12,14 +12,7 @@ import {
 } from "../../ui/tooltip/Tooltip";
 
 // Icons
-import {
-  LayoutDashboard,
-  Receipt,
-  PiggyBank,
-  Target,
-  Settings,
-  HelpCircle,
-} from "lucide-react";
+import { LayoutDashboard, Receipt } from "lucide-react";
 
 interface NavItem {
   title: string;
@@ -40,19 +33,6 @@ const mainNavItems: NavItem[] = [
     href: "/transactions",
     icon: Receipt,
     description: "View and manage your transactions",
-  },
-];
-
-const secondaryNavItems: NavItem[] = [
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
-  {
-    title: "Help",
-    href: "/help",
-    icon: HelpCircle,
   },
 ];
 
@@ -110,14 +90,6 @@ export function MainNav({ className, isCollapsed }: MainNavProps) {
         {mainNavItems.map((item) => (
           <NavLink key={item.href} item={item} />
         ))}
-      </div>
-
-      <div className="mt-auto">
-        <div className="flex flex-col gap-2">
-          {secondaryNavItems.map((item) => (
-            <NavLink key={item.href} item={item} />
-          ))}
-        </div>
       </div>
     </nav>
   );
