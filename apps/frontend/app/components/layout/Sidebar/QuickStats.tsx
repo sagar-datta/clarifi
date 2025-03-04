@@ -8,7 +8,11 @@ import {
   ArrowDownIcon,
   Wallet,
   CreditCard,
+  DollarSign,
   PiggyBank,
+  BanknoteIcon,
+  Calculator,
+  CalendarDays,
 } from "lucide-react";
 import {
   Tooltip,
@@ -248,7 +252,7 @@ export function QuickStats({
         value: Math.round(Math.abs(monthlyIncomeChange)),
         trend: currentMonthIncome > previousMonthIncome ? "up" : "down",
       },
-      icon: Wallet,
+      icon: DollarSign,
     },
     {
       label: "Largest Expense",
@@ -264,7 +268,7 @@ export function QuickStats({
             ? "up"
             : "down",
       },
-      icon: CreditCard,
+      icon: BanknoteIcon,
     },
     {
       label: "Average Transaction",
@@ -276,7 +280,7 @@ export function QuickStats({
             ? "up"
             : "down",
       },
-      icon: CreditCard,
+      icon: Calculator,
     },
     {
       label: "Daily Average",
@@ -285,7 +289,7 @@ export function QuickStats({
         value: Math.round(Math.abs(dailyAverageChange)),
         trend: dailyAverage > previousDailyAverage ? "up" : "down",
       },
-      icon: CreditCard,
+      icon: CalendarDays,
     },
     {
       label: "Savings Rate",
@@ -332,7 +336,7 @@ export function QuickStats({
                       <div className="-rotate-90 whitespace-nowrap flex flex-col items-center">
                         <span className="text-[10px] font-medium text-muted-foreground">
                           {stat.label === "Monthly Spend"
-                            ? "Monthly"
+                            ? "Spend"
                             : stat.label === "Total Balance"
                               ? "Balance"
                               : stat.label === "Monthly Income"
@@ -341,7 +345,9 @@ export function QuickStats({
                                   ? "Largest"
                                   : stat.label === "Average Transaction"
                                     ? "Average"
-                                    : "Savings"}
+                                    : stat.label === "Daily Average"
+                                      ? "Daily"
+                                      : "Savings"}
                         </span>
                         <span className="text-xs font-bold tracking-tight">
                           {stat.value}
