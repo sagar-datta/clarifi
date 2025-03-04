@@ -108,32 +108,28 @@ export function Shell({ children }: ShellProps) {
       )}
 
       {/* Main content area */}
-      <motion.main
-        layout
-        animate={{
+      <div
+        style={{
           paddingLeft: isSignedIn ? `${sidebarWidth}px` : 0,
         }}
-        transition={animationConfig}
         className={cn("flex-1 flex flex-col bg-background")}
       >
-        <motion.header
-          layout
-          animate={{
+        <div
+          style={{
             width: isSignedIn ? `calc(100% - ${sidebarWidth}px)` : "100%",
           }}
-          transition={animationConfig}
-          className={cn("fixed top-0 right-0 z-30 border-b bg-background h-16")}
+          className={cn("fixed top-0 right-0 z-40 bg-background h-16 border-b")}
         >
-          <Header className="border-b-0" />
-        </motion.header>
-        <div className="mt-[64px] flex-1">
+          <Header className="h-full" />
+        </div>
+        <div className="mt-16 flex-1">
           <div className="p-4 md:p-8">
             <AnimatePresence mode="wait" initial={false}>
               {children}
             </AnimatePresence>
           </div>
         </div>
-      </motion.main>
+      </div>
     </div>
   );
 }

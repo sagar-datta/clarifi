@@ -25,7 +25,7 @@ export function Header({ className }: { className?: string }) {
   };
 
   return (
-    <header className={cn("bg-background px-6 py-3", className)}>
+    <header className={cn("bg-background px-6 py-3 w-full", className)}>
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
         <div className="flex items-center gap-2">

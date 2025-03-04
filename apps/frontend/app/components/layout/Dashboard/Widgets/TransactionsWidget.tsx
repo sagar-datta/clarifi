@@ -306,8 +306,8 @@ export function TransactionsWidget() {
                                 className={cn(
                                   "font-medium text-sm",
                                   transaction.type === "expense"
-                                    ? "text-red-500 dark:text-red-400"
-                                    : "text-green-500 dark:text-green-400"
+                                    ? "text-red-500 dark:text-red-500"
+                                    : "text-green-600 dark:text-green-500"
                                 )}
                               >
                                 {transaction.type === "expense" ? "-" : "+"}

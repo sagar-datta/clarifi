@@ -16,6 +16,7 @@ import { endOfDay, startOfDay, isWithinInterval, addDays } from "date-fns";
 import { TransactionsErrorBoundary } from "./components/ErrorBoundary";
 import { EditTransactionDialog } from "@/app/components/shared/transactions/edit-transaction-dialog";
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
+import { PageLayout } from "../components/layout/PageLayout";
 
 export default function TransactionsPage() {
   const transactions = useAppSelector(selectTransactions) ?? [];
@@ -129,32 +130,34 @@ export default function TransactionsPage() {
   }, []);
 
   return (
-    <TransactionsErrorBoundary>
-      <div className="relative bg-background">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-6">
-          <div className="flex flex-col gap-6">
-            <TransactionsHeader filteredTransactions={filteredTransactions} />
-            <div className="relative rounded-lg border bg-card">
-              <TransactionsFilters
-                searchTerm={searchTerm}
-                onSearchChange={handleSearchChange}
-                dateRange={dateRange}
-                onDateRangeChange={handleDateRangeChange}
-                availableCategories={availableCategories}
-                onFiltersChange={handleFiltersChange}
-              />
-              <div className="p-6">
-                <TransactionsTable
-                  transactions={filteredTransactions}
-                  isLoading={isLoading}
+    <PageLayout>
+      <TransactionsErrorBoundary>
+        <div className="relative bg-background">
+          <div className="mx-auto w-full max-w-7xl px-6 pb-6">
+            <div className="flex flex-col gap-6">
+              <TransactionsHeader filteredTransactions={filteredTransactions} />
+              <div className="relative rounded-lg border bg-card">
+                <TransactionsFilters
                   searchTerm={searchTerm}
-                  onTransactionClick={handleTransactionClick}
+                  onSearchChange={handleSearchChange}
+                  dateRange={dateRange}
+                  onDateRangeChange={handleDateRangeChange}
+                  availableCategories={availableCategories}
+                  onFiltersChange={handleFiltersChange}
                 />
+                <div className="p-6">
+                  <TransactionsTable
+                    transactions={filteredTransactions}
+                    isLoading={isLoading}
+                    searchTerm={searchTerm}
+                    onTransactionClick={handleTransactionClick}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </TransactionsErrorBoundary>
       {selectedTransaction && (
         <EditTransactionDialog
           transaction={selectedTransaction}
@@ -162,6 +165,6 @@ export default function TransactionsPage() {
           onOpenChange={handleEditDialogClose}
         />
       )}
-    </TransactionsErrorBoundary>
+    </PageLayout>
   );
 }

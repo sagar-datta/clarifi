@@ -122,7 +122,9 @@ export function MonthlyOverviewWidget() {
           <span
             className={cn(
               "text-sm font-medium",
-              netIncome >= 0 ? "text-green-500/90" : "text-red-500/90"
+              netIncome >= 0
+                ? "text-green-600 dark:text-green-500"
+                : "text-red-500 dark:text-red-500"
             )}
           >
             {netIncome >= 0 ? "saved" : "overspent"}
@@ -132,14 +134,16 @@ export function MonthlyOverviewWidget() {
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         <div className="px-6 pb-4 flex items-center gap-2 border-b">
           {percentageChange > 0 ? (
-            <ArrowUpIcon className="h-4 w-4 text-green-500/90" />
+            <ArrowUpIcon className="h-4 w-4 text-green-600 dark:text-green-500" />
           ) : (
-            <ArrowDownIcon className="h-4 w-4 text-red-500/90" />
+            <ArrowDownIcon className="h-4 w-4 text-red-500 dark:text-red-500" />
           )}
           <p
             className={cn(
               "text-sm font-medium",
-              percentageChange > 0 ? "text-green-500/90" : "text-red-500/90"
+              percentageChange > 0
+                ? "text-green-600 dark:text-green-500"
+                : "text-red-500 dark:text-red-500"
             )}
           >
             {Math.abs(percentageChange).toFixed(1)}%{" "}
@@ -194,7 +198,7 @@ export function MonthlyOverviewWidget() {
                         {format(new Date(transaction.date), "dd MMM yyyy")}
                       </div>
                     </div>
-                    <div className="font-medium text-sm text-green-500/90">
+                    <div className="font-medium text-sm text-green-600 dark:text-green-500">
                       +{formatCurrency(transaction.amount)}
                     </div>
                   </div>
@@ -218,7 +222,7 @@ export function MonthlyOverviewWidget() {
                         {format(new Date(transaction.date), "dd MMM yyyy")}
                       </div>
                     </div>
-                    <div className="font-medium text-sm text-red-500/90">
+                    <div className="font-medium text-sm text-red-500 dark:text-red-500">
                       -{formatCurrency(transaction.amount)}
                     </div>
                   </div>
