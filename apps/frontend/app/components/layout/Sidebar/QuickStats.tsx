@@ -18,13 +18,14 @@ import {
 } from "../../ui/tooltip/Tooltip";
 import { useTransactions } from "@/app/lib/redux/hooks";
 import { formatCurrency } from "@/app/lib/utils";
+import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 
 interface QuickStat {
   label: string;
   value: string;
   change?: {
     value: number;
-    trend: "up" | "down";
+    trend: "up" | "down" | "neutral";
   };
   icon?: React.ComponentType<{ className?: string }>;
 }
@@ -45,24 +46,29 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
       : acc - transaction.amount;
   }, 0);
 
-  // Calculate monthly spend (last 30 days expenses)
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  // Calculate monthly spend (current calendar month)
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
   const monthlySpend = transactions.reduce((acc, transaction) => {
     if (!transaction || transaction.type !== "expense") return acc;
     const transactionDate = new Date(transaction.date);
-    return transactionDate >= thirtyDaysAgo ? acc + transaction.amount : acc;
+    return transactionDate >= currentMonthStart &&
+      transactionDate <= currentMonthEnd
+      ? acc + transaction.amount
+      : acc;
   }, 0);
 
-  // Calculate month-over-month change for monthly spend
-  const sixtyDaysAgo = new Date();
-  sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+  // Calculate previous month's spend
+  const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
   const previousMonthSpend = transactions.reduce((acc, transaction) => {
     if (!transaction || transaction.type !== "expense") return acc;
     const transactionDate = new Date(transaction.date);
-    return transactionDate >= sixtyDaysAgo && transactionDate < thirtyDaysAgo
+    return transactionDate >= previousMonthStart &&
+      transactionDate <= previousMonthEnd
       ? acc + transaction.amount
       : acc;
   }, 0);
@@ -71,6 +77,149 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
     previousMonthSpend === 0
       ? 0
       : ((monthlySpend - previousMonthSpend) / previousMonthSpend) * 100;
+
+  // Calculate largest expense category
+  const categoryTotals = transactions
+    .filter(
+      (t) =>
+        t?.type === "expense" &&
+        new Date(t.date) >= currentMonthStart &&
+        new Date(t.date) <= currentMonthEnd
+    )
+    .reduce(
+      (acc, t) => {
+        if (!t?.category) return acc;
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+  const largestCategory = Object.entries(categoryTotals).reduce(
+    (max, [category, amount]) =>
+      amount > (max.amount || 0) ? { category, amount } : max,
+    { category: "", amount: 0 }
+  );
+
+  const categoryPercentage = monthlySpend
+    ? (largestCategory.amount / monthlySpend) * 100
+    : 0;
+
+  // Calculate daily average
+  const daysInCurrentMonth = currentMonthEnd.getDate();
+  const daysInPreviousMonth = previousMonthEnd.getDate();
+
+  const dailyAverage = monthlySpend / daysInCurrentMonth;
+  const previousDailyAverage = previousMonthSpend / daysInPreviousMonth;
+
+  const dailyAverageChange = previousDailyAverage
+    ? ((dailyAverage - previousDailyAverage) / previousDailyAverage) * 100
+    : 0;
+
+  // Calculate savings rate
+  const currentMonthIncome = transactions
+    .filter(
+      (t) =>
+        t?.type === "income" &&
+        new Date(t.date) >= currentMonthStart &&
+        new Date(t.date) <= currentMonthEnd
+    )
+    .reduce((sum, t) => sum + (t?.amount || 0), 0);
+
+  const savingsRate = currentMonthIncome
+    ? ((currentMonthIncome - monthlySpend) / currentMonthIncome) * 100
+    : 0;
+
+  const previousMonthIncome = transactions
+    .filter(
+      (t) =>
+        t?.type === "income" &&
+        new Date(t.date) >= previousMonthStart &&
+        new Date(t.date) <= previousMonthEnd
+    )
+    .reduce((sum, t) => sum + (t?.amount || 0), 0);
+
+  const previousSavingsRate = previousMonthIncome
+    ? ((previousMonthIncome - previousMonthSpend) / previousMonthIncome) * 100
+    : 0;
+
+  const savingsRateChange = previousSavingsRate
+    ? savingsRate - previousSavingsRate
+    : 0;
+
+  // Calculate monthly income change
+  const monthlyIncomeChange =
+    previousMonthIncome === 0
+      ? 0
+      : ((currentMonthIncome - previousMonthIncome) / previousMonthIncome) *
+        100;
+
+  // Calculate largest transaction
+  const currentLargestTransaction = transactions
+    .filter(
+      (t): t is Transaction =>
+        t !== null &&
+        t.type === "expense" &&
+        new Date(t.date) >= currentMonthStart &&
+        new Date(t.date) <= currentMonthEnd
+    )
+    .reduce(
+      (max, t) => (!max || t.amount > max.amount ? t : max),
+      undefined as Transaction | undefined
+    );
+
+  const previousLargestTransaction = transactions
+    .filter(
+      (t): t is Transaction =>
+        t !== null &&
+        t.type === "expense" &&
+        new Date(t.date) >= previousMonthStart &&
+        new Date(t.date) <= previousMonthEnd
+    )
+    .reduce(
+      (max, t) => (!max || t.amount > max.amount ? t : max),
+      undefined as Transaction | undefined
+    );
+
+  const largestTransactionChange =
+    previousLargestTransaction?.amount && currentLargestTransaction?.amount
+      ? ((currentLargestTransaction.amount -
+          previousLargestTransaction.amount) /
+          previousLargestTransaction.amount) *
+        100
+      : 0;
+
+  // Calculate average transaction size
+  const currentMonthTransactions = transactions.filter(
+    (t) =>
+      t?.type === "expense" &&
+      new Date(t.date) >= currentMonthStart &&
+      new Date(t.date) <= currentMonthEnd
+  );
+
+  const previousMonthTransactions = transactions.filter(
+    (t) =>
+      t?.type === "expense" &&
+      new Date(t.date) >= previousMonthStart &&
+      new Date(t.date) <= previousMonthEnd
+  );
+
+  const currentAverageTransaction = currentMonthTransactions.length
+    ? currentMonthTransactions.reduce((sum, t) => sum + (t?.amount || 0), 0) /
+      currentMonthTransactions.length
+    : 0;
+
+  const previousAverageTransaction = previousMonthTransactions.length
+    ? previousMonthTransactions.reduce((sum, t) => sum + (t?.amount || 0), 0) /
+      previousMonthTransactions.length
+    : 0;
+
+  const averageTransactionChange =
+    previousAverageTransaction === 0
+      ? 0
+      : ((currentAverageTransaction - previousAverageTransaction) /
+          previousAverageTransaction) *
+        100;
 
   const stats: QuickStat[] = [
     {
@@ -86,6 +235,61 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
         trend: monthlySpend > previousMonthSpend ? "up" : "down",
       },
       icon: CreditCard,
+    },
+    {
+      label: "Monthly Income",
+      value: formatCurrency(currentMonthIncome),
+      change: {
+        value: Math.round(Math.abs(monthlyIncomeChange)),
+        trend: currentMonthIncome > previousMonthIncome ? "up" : "down",
+      },
+      icon: Wallet,
+    },
+    {
+      label: "Largest Expense",
+      value: currentLargestTransaction
+        ? formatCurrency(currentLargestTransaction.amount)
+        : "No expenses",
+      change: {
+        value: Math.round(Math.abs(largestTransactionChange)),
+        trend:
+          currentLargestTransaction?.amount &&
+          currentLargestTransaction.amount >
+            (previousLargestTransaction?.amount ?? 0)
+            ? "up"
+            : "down",
+      },
+      icon: CreditCard,
+    },
+    {
+      label: "Average Transaction",
+      value: formatCurrency(currentAverageTransaction),
+      change: {
+        value: Math.round(Math.abs(averageTransactionChange)),
+        trend:
+          currentAverageTransaction > previousAverageTransaction
+            ? "up"
+            : "down",
+      },
+      icon: CreditCard,
+    },
+    {
+      label: "Daily Average",
+      value: formatCurrency(dailyAverage),
+      change: {
+        value: Math.round(Math.abs(dailyAverageChange)),
+        trend: dailyAverage > previousDailyAverage ? "up" : "down",
+      },
+      icon: CreditCard,
+    },
+    {
+      label: "Savings Rate",
+      value: `${Math.round(savingsRate)}%`,
+      change: {
+        value: Math.round(Math.abs(savingsRateChange)),
+        trend: savingsRate > previousSavingsRate ? "up" : "down",
+      },
+      icon: PiggyBank,
     },
   ];
 
@@ -115,7 +319,15 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                         <span className="text-[10px] font-medium text-muted-foreground">
                           {stat.label === "Monthly Spend"
                             ? "Monthly"
-                            : "Balance"}
+                            : stat.label === "Total Balance"
+                              ? "Balance"
+                              : stat.label === "Monthly Income"
+                                ? "Income"
+                                : stat.label === "Largest Expense"
+                                  ? "Largest"
+                                  : stat.label === "Average Transaction"
+                                    ? "Average"
+                                    : "Savings"}
                         </span>
                         <span className="text-xs font-bold tracking-tight">
                           {stat.value}
@@ -132,43 +344,80 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                           <stat.icon className="h-4 w-4 text-muted-foreground" />
                         )}
                       </div>
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col items-center gap-1">
                         <p className="text-2xl font-bold">{stat.value}</p>
                         {stat.change && (
-                          <div className="flex items-center gap-1">
-                            {stat.change.trend === "up" ? (
-                              <ArrowUpIcon
-                                className={cn("h-3 w-3", {
-                                  "text-red-500":
-                                    stat.label === "Monthly Spend",
-                                  "text-green-500":
-                                    stat.label !== "Monthly Spend",
-                                })}
-                              />
+                          <div className="flex items-center gap-2">
+                            {stat.change.trend === "neutral" ? (
+                              <span className="text-xs font-medium text-muted-foreground">
+                                {stat.change.value}% of spend
+                              </span>
                             ) : (
-                              <ArrowDownIcon
-                                className={cn("h-3 w-3", {
-                                  "text-green-500":
-                                    stat.label === "Monthly Spend",
-                                  "text-red-500":
-                                    stat.label !== "Monthly Spend",
-                                })}
-                              />
+                              <div
+                                className={cn(
+                                  "flex items-center gap-1.5 px-2 py-0.5 rounded-full",
+                                  stat.label === "Monthly Spend" ||
+                                    stat.label === "Daily Average" ||
+                                    stat.label === "Largest Expense" ||
+                                    stat.label === "Average Transaction"
+                                    ? stat.change.trend === "up"
+                                      ? "bg-red-100 dark:bg-red-500/20"
+                                      : "bg-green-100 dark:bg-green-500/20"
+                                    : stat.change.trend === "up"
+                                      ? "bg-green-100 dark:bg-green-500/20"
+                                      : "bg-red-100 dark:bg-red-500/20"
+                                )}
+                              >
+                                {stat.change.trend === "up" ? (
+                                  <ArrowUpIcon
+                                    className={cn("h-3 w-3", {
+                                      "text-red-500":
+                                        stat.label === "Monthly Spend" ||
+                                        stat.label === "Daily Average" ||
+                                        stat.label === "Largest Expense" ||
+                                        stat.label === "Average Transaction",
+                                      "text-green-500":
+                                        stat.label !== "Monthly Spend" &&
+                                        stat.label !== "Daily Average" &&
+                                        stat.label !== "Largest Expense" &&
+                                        stat.label !== "Average Transaction",
+                                    })}
+                                  />
+                                ) : (
+                                  <ArrowDownIcon
+                                    className={cn("h-3 w-3", {
+                                      "text-green-500":
+                                        stat.label === "Monthly Spend" ||
+                                        stat.label === "Daily Average" ||
+                                        stat.label === "Largest Expense" ||
+                                        stat.label === "Average Transaction",
+                                      "text-red-500":
+                                        stat.label !== "Monthly Spend" &&
+                                        stat.label !== "Daily Average" &&
+                                        stat.label !== "Largest Expense" &&
+                                        stat.label !== "Average Transaction",
+                                    })}
+                                  />
+                                )}
+                                <span
+                                  className={cn(
+                                    "text-xs font-medium",
+                                    stat.label === "Monthly Spend" ||
+                                      stat.label === "Daily Average" ||
+                                      stat.label === "Largest Expense" ||
+                                      stat.label === "Average Transaction"
+                                      ? stat.change.trend === "up"
+                                        ? "text-red-500"
+                                        : "text-green-500"
+                                      : stat.change.trend === "up"
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                  )}
+                                >
+                                  {stat.change.value}%
+                                </span>
+                              </div>
                             )}
-                            <span
-                              className={cn(
-                                "text-xs font-medium",
-                                stat.label === "Monthly Spend"
-                                  ? stat.change.trend === "up"
-                                    ? "text-red-500"
-                                    : "text-green-500"
-                                  : stat.change.trend === "up"
-                                    ? "text-green-500"
-                                    : "text-red-500"
-                              )}
-                            >
-                              {stat.change.value}%
-                            </span>
                           </div>
                         )}
                       </div>
@@ -182,21 +431,78 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                     <p className="font-medium">{stat.label}</p>
                     <p className="text-muted-foreground">{stat.value}</p>
                     {stat.change && (
-                      <p
-                        className={cn(
-                          "text-xs mt-1",
-                          stat.label === "Monthly Spend"
-                            ? stat.change.trend === "up"
-                              ? "text-red-500"
-                              : "text-green-500"
-                            : stat.change.trend === "up"
-                              ? "text-green-500"
-                              : "text-red-500"
+                      <div className="mt-1">
+                        {stat.change.trend === "neutral" ? (
+                          <span className="text-xs font-medium text-muted-foreground">
+                            {stat.change.value}% of spend
+                          </span>
+                        ) : (
+                          <div
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full",
+                              stat.label === "Monthly Spend" ||
+                                stat.label === "Daily Average" ||
+                                stat.label === "Largest Expense" ||
+                                stat.label === "Average Transaction"
+                                ? stat.change.trend === "up"
+                                  ? "bg-red-100 dark:bg-red-500/20"
+                                  : "bg-green-100 dark:bg-green-500/20"
+                                : stat.change.trend === "up"
+                                  ? "bg-green-100 dark:bg-green-500/20"
+                                  : "bg-red-100 dark:bg-red-500/20"
+                            )}
+                          >
+                            {stat.change.trend === "up" ? (
+                              <ArrowUpIcon
+                                className={cn("h-3 w-3", {
+                                  "text-red-500":
+                                    stat.label === "Monthly Spend" ||
+                                    stat.label === "Daily Average" ||
+                                    stat.label === "Largest Expense" ||
+                                    stat.label === "Average Transaction",
+                                  "text-green-500":
+                                    stat.label !== "Monthly Spend" &&
+                                    stat.label !== "Daily Average" &&
+                                    stat.label !== "Largest Expense" &&
+                                    stat.label !== "Average Transaction",
+                                })}
+                              />
+                            ) : (
+                              <ArrowDownIcon
+                                className={cn("h-3 w-3", {
+                                  "text-green-500":
+                                    stat.label === "Monthly Spend" ||
+                                    stat.label === "Daily Average" ||
+                                    stat.label === "Largest Expense" ||
+                                    stat.label === "Average Transaction",
+                                  "text-red-500":
+                                    stat.label !== "Monthly Spend" &&
+                                    stat.label !== "Daily Average" &&
+                                    stat.label !== "Largest Expense" &&
+                                    stat.label !== "Average Transaction",
+                                })}
+                              />
+                            )}
+                            <span
+                              className={cn(
+                                "text-xs font-medium",
+                                stat.label === "Monthly Spend" ||
+                                  stat.label === "Daily Average" ||
+                                  stat.label === "Largest Expense" ||
+                                  stat.label === "Average Transaction"
+                                  ? stat.change.trend === "up"
+                                    ? "text-red-500"
+                                    : "text-green-500"
+                                  : stat.change.trend === "up"
+                                    ? "text-green-500"
+                                    : "text-red-500"
+                              )}
+                            >
+                              {stat.change.value}%
+                            </span>
+                          </div>
                         )}
-                      >
-                        {stat.change.trend === "up" ? "↑" : "↓"}{" "}
-                        {stat.change.value}%
-                      </p>
+                      </div>
                     )}
                   </div>
                 </TooltipContent>
