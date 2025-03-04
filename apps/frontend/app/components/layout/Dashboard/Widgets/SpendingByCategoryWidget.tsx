@@ -51,10 +51,10 @@ export function SpendingByCategoryWidget() {
     const now = new Date();
 
     if (selectedTab === "month") {
-      // Get last 12 months of data
-      return Array.from({ length: 12 }, (_, i) => {
-        const monthStart = startOfDay(subMonths(now, 11 - i));
-        const monthEnd = endOfDay(subMonths(now, 10 - i));
+      // Get last 6 months of data
+      return Array.from({ length: 6 }, (_, i) => {
+        const monthStart = startOfDay(subMonths(now, 5 - i));
+        const monthEnd = endOfDay(subMonths(now, 4 - i));
 
         const monthlyData = categories.reduce((acc, category) => {
           const total = transactions
@@ -74,10 +74,12 @@ export function SpendingByCategoryWidget() {
         };
       });
     } else {
-      // Get last 5 years of data
-      return Array.from({ length: 5 }, (_, i) => {
-        const yearStart = startOfDay(subYears(now, 4 - i));
-        const yearEnd = endOfDay(subYears(now, 3 - i));
+      // Get last 6 years of data
+      const currentYear = new Date().getFullYear();
+      return Array.from({ length: 6 }, (_, i) => {
+        const year = currentYear - 5 + i;
+        const yearStart = new Date(year, 0, 1);
+        const yearEnd = new Date(year, 11, 31, 23, 59, 59);
 
         const yearlyData = categories.reduce((acc, category) => {
           const total = transactions
@@ -92,7 +94,7 @@ export function SpendingByCategoryWidget() {
         }, {});
 
         return {
-          name: format(yearStart, "yyyy"),
+          name: year.toString(),
           ...yearlyData,
         };
       });
@@ -102,16 +104,16 @@ export function SpendingByCategoryWidget() {
   // Generate colors for each category
   const chartConfig = useMemo<ChartConfigType>(() => {
     const colors = [
-      "#22c55e", // green
-      "#3b82f6", // blue
-      "#f59e0b", // amber
-      "#ec4899", // pink
-      "#8b5cf6", // purple
-      "#6b7280", // gray
-      "#ef4444", // red
-      "#06b6d4", // cyan
-      "#14b8a6", // teal
-      "#f97316", // orange
+      "hsl(142 47% 65%)", // sage green
+      "hsl(221 70% 67%)", // soft blue
+      "hsl(349 70% 70%)", // soft pink
+      "hsl(280 65% 70%)", // soft purple
+      "hsl(31 85% 70%)", // soft orange
+      "hsl(187 65% 65%)", // soft cyan
+      "hsl(168 55% 65%)", // soft teal
+      "hsl(271 65% 70%)", // soft violet
+      "hsl(15 70% 65%)", // soft coral
+      "hsl(250 65% 70%)", // soft indigo
     ];
 
     return categories.reduce<ChartConfigType>((acc, category, index) => {
@@ -151,7 +153,7 @@ export function SpendingByCategoryWidget() {
             <BarChart
               data={chartData}
               margin={{ top: 5, right: 5, left: 45, bottom: 5 }}
-              barSize={15}
+              barSize={100}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" fontSize={11} tickMargin={5} />
@@ -166,32 +168,64 @@ export function SpendingByCategoryWidget() {
                 tickMargin={5}
               />
               <ChartTooltip
-                content={({ active, payload }) => (
-                  <ChartTooltipContent
-                    active={active}
-                    payload={payload}
-                    formatter={(value: any) => {
-                      if (Array.isArray(value)) {
-                        return formatCurrency(value[0]);
-                      }
-                      const numValue =
-                        typeof value === "string" ? parseFloat(value) : value;
-                      return formatCurrency(numValue);
-                    }}
-                  />
-                )}
+                content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-sm">
+                      <div className="grid gap-2">
+                        <div className="text-sm font-medium">
+                          {payload[0]?.payload?.name}
+                        </div>
+                        {payload.map((entry, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div
+                              className="h-2 w-2 rounded-full"
+                              style={{
+                                background:
+                                  chartConfig[entry.dataKey as string]?.color,
+                              }}
+                            />
+                            <span className="text-sm font-medium">
+                              {chartConfig[entry.dataKey as string]?.label}
+                            </span>
+                            <span className="text-sm text-muted-foreground ml-auto">
+                              {formatCurrency(entry.value as number)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }}
               />
               <ChartLegend
                 content={({ payload }) => (
-                  <ChartLegendContent payload={payload} />
+                  <div className="flex flex-wrap gap-4 mt-2 justify-center">
+                    {categories.map((category) => (
+                      <div key={category} className="flex items-center gap-2">
+                        <div
+                          className="h-2 w-2 rounded-full"
+                          style={{ background: chartConfig[category].color }}
+                        />
+                        <span className="text-sm font-medium">
+                          {chartConfig[category].label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               />
-              {categories.map((category) => (
+              {[...categories].reverse().map((category) => (
                 <Bar
                   key={category}
                   name={chartConfig[category].label}
                   dataKey={category}
                   stackId="a"
+                  fill={chartConfig[category].color}
+                  animationDuration={300}
+                  animationBegin={0}
+                  animationEasing="ease-out"
                 />
               ))}
             </BarChart>
