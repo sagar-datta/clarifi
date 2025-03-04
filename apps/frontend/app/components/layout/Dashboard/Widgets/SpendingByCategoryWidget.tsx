@@ -26,83 +26,128 @@ import {
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 
+const CATEGORY_GROUPS = {
+  "Essential Living": ["rent", "utilities", "groceries", "household"],
+  Transportation: ["fuel", "public_transport", "car_maintenance", "parking"],
+  "Health & Wellbeing": ["medical", "fitness", "personal_care"],
+  Lifestyle: ["dining", "entertainment", "shopping", "hobbies", "gifts"],
+  Financial: ["insurance", "debt", "investments", "fees"],
+  Other: ["education", "business", "charity", "misc_expense"],
+} as const;
+
+type CategoryValues =
+  (typeof CATEGORY_GROUPS)[keyof typeof CATEGORY_GROUPS][number];
+type CategoryGroup = keyof typeof CATEGORY_GROUPS;
+
+type ChartDataType = {
+  name: string;
+} & {
+  [K in CategoryGroup]?: number;
+};
+
 type ChartConfigType = {
-  [key: string]: { color: string; label: string };
+  [key in CategoryGroup]: { color: string; label: string };
 };
 
 export function SpendingByCategoryWidget() {
   const transactions = useTransactions() ?? [];
   const [selectedTab, setSelectedTab] = useState<"month" | "year">("month");
 
-  // Get unique categories from transactions
-  const categories = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          transactions
-            .filter((t): t is Transaction => t !== null && t.type === "expense")
-            .map((t) => t.category)
-        )
-      ),
-    [transactions]
-  );
+  // Get category groups that have transactions
+  const categoryGroups = useMemo(() => {
+    const expenseTransactions = transactions.filter(
+      (t): t is Transaction => t !== null && t.type === "expense"
+    );
+    const usedGroups = new Set<CategoryGroup>();
 
-  const chartData = useMemo(() => {
+    expenseTransactions.forEach((t) => {
+      const entries = Object.entries(CATEGORY_GROUPS) as [
+        CategoryGroup,
+        readonly string[],
+      ][];
+      for (const [group, categories] of entries) {
+        if (categories.includes(t.category)) {
+          usedGroups.add(group);
+          break;
+        }
+      }
+    });
+
+    return Array.from(usedGroups) as CategoryGroup[];
+  }, [transactions]);
+
+  const chartData = useMemo<ChartDataType[]>(() => {
     const now = new Date();
 
     if (selectedTab === "month") {
-      // Get last 6 months of data
       return Array.from({ length: 6 }, (_, i) => {
         const monthStart = startOfDay(subMonths(now, 5 - i));
         const monthEnd = endOfDay(subMonths(now, 4 - i));
 
-        const monthlyData = categories.reduce((acc, category) => {
-          const total = transactions
-            .filter((t) => t?.type === "expense" && t?.category === category)
-            .filter((t) => {
-              const date = new Date(t?.date ?? "");
-              return date >= monthStart && date <= monthEnd;
-            })
-            .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+        const monthlyData = categoryGroups.reduce<Partial<ChartDataType>>(
+          (acc, group) => {
+            const groupCategories = CATEGORY_GROUPS[
+              group
+            ] as readonly CategoryValues[];
+            const total = transactions
+              .filter((t): t is Transaction => {
+                if (!t || t.type !== "expense" || !t.category) return false;
+                return groupCategories.includes(t.category as CategoryValues);
+              })
+              .filter((t) => {
+                const date = new Date(t.date);
+                return date >= monthStart && date <= monthEnd;
+              })
+              .reduce((sum, t) => sum + t.amount, 0);
 
-          return { ...acc, [category]: total };
-        }, {});
+            return { ...acc, [group]: total };
+          },
+          {}
+        );
 
         return {
           name: format(monthStart, "MMM"),
           ...monthlyData,
-        };
+        } as ChartDataType;
       });
     } else {
-      // Get last 6 years of data
       const currentYear = new Date().getFullYear();
       return Array.from({ length: 6 }, (_, i) => {
         const year = currentYear - 5 + i;
         const yearStart = new Date(year, 0, 1);
         const yearEnd = new Date(year, 11, 31, 23, 59, 59);
 
-        const yearlyData = categories.reduce((acc, category) => {
-          const total = transactions
-            .filter((t) => t?.type === "expense" && t?.category === category)
-            .filter((t) => {
-              const date = new Date(t?.date ?? "");
-              return date >= yearStart && date <= yearEnd;
-            })
-            .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+        const yearlyData = categoryGroups.reduce<Partial<ChartDataType>>(
+          (acc, group) => {
+            const groupCategories = CATEGORY_GROUPS[
+              group
+            ] as readonly CategoryValues[];
+            const total = transactions
+              .filter((t): t is Transaction => {
+                if (!t || t.type !== "expense" || !t.category) return false;
+                return groupCategories.includes(t.category as CategoryValues);
+              })
+              .filter((t) => {
+                const date = new Date(t.date);
+                return date >= yearStart && date <= yearEnd;
+              })
+              .reduce((sum, t) => sum + t.amount, 0);
 
-          return { ...acc, [category]: total };
-        }, {});
+            return { ...acc, [group]: total };
+          },
+          {}
+        );
 
         return {
           name: year.toString(),
           ...yearlyData,
-        };
+        } as ChartDataType;
       });
     }
-  }, [transactions, selectedTab, categories]);
+  }, [transactions, selectedTab, categoryGroups]);
 
-  // Generate colors for each category
-  const chartConfig = useMemo<ChartConfigType>(() => {
+  // Generate colors for each category group
+  const chartConfig = useMemo(() => {
     const colors = [
       "hsl(142 47% 65%)", // sage green
       "hsl(221 70% 67%)", // soft blue
@@ -110,22 +155,17 @@ export function SpendingByCategoryWidget() {
       "hsl(280 65% 70%)", // soft purple
       "hsl(31 85% 70%)", // soft orange
       "hsl(187 65% 65%)", // soft cyan
-      "hsl(168 55% 65%)", // soft teal
-      "hsl(271 65% 70%)", // soft violet
-      "hsl(15 70% 65%)", // soft coral
-      "hsl(250 65% 70%)", // soft indigo
     ];
 
-    return categories.reduce<ChartConfigType>((acc, category, index) => {
-      return {
-        ...acc,
-        [category]: {
-          color: colors[index % colors.length],
-          label: category.charAt(0).toUpperCase() + category.slice(1),
-        },
+    const config = {} as ChartConfigType;
+    categoryGroups.forEach((group, index) => {
+      config[group] = {
+        color: colors[index % colors.length],
+        label: group,
       };
-    }, {});
-  }, [categories]);
+    });
+    return config;
+  }, [categoryGroups]);
 
   return (
     <Card className="h-[400px] flex flex-col">
@@ -183,11 +223,15 @@ export function SpendingByCategoryWidget() {
                               className="h-2 w-2 rounded-full"
                               style={{
                                 background:
-                                  chartConfig[entry.dataKey as string]?.color,
+                                  chartConfig[entry.dataKey as CategoryGroup]
+                                    ?.color,
                               }}
                             />
                             <span className="text-sm font-medium">
-                              {chartConfig[entry.dataKey as string]?.label}
+                              {
+                                chartConfig[entry.dataKey as CategoryGroup]
+                                  ?.label
+                              }
                             </span>
                             <span className="text-sm text-muted-foreground ml-auto">
                               {formatCurrency(entry.value as number)}
@@ -202,27 +246,27 @@ export function SpendingByCategoryWidget() {
               <ChartLegend
                 content={({ payload }) => (
                   <div className="flex flex-wrap gap-4 mt-2 justify-center">
-                    {categories.map((category) => (
-                      <div key={category} className="flex items-center gap-2">
+                    {categoryGroups.map((group) => (
+                      <div key={group} className="flex items-center gap-2">
                         <div
                           className="h-2 w-2 rounded-full"
-                          style={{ background: chartConfig[category].color }}
+                          style={{ background: chartConfig[group].color }}
                         />
                         <span className="text-sm font-medium">
-                          {chartConfig[category].label}
+                          {chartConfig[group].label}
                         </span>
                       </div>
                     ))}
                   </div>
                 )}
               />
-              {[...categories].reverse().map((category) => (
+              {[...categoryGroups].reverse().map((group) => (
                 <Bar
-                  key={category}
-                  name={chartConfig[category].label}
-                  dataKey={category}
+                  key={group}
+                  name={chartConfig[group].label}
+                  dataKey={group}
                   stackId="a"
-                  fill={chartConfig[category].color}
+                  fill={chartConfig[group].color}
                   animationDuration={300}
                   animationBegin={0}
                   animationEasing="ease-out"

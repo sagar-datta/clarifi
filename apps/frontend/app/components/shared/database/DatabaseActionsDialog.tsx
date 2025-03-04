@@ -33,18 +33,31 @@ export function DatabaseActionsDialog() {
   const handlePopulateData = async () => {
     try {
       setIsLoading(true);
-      await seedDummyData();
-      await fetchAll();
-      toast({
-        title: "Success",
-        description: "Sample data has been populated successfully",
-      });
-      setOpen(false);
+
+      // Try up to 3 times with a delay between attempts
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          await seedDummyData();
+          await fetchAll();
+          toast({
+            title: "Success",
+            description: "Sample data has been populated successfully",
+          });
+          setOpen(false);
+          return; // Success, exit the function
+        } catch (error) {
+          if (attempt === 2) throw error; // On last attempt, throw the error
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+        }
+      }
     } catch (error) {
+      console.error("Failed to populate data:", error);
       toast({
         title: "Error",
         description:
-          error instanceof Error ? error.message : "Failed to populate data",
+          error instanceof Error
+            ? error.message
+            : "Failed to populate data. Please try again.",
         variant: "destructive",
       });
     } finally {

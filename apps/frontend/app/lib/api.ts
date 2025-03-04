@@ -2,12 +2,26 @@ import { useAuth } from "@clerk/nextjs";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function fetchWithAuth(
   endpoint: string,
   token: string | null,
   options: RequestInit = {}
 ) {
   try {
+    // If no token, wait briefly and retry up to 3 times
+    if (!token) {
+      for (let i = 0; i < 3; i++) {
+        console.log("No token, waiting and retrying...", i + 1);
+        await wait(1000); // Wait 1 second between retries
+        if (token) break;
+      }
+      if (!token) {
+        throw new Error("No authentication token available");
+      }
+    }
+
     console.log("Making authenticated request...");
     console.log("Token present:", !!token);
 

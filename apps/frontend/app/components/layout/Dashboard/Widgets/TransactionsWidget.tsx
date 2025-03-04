@@ -250,17 +250,6 @@ export function TransactionsWidget() {
                   <p className="text-sm text-red-500">Error: {error}</p>
                 )}
               </div>
-              {transactions.length === 0 && (
-                <Button
-                  onClick={handleSeedData}
-                  variant="outline"
-                  size="sm"
-                  disabled={isLoadingState}
-                  className="h-8 text-xs"
-                >
-                  Add Sample Transactions
-                </Button>
-              )}
             </div>
           ) : (
             <div className="space-y-4 py-2">
