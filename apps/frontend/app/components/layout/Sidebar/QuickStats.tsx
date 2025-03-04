@@ -33,9 +33,14 @@ interface QuickStat {
 interface QuickStatsProps {
   className?: string;
   isCollapsed?: boolean;
+  showTitle?: boolean;
 }
 
-export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
+export function QuickStats({
+  className,
+  isCollapsed,
+  showTitle = true,
+}: QuickStatsProps) {
   const transactions = useTransactions() ?? [];
 
   // Calculate total balance (all time income - expenses)
@@ -294,15 +299,24 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
   ];
 
   return (
-    <div className={cn("space-y-4", className)}>
-      {!isCollapsed && (
-        <h3 className="text-sm font-medium text-muted-foreground px-2">
+    <div className={cn("flex flex-col h-full", className)}>
+      {!isCollapsed && showTitle && (
+        <h3 className="text-sm font-medium text-muted-foreground px-2 flex-none">
           Quick Stats
         </h3>
       )}
-      <div className={cn("space-y-2", isCollapsed && "px-0.5")}>
+      <div
+        className={cn(
+          "space-y-2 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 hover:scrollbar-thumb-muted-foreground/40 scrollbar-track-transparent",
+          isCollapsed && "px-0.5"
+        )}
+      >
         {stats.map((stat, index) => (
-          <TooltipProvider key={index} delayDuration={0}>
+          <TooltipProvider
+            key={index}
+            delayDuration={0}
+            disableHoverableContent
+          >
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card
@@ -314,7 +328,7 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                   )}
                 >
                   {isCollapsed ? (
-                    <div className="h-full flex items-center justify-center">
+                    <div className="h-full flex items-center justify-center group">
                       <div className="-rotate-90 whitespace-nowrap flex flex-col items-center">
                         <span className="text-[10px] font-medium text-muted-foreground">
                           {stat.label === "Monthly Spend"

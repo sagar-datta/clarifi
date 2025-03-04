@@ -148,13 +148,27 @@ function MobileSidebar() {
 
 function DesktopSidebar({ isCollapsed }: { isCollapsed: boolean }) {
   return (
-    <ScrollArea className="flex-1">
-      <div className={cn("flex flex-col gap-4", isCollapsed ? "p-2" : "p-6")}>
+    <div className="flex flex-col h-[calc(100vh-4rem)]">
+      <div
+        className={cn(
+          "flex flex-col gap-4 flex-none",
+          isCollapsed ? "p-2" : "p-6"
+        )}
+      >
         <MainNav isCollapsed={isCollapsed} />
         <Separator />
-        <QuickStats isCollapsed={isCollapsed} />
+        {!isCollapsed && (
+          <h3 className="text-sm font-medium text-muted-foreground">
+            Quick Stats
+          </h3>
+        )}
       </div>
-    </ScrollArea>
+      <ScrollArea className="flex-1 h-[calc(100vh-12rem)]">
+        <div className={cn(isCollapsed ? "p-2" : "p-6", "pt-0")}>
+          <QuickStats isCollapsed={isCollapsed} showTitle={false} />
+        </div>
+      </ScrollArea>
+    </div>
   );
 }
 
