@@ -1,11 +1,17 @@
 import { FormField, FormItem } from "@/app/components/ui/form/Form";
 import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs/Tabs";
-import { FormFieldProps } from "../types";
+import { cn } from "@/app/lib/utils";
+import { useFormContext } from "react-hook-form";
+
+interface TransactionTypeFieldProps {
+  isSubmitting: boolean;
+}
 
 export function TransactionTypeField({
-  form,
-  isSubmitting = false,
-}: FormFieldProps) {
+  isSubmitting,
+}: TransactionTypeFieldProps) {
+  const form = useFormContext();
+
   return (
     <FormField
       control={form.control}
@@ -13,25 +19,28 @@ export function TransactionTypeField({
       render={({ field }) => (
         <FormItem>
           <Tabs
+            defaultValue={field.value}
             value={field.value}
-            onValueChange={(value) => !isSubmitting && field.onChange(value)}
+            onValueChange={field.onChange}
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-2 p-1 h-[46px]">
+            <TabsList className="w-full grid grid-cols-2 gap-1">
               <TabsTrigger
                 value="expense"
-                className="flex items-center gap-2 data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-900"
                 disabled={isSubmitting}
+                className={cn(
+                  "w-full data-[state=active]:bg-destructive data-[state=active]:text-destructive-foreground"
+                )}
               >
-                <span className="h-2 w-2 rounded-full bg-red-500" />
                 Expense
               </TabsTrigger>
               <TabsTrigger
                 value="income"
-                className="flex items-center gap-2 data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-800"
                 disabled={isSubmitting}
+                className={cn(
+                  "w-full data-[state=active]:bg-green-600 data-[state=active]:text-white"
+                )}
               >
-                <span className="h-2 w-2 rounded-full bg-green-500" />
                 Income
               </TabsTrigger>
             </TabsList>

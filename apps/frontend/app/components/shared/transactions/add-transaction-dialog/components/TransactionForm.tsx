@@ -20,7 +20,7 @@ export function TransactionForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Type Selection at the top for immediate context */}
         <div className="px-6">
-          <TransactionTypeField form={form} isSubmitting={isSubmitting} />
+          <TransactionTypeField isSubmitting={isSubmitting} />
         </div>
 
         <div className="px-6 space-y-6">
