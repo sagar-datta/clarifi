@@ -154,6 +154,27 @@ const deleteTransaction: RequestHandler = async (
   }
 };
 
+/**
+ * DELETE /transactions/all
+ * Delete all transactions for a user
+ */
+const deleteAllTransactions: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { auth } = req as AuthenticatedRequest;
+    await TransactionsService.deleteAll(auth.userId);
+    res.json({
+      status: 'success',
+      message: 'All transactions deleted',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Test endpoint to create dummy data
 router.post(
   '/seed',
@@ -219,6 +240,7 @@ router.post(
 
 // Mount routes
 router.get('/', listTransactions);
+router.delete('/all', deleteAllTransactions);
 router.get('/:id', getTransaction);
 router.post('/', createTransaction);
 router.put('/:id', updateTransaction);

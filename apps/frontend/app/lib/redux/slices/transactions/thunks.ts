@@ -115,3 +115,19 @@ export const deleteTransaction = createAsyncThunk<
     }
   }
 );
+
+export const deleteAllTransactions = createAsyncThunk<
+  void,
+  string | null,
+  ThunkConfig
+>("transactions/deleteAllTransactions", async (token, { rejectWithValue }) => {
+  try {
+    await fetchWithAuth("/transactions/all", token, {
+      method: "DELETE",
+    });
+  } catch (error: any) {
+    return rejectWithValue(
+      error.message || "Failed to delete all transactions"
+    );
+  }
+});

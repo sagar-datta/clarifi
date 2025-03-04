@@ -27,7 +27,7 @@ import { useToast } from "@/app/components/ui/toast/use-toast";
 export function DatabaseActionsDialog() {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { seedDummyData, fetchAll } = useTransactionActions();
+  const { seedDummyData, deleteAll, fetchAll } = useTransactionActions();
   const { toast } = useToast();
 
   const handlePopulateData = async () => {
@@ -45,6 +45,30 @@ export function DatabaseActionsDialog() {
         title: "Error",
         description:
           error instanceof Error ? error.message : "Failed to populate data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      setIsLoading(true);
+      await deleteAll();
+      await fetchAll();
+      toast({
+        title: "Success",
+        description: "All transactions have been deleted",
+      });
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete transactions",
         variant: "destructive",
       });
     } finally {
@@ -99,7 +123,7 @@ export function DatabaseActionsDialog() {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => {}}
+                  onClick={handleDeleteAll}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   {isLoading ? (

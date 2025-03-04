@@ -11,6 +11,7 @@ import {
   deleteTransaction,
   setSelectedTransaction,
   seedDummyData,
+  deleteAllTransactions,
 } from "../slices/transactions";
 
 // Selectors
@@ -69,6 +70,11 @@ export const useTransactionActions = () => {
     return dispatch(seedDummyData(token));
   }, [dispatch, getToken]);
 
+  const deleteAll = useCallback(async () => {
+    const token = await getToken();
+    return dispatch(deleteAllTransactions(token));
+  }, [dispatch, getToken]);
+
   return {
     fetchAll,
     create,
@@ -76,5 +82,6 @@ export const useTransactionActions = () => {
     remove,
     select,
     seedDummyData: seed,
+    deleteAll,
   };
 };

@@ -6,6 +6,7 @@ import {
   updateTransaction,
   deleteTransaction,
   seedDummyData,
+  deleteAllTransactions,
 } from "./thunks";
 
 interface TransactionsState {
@@ -114,6 +115,20 @@ export const transactionsSlice = createSlice({
     builder.addCase(deleteTransaction.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || "Failed to delete transaction";
+    });
+
+    // Delete all transactions
+    builder.addCase(deleteAllTransactions.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(deleteAllTransactions.fulfilled, (state) => {
+      state.loading = false;
+      state.items = [];
+    });
+    builder.addCase(deleteAllTransactions.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to delete all transactions";
     });
   },
 });
