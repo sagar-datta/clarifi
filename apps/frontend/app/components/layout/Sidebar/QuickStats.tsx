@@ -72,15 +72,6 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
       ? 0
       : ((monthlySpend - previousMonthSpend) / previousMonthSpend) * 100;
 
-  // Calculate savings goal progress
-  const savingsGoal = 5000; // This could come from user settings in the future
-  const currentSavings =
-    transactions
-      .filter((t) => t?.type === "income" && new Date(t.date) >= thirtyDaysAgo)
-      .reduce((acc, t) => acc + (t?.amount || 0), 0) - monthlySpend;
-
-  const savingsProgress = (currentSavings / savingsGoal) * 100;
-
   const stats: QuickStat[] = [
     {
       label: "Total Balance",
@@ -95,15 +86,6 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
         trend: monthlySpend > previousMonthSpend ? "up" : "down",
       },
       icon: CreditCard,
-    },
-    {
-      label: "Savings Goal",
-      value: formatCurrency(currentSavings),
-      change: {
-        value: Math.min(100, Math.max(0, Math.round(savingsProgress))),
-        trend: "up",
-      },
-      icon: PiggyBank,
     },
   ];
 

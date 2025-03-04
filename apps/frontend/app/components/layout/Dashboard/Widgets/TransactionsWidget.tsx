@@ -225,13 +225,13 @@ export function TransactionsWidget() {
                     {[1, 2].map((item) => (
                       <div
                         key={item}
-                        className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
+                        className="flex items-center justify-between rounded-lg bg-muted/30 dark:bg-muted/10 p-3"
                       >
                         <div className="space-y-1">
-                          <Skeleton className="h-4 w-[120px]" />
-                          <Skeleton className="h-3 w-[80px]" />
+                          <Skeleton className="h-4 w-[120px] dark:bg-muted/20" />
+                          <Skeleton className="h-3 w-[80px] dark:bg-muted/20" />
                         </div>
-                        <Skeleton className="h-4 w-[60px]" />
+                        <Skeleton className="h-4 w-[60px] dark:bg-muted/20" />
                       </div>
                     ))}
                   </div>
@@ -272,9 +272,11 @@ export function TransactionsWidget() {
                       defaultOpen
                       className="mb-4 last:mb-0"
                     >
-                      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors">
+                      <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors dark:hover:bg-accent/40">
                         <div className="flex items-center gap-3">
-                          <h4 className="capitalize">{group}</h4>
+                          <h4 className="capitalize text-foreground">
+                            {group}
+                          </h4>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>•</span>
                             <span>{transactions.length} items</span>
@@ -283,17 +285,17 @@ export function TransactionsWidget() {
                         <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
                       </CollapsibleTrigger>
                       <CollapsibleContent className="space-y-2 pt-2 pl-2 pr-2">
-                        <div className="space-y-2 divide-y divide-border/30">
+                        <div className="space-y-2 divide-y divide-border">
                           {transactions.map((transaction) => (
                             <div
                               key={transaction.id}
                               className="flex items-center justify-between pt-2 first:pt-0"
                             >
                               <div>
-                                <div className="font-medium text-sm">
+                                <div className="font-medium text-sm text-foreground">
                                   {transaction.description}
                                 </div>
-                                <div className="text-xs text-muted-foreground/70">
+                                <div className="text-xs text-muted-foreground">
                                   {format(
                                     new Date(transaction.date),
                                     "dd MMM yyyy"
@@ -304,8 +306,8 @@ export function TransactionsWidget() {
                                 className={cn(
                                   "font-medium text-sm",
                                   transaction.type === "expense"
-                                    ? "text-red-500/90"
-                                    : "text-green-500/90"
+                                    ? "text-red-500 dark:text-red-400"
+                                    : "text-green-500 dark:text-green-400"
                                 )}
                               >
                                 {transaction.type === "expense" ? "-" : "+"}

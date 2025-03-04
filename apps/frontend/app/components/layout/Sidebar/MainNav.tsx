@@ -41,18 +41,6 @@ const mainNavItems: NavItem[] = [
     icon: Receipt,
     description: "View and manage your transactions",
   },
-  {
-    title: "Budget",
-    href: "/budget",
-    icon: PiggyBank,
-    description: "Track your budgets and spending",
-  },
-  {
-    title: "Goals",
-    href: "/goals",
-    icon: Target,
-    description: "Set and monitor financial goals",
-  },
 ];
 
 const secondaryNavItems: NavItem[] = [

@@ -3,8 +3,6 @@ import { PageLayout } from "../components/layout/PageLayout";
 import { WidgetGrid, Widget } from "../components/layout/Dashboard/WidgetGrid";
 import { TransactionsWidget } from "../components/layout/Dashboard/Widgets/TransactionsWidget";
 import { MonthlyOverviewWidget } from "../components/layout/Dashboard/Widgets/MonthlyOverviewWidget";
-import { BudgetProgressWidget } from "../components/layout/Dashboard/Widgets/BudgetProgressWidget";
-import { SavingsGoalsWidget } from "../components/layout/Dashboard/Widgets/SavingsGoalsWidget";
 import { SpendingByCategoryWidget } from "../components/layout/Dashboard/Widgets/SpendingByCategoryWidget";
 
 export const metadata: Metadata = {
@@ -25,12 +23,6 @@ export default function DashboardPage() {
           </Widget>
           <Widget>
             <MonthlyOverviewWidget />
-          </Widget>
-          <Widget>
-            <BudgetProgressWidget />
-          </Widget>
-          <Widget>
-            <SavingsGoalsWidget />
           </Widget>
           <Widget fullWidth>
             <SpendingByCategoryWidget />
