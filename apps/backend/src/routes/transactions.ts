@@ -13,26 +13,6 @@ import type { TransactionType } from '../types/database.js';
 
 const router = Router();
 
-interface CreateTransactionBody {
-  amount: number;
-  description: string;
-  category: string;
-  type: TransactionType;
-  date: string;
-}
-
-interface UpdateTransactionBody {
-  amount?: number;
-  description?: string;
-  category?: string;
-  type?: TransactionType;
-  date?: string;
-}
-
-interface TransactionParams {
-  id: string;
-}
-
 /**
  * GET /transactions
  * List all transactions for the authenticated user

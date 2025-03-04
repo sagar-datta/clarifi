@@ -217,7 +217,7 @@ export function SpendingByCategoryWidget() {
                         <div className="text-sm font-medium">
                           {payload[0]?.payload?.name}
                         </div>
-                        {payload.map((entry, index) => (
+                        {[...payload].reverse().map((entry, index) => (
                           <div key={index} className="flex items-center gap-2">
                             <div
                               className="h-2 w-2 rounded-full"
