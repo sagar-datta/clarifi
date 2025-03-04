@@ -96,7 +96,7 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
           Quick Stats
         </h3>
       )}
-      <div className={cn("space-y-2", isCollapsed && "px-2")}>
+      <div className={cn("space-y-2", isCollapsed && "px-0.5")}>
         {stats.map((stat, index) => (
           <TooltipProvider key={index} delayDuration={0}>
             <Tooltip>
@@ -105,36 +105,22 @@ export function QuickStats({ className, isCollapsed }: QuickStatsProps) {
                   className={cn(
                     "transition-all duration-300",
                     isCollapsed
-                      ? "p-2 h-12 hover:bg-accent/50 flex items-center justify-center"
+                      ? "p-1.5 h-[100px] w-[56px] hover:bg-accent/50"
                       : "p-4 hover:bg-accent/50"
                   )}
                 >
                   {isCollapsed ? (
-                    <div className="relative flex flex-col items-center gap-1.5">
-                      {stat.change && (
-                        <div>
-                          {stat.change.trend === "up" ? (
-                            <ArrowUpIcon
-                              className={cn("h-3 w-3", {
-                                "text-red-500": stat.label === "Monthly Spend",
-                                "text-green-500":
-                                  stat.label !== "Monthly Spend",
-                              })}
-                            />
-                          ) : (
-                            <ArrowDownIcon
-                              className={cn("h-3 w-3", {
-                                "text-green-500":
-                                  stat.label === "Monthly Spend",
-                                "text-red-500": stat.label !== "Monthly Spend",
-                              })}
-                            />
-                          )}
-                        </div>
-                      )}
-                      {stat.icon && (
-                        <stat.icon className="h-4 w-4 text-muted-foreground" />
-                      )}
+                    <div className="h-full flex items-center justify-center">
+                      <div className="-rotate-90 whitespace-nowrap flex flex-col items-center">
+                        <span className="text-[10px] font-medium text-muted-foreground">
+                          {stat.label === "Monthly Spend"
+                            ? "Monthly"
+                            : "Balance"}
+                        </span>
+                        <span className="text-xs font-bold tracking-tight">
+                          {stat.value}
+                        </span>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-2">
