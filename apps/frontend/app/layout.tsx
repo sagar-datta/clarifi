@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Shell } from "./components/layout/Shell";
@@ -9,11 +9,14 @@ import { Toaster } from "@/app/components/ui/toast/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+};
+
 export const metadata: Metadata = {
   title: "ClariFi - Personal Finance Management",
   description:
     "Track your finances, set budgets, and achieve your financial goals",
-  colorScheme: "light dark",
 };
 
 export default function RootLayout({

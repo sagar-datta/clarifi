@@ -1,4 +1,4 @@
-import { Metadata, Viewport } from "next";
+import { Metadata } from "next";
 import { PageLayout } from "../components/layout/PageLayout";
 import { WidgetGrid, Widget } from "../components/layout/Dashboard/WidgetGrid";
 import { TransactionsWidget } from "../components/layout/Dashboard/Widgets/TransactionsWidget";
@@ -8,10 +8,6 @@ import { SpendingByCategoryWidget } from "../components/layout/Dashboard/Widgets
 export const metadata: Metadata = {
   title: "Dashboard | ClariFi",
   description: "Your financial overview",
-};
-
-export const viewport: Viewport = {
-  colorScheme: "dark light",
 };
 
 export default function DashboardPage() {
