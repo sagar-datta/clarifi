@@ -24,6 +24,14 @@ export function ClerkThemeProvider({
           colorInputText: isDark ? "#f7f4f1" : "#29241D",
           colorTextSecondary: isDark ? "#bfb4a9" : "#6B635A",
         },
+        elements: {
+          formButtonPrimary:
+            "bg-primary text-primary-foreground hover:bg-primary/90 !border-0",
+          formFieldInput: "rounded-md bg-background border border-input",
+          card: "rounded-lg",
+          headerTitle: "text-foreground",
+          headerSubtitle: "text-muted-foreground",
+        },
       }}
     >
       {children}
