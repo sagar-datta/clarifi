@@ -22,13 +22,15 @@ export function Header({ className }: { className?: string }) {
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
         <div className="flex items-center gap-2">
-          {/* Quick Add Transaction */}
-          <AddTransactionDialog>
-            <Button variant="ghost" size="icon">
-              <Plus className="h-5 w-5" />
-              <span className="sr-only">Add transaction</span>
-            </Button>
-          </AddTransactionDialog>
+          {/* Quick Add Transaction - Only show when signed in */}
+          {isSignedIn && (
+            <AddTransactionDialog>
+              <Button variant="ghost" size="icon">
+                <Plus className="h-5 w-5" />
+                <span className="sr-only">Add transaction</span>
+              </Button>
+            </AddTransactionDialog>
+          )}
 
           {isSignedIn && <DatabaseActionsDialog />}
 
