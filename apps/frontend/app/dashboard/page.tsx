@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import { PageLayout } from "../components/layout/PageLayout";
 import { WidgetGrid, Widget } from "../components/layout/Dashboard/WidgetGrid";
-import { TransactionsWidget } from "../components/layout/Dashboard/Widgets/TransactionsWidget";
-import { MonthlyOverviewWidget } from "../components/layout/Dashboard/Widgets/MonthlyOverviewWidget";
-import { SpendingByCategoryWidget } from "../components/layout/Dashboard/Widgets/SpendingByCategoryWidget";
+import { TransactionsWidget } from "@/app/components/layout/Dashboard/Widgets/TransactionsWidget/index";
+import { MonthlyOverviewWidget } from "@/app/components/layout/Dashboard/Widgets/MonthlyOverviewWidget";
+import { SpendingByCategoryWidget } from "@/app/components/layout/Dashboard/Widgets/SpendingByCategoryWidget";
 
 export const metadata: Metadata = {
   title: "Dashboard | ClariFi",
