@@ -10,7 +10,7 @@ clarifi/
 │   ├── frontend/     # Next.js web application
 │   └── backend/      # Express API server
 ├── packages/         # Shared packages (types, utils, etc.)
-└── turbo.json       # Turborepo configuration
+└── turbo.json        # Turborepo configuration
 ```
 
 ## 🚀 Tech Stack
