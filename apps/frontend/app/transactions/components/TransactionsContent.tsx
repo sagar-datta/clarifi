@@ -1,12 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState, useEffect } from "react";
-import { useAppSelector } from "@/app/lib/redux/hooks";
-import {
-  selectTransactions,
-  selectTransactionsLoading,
-} from "@/app/lib/redux/slices/transactions/selectors";
-import { useTransactionActions } from "@/app/lib/redux/hooks/transactions";
+import { useCallback, useMemo, useState } from "react";
+import { useTransactionsQuery } from "@/app/lib/hooks/useTransactionsQuery";
 import { DateRange } from "./types";
 import { TransactionsHeader } from "./TransactionsHeader";
 import { TransactionsFilters } from "./TransactionsFilters";
@@ -18,9 +13,7 @@ import { EditTransactionDialog } from "@/app/components/shared/transactions/edit
 import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 
 export function TransactionsContent() {
-  const transactions = useAppSelector(selectTransactions) ?? [];
-  const isLoading = useAppSelector(selectTransactionsLoading);
-  const { fetchAll } = useTransactionActions();
+  const { data: transactions = [], isLoading } = useTransactionsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
     from: addDays(new Date(), -30), // Last 30 days
@@ -35,71 +28,51 @@ export function TransactionsContent() {
     useState<Transaction | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
-
   // Get unique categories from transactions
   const availableCategories = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          (transactions ?? [])
-            .filter((t): t is Transaction => t !== null)
-            .map((t) => t.category)
-        )
-      ),
+    () => Array.from(new Set(transactions.map((t) => t.category))),
     [transactions]
   );
 
   const filteredTransactions = useMemo(
     () =>
-      (transactions ?? [])
-        .filter(
-          (transaction): transaction is Transaction => transaction !== null
-        )
-        .filter((transaction) => {
-          try {
-            const matchesSearch = transaction?.description
-              ?.toLowerCase()
-              ?.includes(searchTerm.toLowerCase());
+      transactions.filter((transaction) => {
+        try {
+          const matchesSearch = transaction.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
 
-            const withinDateRange = transaction?.date
-              ? isWithinInterval(new Date(transaction.date), {
-                  start: startOfDay(dateRange.from),
-                  end: endOfDay(dateRange.to),
-                })
-              : false;
+          const withinDateRange = isWithinInterval(new Date(transaction.date), {
+            start: startOfDay(dateRange.from),
+            end: endOfDay(dateRange.to),
+          });
 
-            const matchesCategories =
-              activeFilters.categories.length === 0 ||
-              (transaction?.category &&
-                activeFilters.categories.includes(transaction.category));
+          const matchesCategories =
+            activeFilters.categories.length === 0 ||
+            activeFilters.categories.includes(transaction.category);
 
-            const matchesType =
-              activeFilters.type === "all" ||
-              activeFilters.type === transaction?.type;
+          const matchesType =
+            activeFilters.type === "all" ||
+            activeFilters.type === transaction.type;
 
-            const matchesAmountRange =
-              (activeFilters.amountRange.min === undefined ||
-                (transaction?.amount &&
-                  transaction.amount >= activeFilters.amountRange.min)) &&
-              (activeFilters.amountRange.max === undefined ||
-                (transaction?.amount &&
-                  transaction.amount <= activeFilters.amountRange.max));
+          const matchesAmountRange =
+            (activeFilters.amountRange.min === undefined ||
+              transaction.amount >= activeFilters.amountRange.min) &&
+            (activeFilters.amountRange.max === undefined ||
+              transaction.amount <= activeFilters.amountRange.max);
 
-            return (
-              matchesSearch &&
-              withinDateRange &&
-              matchesCategories &&
-              matchesType &&
-              matchesAmountRange
-            );
-          } catch (error) {
-            console.error("Error filtering transaction:", error);
-            return false;
-          }
-        }),
+          return (
+            matchesSearch &&
+            withinDateRange &&
+            matchesCategories &&
+            matchesType &&
+            matchesAmountRange
+          );
+        } catch (error) {
+          console.error("Error filtering transaction:", error);
+          return false;
+        }
+      }),
     [transactions, searchTerm, dateRange, activeFilters]
   );
 

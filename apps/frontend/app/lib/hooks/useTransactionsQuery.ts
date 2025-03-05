@@ -13,6 +13,7 @@ export function useTransactionsQuery() {
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Keep unused data in cache for 30 minutes
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    select: (data) => getTransactionsFromQuery(data),
   });
 }
 

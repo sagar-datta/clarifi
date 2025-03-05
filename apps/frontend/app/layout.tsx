@@ -7,6 +7,7 @@ import { ReduxProvider } from "./providers/ReduxProvider";
 import { ClerkThemeProvider } from "./providers/ClerkThemeProvider";
 import { Toaster } from "@/app/components/ui/toast/toaster";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider";
+import { PrefetchProvider } from "./components/providers/PrefetchProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,8 +17,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "ClariFi - Personal Finance Management",
-  description:
-    "Track your finances, set budgets, and achieve your financial goals",
+  description: "Track your finances and reach financial clarity.",
 };
 
 export default function RootLayout({
@@ -35,7 +35,9 @@ export default function RootLayout({
           <ThemeProvider>
             <ClerkThemeProvider>
               <ReduxProvider>
-                <Shell>{children}</Shell>
+                <PrefetchProvider>
+                  <Shell>{children}</Shell>
+                </PrefetchProvider>
               </ReduxProvider>
             </ClerkThemeProvider>
           </ThemeProvider>
