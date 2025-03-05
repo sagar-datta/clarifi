@@ -86,7 +86,7 @@ export function SpendingByCategoryWidget() {
 
   if (isLoading) {
     return (
-      <Card className="h-[600px] sm:h-[500px] flex flex-col">
+      <Card className="h-[575px] sm:h-[400px] flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-8 w-[200px]" />
@@ -107,7 +107,7 @@ export function SpendingByCategoryWidget() {
   const { categoryGroups, chartData, chartConfig } = data;
 
   return (
-    <Card className="h-[600px] sm:h-[500px]flex flex-col">
+    <Card className="h-[575px] sm:h-[400px] flex flex-col">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0 pb-2">
         <CardTitle className="text-base font-medium">
           Spending by Category

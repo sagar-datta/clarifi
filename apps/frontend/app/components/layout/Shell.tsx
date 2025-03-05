@@ -27,7 +27,23 @@ interface ShellProps {
 export function Shell({ children }: ShellProps) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = React.useState(false);
+  const [isLargeScreen, setIsLargeScreen] = React.useState(false);
   const { isLoaded, isSignedIn } = useUser();
+
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+
+    // Initial check
+    checkScreenSize();
+
+    // Add resize listener
+    window.addEventListener("resize", checkScreenSize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   // Animation values
   const sidebarWidth = isDesktopCollapsed ? 80 : 240;
@@ -107,26 +123,46 @@ export function Shell({ children }: ShellProps) {
       )}
 
       {/* Main content area */}
-      <div
+      <motion.div
+        layout
+        animate={{
+          marginLeft: isSignedIn
+            ? isLargeScreen
+              ? isDesktopCollapsed
+                ? 80
+                : 240
+              : 0
+            : 0,
+          width: isSignedIn
+            ? isLargeScreen
+              ? `calc(100% - ${isDesktopCollapsed ? 80 : 240}px)`
+              : "100%"
+            : "100%",
+        }}
+        transition={isLargeScreen ? animationConfig : { duration: 0 }}
         className={cn(
-          "flex-1 flex flex-col bg-background",
-          isSignedIn ? "lg:pl-[240px] pl-0" : "",
-          isSignedIn && isDesktopCollapsed ? "lg:pl-[80px]" : ""
+          "flex-1 flex flex-col bg-background min-h-screen relative",
+          !isSignedIn && "pl-0"
         )}
       >
-        <div
-          className={cn(
-            "fixed top-0 right-0 z-40 bg-background h-16",
-            isSignedIn ? "lg:w-[calc(100%-240px)] w-full" : "w-full",
-            isSignedIn && isDesktopCollapsed ? "lg:w-[calc(100%-80px)]" : ""
-          )}
+        <motion.div
+          layout
+          animate={{
+            width: isSignedIn
+              ? isLargeScreen
+                ? `calc(100% - ${isDesktopCollapsed ? 80 : 240}px)`
+                : "100%"
+              : "100%",
+          }}
+          transition={isLargeScreen ? animationConfig : { duration: 0 }}
+          className={cn("sticky top-0 right-0 z-40 bg-background h-16")}
         >
           <Header className="h-full" />
-        </div>
-        <div className="mt-14 md:mt-8 flex-1">
+        </motion.div>
+        <main className="flex-1">
           <div className="p-4 md:p-8">{children}</div>
-        </div>
-      </div>
+        </main>
+      </motion.div>
     </div>
   );
 }
