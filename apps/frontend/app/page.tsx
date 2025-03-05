@@ -1,6 +1,6 @@
 "use client";
 
-import { SignUpButton, useAuth } from "@clerk/nextjs";
+import { SignUpButton, useAuth, useSignIn } from "@clerk/nextjs";
 import { Button } from "./components/ui/button/Button";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,25 @@ import { useEffect } from "react";
 export default function LandingPage() {
   const { isSignedIn } = useAuth();
   const router = useRouter();
+  const { signIn, isLoaded } = useSignIn();
+
+  const signInWithDemo = async () => {
+    if (!isLoaded) return;
+
+    try {
+      const result = await signIn.create({
+        identifier: "demo@clarifi.app",
+        password: "demo-password-123",
+      });
+
+      if (result.status === "complete") {
+        await result.createdSessionId;
+        window.location.href = "/dashboard";
+      }
+    } catch (err) {
+      console.error("Error signing in with demo account:", err);
+    }
+  };
 
   useEffect(() => {
     if (isSignedIn) {
@@ -42,6 +61,9 @@ export default function LandingPage() {
               Get Started <ArrowRight className="h-4 w-4" />
             </Button>
           </SignUpButton>
+          <Button size="lg" variant="outline" onClick={signInWithDemo}>
+            Try Demo Account
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-8 pt-12 sm:grid-cols-2 md:grid-cols-3">
