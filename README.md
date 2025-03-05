@@ -2,6 +2,8 @@
 
 ClariFi is a modern, full-stack personal finance management application built with a focus on clarity and user experience. The project is structured as a monorepo using Turborepo for efficient build and dependency management.
 
+🌐 **Live Demo**: [https://clarifi-finance.vercel.app/](https://clarifi-finance.vercel.app/)
+
 ## 🏗 Project Structure
 
 ```
@@ -17,7 +19,7 @@ clarifi/
 
 ### Frontend (`apps/frontend`)
 
-- **Framework**: Next.js 14 with App Router
+- **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **State Management**:
   - Redux Toolkit for global state
@@ -48,8 +50,8 @@ clarifi/
 
 ### Infrastructure
 
-- **Frontend Hosting**: GitHub Pages
-- **Backend Hosting**: Railway
+- **Frontend Hosting**: Vercel ([clarifi-finance.vercel.app](https://clarifi-finance.vercel.app/))
+- **Backend Hosting**: Render
 - **Database Hosting**: Supabase
 - **Authentication Service**: Clerk
 - **Development Tools**:
@@ -57,6 +59,20 @@ clarifi/
   - Turborepo (Monorepo Build System)
   - ESLint & Prettier (Code Quality)
   - TypeScript (Type Safety)
+
+## 🌐 Deployment
+
+The application is deployed and accessible at:
+
+- Frontend: [https://clarifi-finance.vercel.app/](https://clarifi-finance.vercel.app/)
+- Backend: [https://clarifi-backend.onrender.com](https://clarifi-backend.onrender.com)
+
+### Deployment Infrastructure
+
+- **Frontend**: Hosted on Vercel with automatic deployments from the main branch
+- **Backend**: Hosted on Render with automatic deployments
+- **Database**: Managed PostgreSQL instance on Supabase
+- **Authentication**: Clerk development instance for secure user management
 
 ## 🛠 Development
 
