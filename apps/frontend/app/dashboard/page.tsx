@@ -1,10 +1,7 @@
 import { Metadata } from "next";
 import { PageLayout } from "../components/layout/PageLayout";
-import { WidgetGrid, Widget } from "../components/layout/Dashboard/WidgetGrid";
-import { TransactionsWidget } from "@/app/components/layout/Dashboard/Widgets/TransactionsWidget/index";
-import { MonthlyOverviewWidget } from "@/app/components/layout/Dashboard/Widgets/MonthlyOverviewWidget/index";
-import { SpendingByCategoryWidget } from "@/app/components/layout/Dashboard/Widgets/SpendingByCategoryWidget/index";
 import { DashboardDataPrefetch } from "./DashboardDataPrefetch";
+import { DashboardWidgets } from "../components/layout/Dashboard/DashboardWidgets";
 
 export const metadata: Metadata = {
   title: "Dashboard | ClariFi",
@@ -22,17 +19,7 @@ export default function DashboardPage() {
             Your financial overview at a glance
           </p>
         </div>
-        <WidgetGrid>
-          <Widget>
-            <TransactionsWidget />
-          </Widget>
-          <Widget>
-            <MonthlyOverviewWidget />
-          </Widget>
-          <Widget fullWidth>
-            <SpendingByCategoryWidget />
-          </Widget>
-        </WidgetGrid>
+        <DashboardWidgets />
       </div>
     </PageLayout>
   );
