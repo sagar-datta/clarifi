@@ -33,7 +33,7 @@ export function Shell({ children }: ShellProps) {
   const { isLoaded, isSignedIn } = useUser();
 
   // Animation values
-  const sidebarWidth = isDesktopCollapsed ? 72 : 240;
+  const sidebarWidth = isDesktopCollapsed ? 80 : 240;
   const animationConfig = {
     type: "spring",
     stiffness: 200,

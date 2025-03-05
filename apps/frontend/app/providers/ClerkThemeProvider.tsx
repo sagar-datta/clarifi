@@ -16,6 +16,14 @@ export function ClerkThemeProvider({
     <ClerkProvider
       appearance={{
         baseTheme: isDark ? dark : undefined,
+        variables: {
+          colorBackground: isDark ? "#29241D" : "#FBFAF8",
+          colorText: isDark ? "#E8E6E3" : "#29241D",
+          colorPrimary: isDark ? "#E8E6E3" : "#29241D",
+          colorInputBackground: isDark ? "#332D24" : "#F5F4F1",
+          colorInputText: isDark ? "#E8E6E3" : "#29241D",
+          colorTextSecondary: isDark ? "#A39E99" : "#6B635A",
+        },
       }}
     >
       {children}
