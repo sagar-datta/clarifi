@@ -17,12 +17,12 @@ export function ClerkThemeProvider({
       appearance={{
         baseTheme: isDark ? dark : undefined,
         variables: {
-          colorBackground: isDark ? "#29241D" : "#FBFAF8",
-          colorText: isDark ? "#E8E6E3" : "#29241D",
-          colorPrimary: isDark ? "#E8E6E3" : "#29241D",
-          colorInputBackground: isDark ? "#332D24" : "#F5F4F1",
-          colorInputText: isDark ? "#E8E6E3" : "#29241D",
-          colorTextSecondary: isDark ? "#A39E99" : "#6B635A",
+          colorBackground: isDark ? "#1f1915" : "#e9e3d8",
+          colorText: isDark ? "#f7f4f1" : "#29241D",
+          colorPrimary: isDark ? "#f7f4f1" : "#29241D",
+          colorInputBackground: isDark ? "#252019" : "#e2dcd1",
+          colorInputText: isDark ? "#f7f4f1" : "#29241D",
+          colorTextSecondary: isDark ? "#bfb4a9" : "#6B635A",
         },
       }}
     >
