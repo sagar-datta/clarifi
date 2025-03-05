@@ -174,23 +174,6 @@ export function TransactionsWidget() {
     fetchAll();
   }, [fetchAll]);
 
-  const handleSeedData = async () => {
-    try {
-      setIsSeedingData(true);
-      console.log("Starting to seed data...");
-      const seedResult = await seedDummyData();
-      console.log("Seed complete, fetching updated transactions...");
-      // Small delay to ensure state updates
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await fetchAll();
-      console.log("Fetch complete");
-    } catch (error) {
-      console.error("Failed to seed data:", error);
-    } finally {
-      setIsSeedingData(false);
-    }
-  };
-
   const isLoadingState = isLoading || isSeedingData;
 
   return (
@@ -263,15 +246,28 @@ export function TransactionsWidget() {
                     >
                       <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors dark:hover:bg-accent/40">
                         <div className="flex items-center gap-3">
-                          <h4 className="capitalize text-foreground">
-                            {group === "older" ? "Previous Months" : group}
+                          <h4 className="capitalize text-primary">
+                            {group === "older"
+                              ? transactions.every(
+                                  (t, i, arr) =>
+                                    i === 0 ||
+                                    new Date(t.date).getMonth() ===
+                                      new Date(arr[0].date).getMonth()
+                                )
+                                ? format(new Date(transactions[0].date), "MMMM")
+                                : "Previous Months"
+                              : group === "thisWeek"
+                                ? "This Week"
+                                : group === "thisMonth"
+                                  ? format(new Date(), "MMMM")
+                                  : group}
                           </h4>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2 text-xs text-primary/60">
                             <span>•</span>
                             <span>{transactions.length} items</span>
                           </div>
                         </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+                        <ChevronDown className="h-4 w-4 text-primary transition-all duration-200 ease-in-out group-data-[state=open]:rotate-180" />
                       </CollapsibleTrigger>
                       <CollapsibleContent className="space-y-2 pt-2 pl-2 pr-2">
                         <div className="space-y-2 divide-y divide-border">
