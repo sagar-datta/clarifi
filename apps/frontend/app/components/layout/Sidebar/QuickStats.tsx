@@ -87,23 +87,6 @@ export function QuickStats({
       ? 0
       : ((monthlySpend - previousMonthSpend) / previousMonthSpend) * 100;
 
-  // Calculate largest expense category
-  const categoryTotals = transactions
-    .filter(
-      (t) =>
-        t?.type === "expense" &&
-        new Date(t.date) >= currentMonthStart &&
-        new Date(t.date) <= currentMonthEnd
-    )
-    .reduce(
-      (acc, t) => {
-        if (!t?.category) return acc;
-        acc[t.category] = (acc[t.category] || 0) + t.amount;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
   // Calculate daily average
   const daysInCurrentMonth = currentMonthEnd.getDate();
   const daysInPreviousMonth = previousMonthEnd.getDate();
