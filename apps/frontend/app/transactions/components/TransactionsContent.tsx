@@ -233,7 +233,9 @@ export function TransactionsContent() {
                                       Date
                                     </TableHead>
                                     <TableHead>Description</TableHead>
-                                    <TableHead>Category</TableHead>
+                                    <TableHead className="w-[180px]">
+                                      Category
+                                    </TableHead>
                                     <TableHead className="text-right w-[120px]">
                                       Amount
                                     </TableHead>
