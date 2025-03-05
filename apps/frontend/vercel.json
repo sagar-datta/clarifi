@@ -1,7 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "cd ../.. && pnpm install --no-frozen-lockfile && cd apps/frontend && pnpm add tailwindcss@latest postcss@latest autoprefixer@latest && pnpm build",
-  "outputDirectory": "apps/frontend/.next",
-  "installCommand": "pnpm install --no-frozen-lockfile"
+  "framework": "nextjs"
 }
