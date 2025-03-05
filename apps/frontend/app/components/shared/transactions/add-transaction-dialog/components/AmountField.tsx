@@ -9,9 +9,10 @@ import {
 import { Input } from "@/app/components/ui/input/Input";
 import { FormFieldProps } from "../types";
 import { ControllerRenderProps } from "react-hook-form";
+import { FormValues } from "../schema";
 
 interface AmountInputProps {
-  field: ControllerRenderProps<any, "amount">;
+  field: ControllerRenderProps<FormValues, "amount">;
   isSubmitting?: boolean;
 }
 

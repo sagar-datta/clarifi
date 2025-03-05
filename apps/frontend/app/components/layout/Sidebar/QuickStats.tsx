@@ -104,12 +104,6 @@ export function QuickStats({
       {} as Record<string, number>
     );
 
-  const largestCategory = Object.entries(categoryTotals).reduce(
-    (max, [category, amount]) =>
-      amount > (max.amount || 0) ? { category, amount } : max,
-    { category: "", amount: 0 }
-  );
-
   // Calculate daily average
   const daysInCurrentMonth = currentMonthEnd.getDate();
   const daysInPreviousMonth = previousMonthEnd.getDate();

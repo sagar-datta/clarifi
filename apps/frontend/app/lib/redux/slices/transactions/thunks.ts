@@ -13,13 +13,14 @@ interface ThunkConfig {
   rejectValue: string;
 }
 
-// Helper function to handle API errors
-const handleApiError = (error: any): never => {
-  if (error.response?.data?.message) {
-    throw new Error(error.response.data.message);
-  }
-  throw new Error("An unexpected error occurred");
-};
+interface ApiError {
+  message?: string;
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
 export const seedDummyData = createAsyncThunk<
   Transaction[],
@@ -31,8 +32,9 @@ export const seedDummyData = createAsyncThunk<
       method: "POST",
     });
     return data.data;
-  } catch (error: any) {
-    return rejectWithValue(error.message || "Failed to seed dummy data");
+  } catch (error) {
+    const err = error as ApiError;
+    return rejectWithValue(err.message || "Failed to seed dummy data");
   }
 });
 
@@ -47,8 +49,9 @@ export const fetchTransactions = createAsyncThunk<
       token
     );
     return data.data;
-  } catch (error: any) {
-    return rejectWithValue(error.message || "Failed to fetch transactions");
+  } catch (error) {
+    const err = error as ApiError;
+    return rejectWithValue(err.message || "Failed to fetch transactions");
   }
 });
 
@@ -69,8 +72,9 @@ export const createTransaction = createAsyncThunk<
         }
       );
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to create transaction");
+    } catch (error) {
+      const err = error as ApiError;
+      return rejectWithValue(err.message || "Failed to create transaction");
     }
   }
 );
@@ -92,8 +96,9 @@ export const updateTransaction = createAsyncThunk<
         }
       );
       return responseData.data;
-    } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to update transaction");
+    } catch (error) {
+      const err = error as ApiError;
+      return rejectWithValue(err.message || "Failed to update transaction");
     }
   }
 );
@@ -110,8 +115,9 @@ export const deleteTransaction = createAsyncThunk<
         method: "DELETE",
       });
       return id;
-    } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to delete transaction");
+    } catch (error) {
+      const err = error as ApiError;
+      return rejectWithValue(err.message || "Failed to delete transaction");
     }
   }
 );
@@ -125,10 +131,9 @@ export const deleteAllTransactions = createAsyncThunk<
     await fetchWithAuth("/transactions/all", token, {
       method: "DELETE",
     });
-  } catch (error: any) {
-    return rejectWithValue(
-      error.message || "Failed to delete all transactions"
-    );
+  } catch (error) {
+    const err = error as ApiError;
+    return rejectWithValue(err.message || "Failed to delete all transactions");
   }
 });
 
@@ -141,8 +146,9 @@ export const fetchAll = createAsyncThunk<Transaction[], void, ThunkConfig>(
         null
       );
       return data.data;
-    } catch (error: any) {
-      return rejectWithValue(error.message || "Failed to fetch transactions");
+    } catch (error) {
+      const err = error as ApiError;
+      return rejectWithValue(err.message || "Failed to fetch transactions");
     }
   }
 );

@@ -26,7 +26,7 @@ export function useMonthlyOverviewQuery() {
           if (!t?.date) return false;
           const date = new Date(t.date);
           return date >= startOfDay(thirtyDaysAgo) && date <= endOfDay(now);
-        } catch (error) {
+        } catch {
           return false;
         }
       });
@@ -47,7 +47,7 @@ export function useMonthlyOverviewQuery() {
           return (
             date >= startOfDay(sixtyDaysAgo) && date < startOfDay(thirtyDaysAgo)
           );
-        } catch (error) {
+        } catch {
           return false;
         }
       });

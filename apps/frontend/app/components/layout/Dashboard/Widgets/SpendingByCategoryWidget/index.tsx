@@ -6,12 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card/Card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components/ui/tabs/Tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs/Tabs";
 import { formatCurrency } from "@/app/lib/utils";
 import { useState } from "react";
 import {
@@ -24,7 +19,6 @@ import { useSpendingChartQuery } from "@/app/lib/hooks/useSpendingChartQuery";
 import { ChartTooltipContent } from "./components/ChartTooltipContent";
 import { ChartLegendContent } from "./components/ChartLegendContent";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
-import { cn } from "@/app/lib/utils";
 import { CategoryGroup, ChartConfigType, ChartDataType } from "./types";
 
 interface MobileSpendingListProps {

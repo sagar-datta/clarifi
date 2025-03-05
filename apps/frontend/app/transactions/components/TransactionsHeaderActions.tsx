@@ -45,7 +45,7 @@ export function TransactionsHeaderActions({
         title: "Export successful",
         description: `${filteredTransactions.length} transactions exported to CSV`,
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Export failed",
         description: "There was an error exporting your transactions",

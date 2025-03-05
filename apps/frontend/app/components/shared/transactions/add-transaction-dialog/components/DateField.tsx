@@ -12,9 +12,10 @@ import { format } from "date-fns";
 import { cn } from "@/app/lib/utils";
 import { FormFieldProps } from "../types";
 import { ControllerRenderProps } from "react-hook-form";
+import { FormValues } from "../schema";
 
 interface DateInputProps {
-  field: ControllerRenderProps<any, "date">;
+  field: ControllerRenderProps<FormValues, "date">;
   isSubmitting?: boolean;
 }
 
