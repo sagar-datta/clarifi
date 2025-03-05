@@ -27,7 +27,7 @@ export type NodeEnv = 'development' | 'production' | 'test';
  *
  * Security note: This prevents accidental deployment with missing credentials.
  */
-export const config = cleanEnv(process.env, {
+const rawConfig = cleanEnv(process.env, {
   NODE_ENV: str({
     choices: ['development', 'production', 'test'],
     default: 'development',
@@ -44,8 +44,31 @@ export const config = cleanEnv(process.env, {
   SUPABASE_SERVICE_ROLE_KEY: str(),
 
   // CORS Configuration
-  FRONTEND_URL: url({ default: 'http://localhost:3000' }),
+  FRONTEND_URL: str({
+    desc: 'Comma-separated list of allowed frontend URLs',
+    example: 'http://localhost:3000,https://myapp.com',
+  }),
 });
+
+export const config = {
+  nodeEnv: rawConfig.NODE_ENV as NodeEnv,
+  port: rawConfig.PORT,
+
+  clerk: {
+    secretKey: rawConfig.CLERK_SECRET_KEY,
+    pubKey: rawConfig.CLERK_PUB_KEY,
+  },
+
+  supabase: {
+    url: rawConfig.SUPABASE_URL,
+    anonKey: rawConfig.SUPABASE_ANON_KEY,
+    serviceRoleKey: rawConfig.SUPABASE_SERVICE_ROLE_KEY,
+  },
+
+  cors: {
+    allowedOrigins: rawConfig.FRONTEND_URL.split(',').map((url) => url.trim()),
+  },
+} as const;
 
 /**
  * Typed configuration object used throughout the application.
@@ -58,23 +81,3 @@ export const config = cleanEnv(process.env, {
  * Note: Using 'as const' to ensure maximum type safety
  * and prevent accidental mutation of config values.
  */
-export default {
-  nodeEnv: config.NODE_ENV as NodeEnv,
-  port: config.PORT,
-
-  clerk: {
-    secretKey: config.CLERK_SECRET_KEY,
-    pubKey: config.CLERK_PUB_KEY,
-  },
-
-  supabase: {
-    url: config.SUPABASE_URL,
-    anonKey: config.SUPABASE_ANON_KEY,
-    serviceRoleKey: config.SUPABASE_SERVICE_ROLE_KEY,
-  },
-
-  cors: {
-    // Convert readonly array to mutable array for cors middleware compatibility
-    allowedOrigins: Array.from([config.FRONTEND_URL]),
-  },
-} as const;
