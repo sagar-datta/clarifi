@@ -145,29 +145,28 @@ The application is deployed and accessible at:
 
 - **Secure Authentication**
 
-  - Email/Password login
-  - OAuth providers (coming soon)
+  - Email/Password login with Clerk
   - Demo account access
+  - Social login providers (planned)
 
 - **Transaction Management**
 
   - Add/Edit/Delete transactions
-  - Categorisation
-  - Search and filtering
-  - Bulk operations
+  - Smart categorisation
+  - Advanced search and filtering
 
 - **Financial Insights**
 
-  - Spending patterns
+  - Real-time spending patterns
   - Category breakdowns
   - Trend analysis
   - Budget tracking
 
 - **User Experience**
   - Responsive design
-  - Dark/Light themes
-  - Intuitive interface
-  - Real-time updates
+  - Dark/Light themes with system preference detection
+  - Intuitive interface with animations
+  - Real-time data updates
 
 ## 📱 Progressive Web App
 
@@ -180,12 +179,12 @@ ClariFi is configured as a Progressive Web App (PWA) with:
 
 ## 🔒 Security
 
-- JWT-based authentication
+- JWT-based authentication with Clerk
 - CORS protection
 - Rate limiting
-- Secure password handling
-- HTTP-only cookies
-- XSS protection
+- Secure environment variable handling
+- XSS protection via React's built-in safeguards
+- Type-safe database operations
 
 ## 🤝 Contributing
 
