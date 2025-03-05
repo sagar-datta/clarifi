@@ -75,15 +75,17 @@ export function Shell({ children }: ShellProps) {
               "fixed left-0 top-0 h-screen hidden lg:flex flex-col border-r bg-background z-40"
             )}
           >
-            <div className="flex h-16 items-center justify-between border-b px-4">
-              <Link href="/" className={cn("flex items-center")}>
+            <div className="flex h-16 items-center justify-center">
+              <Link href="/" className={cn("flex items-center justify-center")}>
                 <span
                   className={cn(
-                    "text-lg font-semibold",
-                    isDesktopCollapsed && "opacity-0"
+                    "text-lg font-semibold flex items-center gap-2"
                   )}
                 >
-                  ClariFi
+                  <span>🏦</span>
+                  <span className={cn(isDesktopCollapsed && "hidden")}>
+                    ClariFi
+                  </span>
                 </span>
               </Link>
             </div>
@@ -119,11 +121,11 @@ export function Shell({ children }: ShellProps) {
             width: isSignedIn ? `calc(100% - ${sidebarWidth}px)` : "100%",
           }}
           transition={animationConfig}
-          className={cn("fixed top-0 right-0 z-40 bg-background h-16 border-b")}
+          className={cn("fixed top-0 right-0 z-40 bg-background h-16")}
         >
           <Header className="h-full" />
         </motion.div>
-        <div className="mt-16 flex-1">
+        <div className="mt-8 flex-1">
           <div className="p-4 md:p-8">{children}</div>
         </div>
       </motion.div>
@@ -149,13 +151,15 @@ function DesktopSidebar({ isCollapsed }: { isCollapsed: boolean }) {
       <div
         className={cn(
           "flex flex-col gap-4 flex-none",
-          isCollapsed ? "p-2" : "p-6"
+          isCollapsed ? "px-2" : "px-6"
         )}
       >
         <MainNav isCollapsed={isCollapsed} />
+      </div>
+      <div className={cn(isCollapsed ? "p-2" : "p-6")}>
         <Separator />
         {!isCollapsed && (
-          <h3 className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground mt-4">
             Quick Stats
           </h3>
         )}

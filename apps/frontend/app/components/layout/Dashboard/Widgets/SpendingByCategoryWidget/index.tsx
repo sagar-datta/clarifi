@@ -104,9 +104,9 @@ export function SpendingByCategoryWidget() {
                   />
                 )}
               />
-              {[...categoryGroups].reverse().map((group) => (
+              {[...categoryGroups].reverse().map((group, index) => (
                 <Bar
-                  key={group}
+                  key={`${group}-${index}`}
                   name={chartConfig[group].label}
                   dataKey={group}
                   stackId="a"
