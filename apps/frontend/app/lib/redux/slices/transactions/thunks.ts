@@ -131,3 +131,18 @@ export const deleteAllTransactions = createAsyncThunk<
     );
   }
 });
+
+export const fetchAll = createAsyncThunk<Transaction[], void, ThunkConfig>(
+  "transactions/fetchAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data: TransactionsResponse = await fetchWithAuth(
+        "/transactions",
+        null
+      );
+      return data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch transactions");
+    }
+  }
+);

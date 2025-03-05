@@ -1,13 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
-import {
-  useTransactions,
-  useTransactionsLoading,
-  useTransactionActions,
-  useTransactionsError,
-} from "@/app/lib/redux/hooks";
-import { Transaction } from "@/app/lib/redux/slices/transactions/types";
+import { useState, useMemo, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/app/lib/utils";
 import { addDays, format, isWithinInterval, startOfDay } from "date-fns";
@@ -21,12 +14,14 @@ import {
   CollapsibleTrigger,
 } from "@/app/components/ui/collapsible/Collapsible";
 import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
+import {
+  useTransactionsQuery,
+  getTransactionsFromQuery,
+} from "@/app/lib/hooks/useTransactionsQuery";
 
 export function TransactionsWidgetContent() {
-  const transactions = useTransactions() || [];
-  const isLoading = useTransactionsLoading();
-  const error = useTransactionsError();
-  const { fetchAll } = useTransactionActions();
+  const { data, isLoading, error } = useTransactionsQuery();
+  const transactions = getTransactionsFromQuery(data);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: addDays(new Date(), -7),
     to: new Date(),
@@ -34,15 +29,9 @@ export function TransactionsWidgetContent() {
 
   const getFilteredTransactions = useCallback(
     (start: Date, end: Date) => {
-      if (!transactions) return [];
-
-      return [...transactions]
-        .filter(
-          (transaction): transaction is Transaction => transaction !== null
-        )
+      return transactions
         .filter((transaction) => {
           try {
-            if (!transaction?.date) return false;
             const date = startOfDay(new Date(transaction.date));
             return isWithinInterval(date, { start, end });
           } catch (error) {
@@ -52,7 +41,6 @@ export function TransactionsWidgetContent() {
         })
         .sort((a, b) => {
           try {
-            if (!a?.date || !b?.date) return 0;
             return new Date(b.date).getTime() - new Date(a.date).getTime();
           } catch (error) {
             console.error("Error sorting transactions:", error);
@@ -77,10 +65,6 @@ export function TransactionsWidgetContent() {
     [filteredAndSortedTransactions]
   );
 
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
-
   return (
     <>
       <div className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -95,7 +79,7 @@ export function TransactionsWidgetContent() {
           onDateRangeChange={setDateRange}
         />
       </div>
-      <ScrollArea className="h-full px-4">
+      <ScrollArea className="h-full">
         {isLoading ? (
           // Loading skeletons with better visual hierarchy
           <div className="space-y-4 py-2">
@@ -130,7 +114,9 @@ export function TransactionsWidgetContent() {
                   ? "No transactions found"
                   : `No transactions in the last ${dateRange.to.toLocaleDateString().split("T")[0] === dateRange.from.toLocaleDateString().split("T")[0] ? dateRange.to.toLocaleDateString().split("T")[1].split(":")[0] + " hours" : dateRange.to.toLocaleDateString().split("T")[0] + " days"}`}
               </p>
-              {error && <p className="text-sm text-red-500">Error: {error}</p>}
+              {error && (
+                <p className="text-sm text-red-500">Error: {error.message}</p>
+              )}
             </div>
           </div>
         ) : (

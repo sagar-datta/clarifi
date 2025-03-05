@@ -4,6 +4,7 @@ import { WidgetGrid, Widget } from "../components/layout/Dashboard/WidgetGrid";
 import { TransactionsWidget } from "@/app/components/layout/Dashboard/Widgets/TransactionsWidget/index";
 import { MonthlyOverviewWidget } from "@/app/components/layout/Dashboard/Widgets/MonthlyOverviewWidget/index";
 import { SpendingByCategoryWidget } from "@/app/components/layout/Dashboard/Widgets/SpendingByCategoryWidget/index";
+import { DashboardDataPrefetch } from "./DashboardDataPrefetch";
 
 export const metadata: Metadata = {
   title: "Dashboard | ClariFi",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <PageLayout>
+      <DashboardDataPrefetch />
       <div className="space-y-8">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Dashboard</h2>

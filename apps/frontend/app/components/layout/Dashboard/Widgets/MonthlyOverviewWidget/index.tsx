@@ -7,18 +7,50 @@ import { MonthlyOverviewHeader } from "./components/MonthlyOverviewHeader";
 import { PercentageChangeIndicator } from "./components/PercentageChangeIndicator";
 import { TabsNavigation } from "./components/TabsNavigation";
 import { TransactionList } from "./components/TransactionList";
-import { useMonthlyOverview } from "./hooks/useMonthlyOverview";
+import { useMonthlyOverviewQuery } from "@/app/lib/hooks/useMonthlyOverviewQuery";
+import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 
 export function MonthlyOverviewWidget() {
   const [selectedTab, setSelectedTab] = useState<"income" | "expenses">(
     "income"
   );
+  const { data, isLoading } = useMonthlyOverviewQuery();
+
+  if (isLoading) {
+    return (
+      <Card className="flex h-[400px] flex-col">
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-40" />
+            </div>
+            <div className="space-y-1 text-right">
+              <Skeleton className="h-8 w-24 ml-auto" />
+              <Skeleton className="h-4 w-16 ml-auto" />
+            </div>
+          </div>
+          <Skeleton className="h-8 w-full" />
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
   const {
     netIncome,
     percentageChange,
     currentIncomeTransactions,
     currentExpenseTransactions,
-  } = useMonthlyOverview();
+  } = data;
 
   return (
     <Card className="flex h-[400px] flex-col">

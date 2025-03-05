@@ -6,6 +6,7 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 import { ReduxProvider } from "./providers/ReduxProvider";
 import { ClerkThemeProvider } from "./providers/ClerkThemeProvider";
 import { Toaster } from "@/app/components/ui/toast/toaster";
+import { ReactQueryProvider } from "./providers/ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,13 +31,15 @@ export default function RootLayout({
         <meta name="color-scheme" content="light dark" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          <ClerkThemeProvider>
-            <ReduxProvider>
-              <Shell>{children}</Shell>
-            </ReduxProvider>
-          </ClerkThemeProvider>
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider>
+            <ClerkThemeProvider>
+              <ReduxProvider>
+                <Shell>{children}</Shell>
+              </ReduxProvider>
+            </ClerkThemeProvider>
+          </ThemeProvider>
+        </ReactQueryProvider>
         <Toaster />
       </body>
     </html>

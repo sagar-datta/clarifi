@@ -1,10 +1,10 @@
 import { formatCurrency } from "@/app/lib/utils";
-import { CategoryGroup, ChartConfigType } from "../types";
+import { CategoryGroup } from "../types";
 
 type ChartTooltipContentProps = {
   active?: boolean;
   payload?: any[];
-  chartConfig: ChartConfigType;
+  chartConfig: Record<CategoryGroup, { color: string; label: string }>;
 };
 
 export function ChartTooltipContent({

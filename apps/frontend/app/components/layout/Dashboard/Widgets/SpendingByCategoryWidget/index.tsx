@@ -20,14 +20,36 @@ import {
   ChartLegend,
 } from "@/app/components/ui/chart/Chart";
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts";
-import { useSpendingChart } from "./hooks/useSpendingChart";
+import { useSpendingChartQuery } from "@/app/lib/hooks/useSpendingChartQuery";
 import { ChartTooltipContent } from "./components/ChartTooltipContent";
 import { ChartLegendContent } from "./components/ChartLegendContent";
+import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 
 export function SpendingByCategoryWidget() {
   const [selectedTab, setSelectedTab] = useState<"month" | "year">("month");
-  const { categoryGroups, chartData, chartConfig } =
-    useSpendingChart(selectedTab);
+  const { data, isLoading } = useSpendingChartQuery(selectedTab);
+
+  if (isLoading) {
+    return (
+      <Card className="h-[400px] flex flex-col">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-8 w-[200px]" />
+        </CardHeader>
+        <CardContent className="flex-1 min-h-0 pt-0 h-[300px]">
+          <div className="w-full h-full flex items-center justify-center">
+            <Skeleton className="w-full h-[250px]" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  const { categoryGroups, chartData, chartConfig } = data;
 
   return (
     <Card className="h-[400px] flex flex-col">
