@@ -10,7 +10,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import config from '../config/env.js';
+import { config } from '../config/env.js';
 import type { Database } from '../types/database.js';
 
 // Create a single instance of Supabase client

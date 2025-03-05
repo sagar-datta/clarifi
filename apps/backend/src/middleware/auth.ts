@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { verifyToken } from '@clerk/backend';
-import config from '../config/env.js';
+import { config } from '../config/env.js';
 
 /**
  * Extends Express Request to include auth information.

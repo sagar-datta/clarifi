@@ -18,7 +18,7 @@ import express, { ErrorRequestHandler } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { createClerkClient } from '@clerk/backend';
-import config from './config/env.js';
+import { config } from './config/env.js';
 import {
   requireAuth,
   AuthError,
