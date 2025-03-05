@@ -12,7 +12,7 @@ type TransactionListProps = {
 export function TransactionList({ transactions, type }: TransactionListProps) {
   return (
     <ScrollArea className="h-full px-6">
-      <div className="space-y-2 py-2 divide-y divide-border/30">
+      <div className="space-y-2 py-2 divide-y divide-border">
         {transactions.map((transaction) => (
           <div
             key={transaction.id}
