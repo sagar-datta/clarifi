@@ -3,7 +3,7 @@ import { TransactionsWidgetContent } from "./TransactionsWidgetContent";
 
 export function TransactionsWidget() {
   return (
-    <Card className="col-span-3 h-[400px]">
+    <Card className="col-span-3 h-[500px] sm:h-[400px]">
       <CardContent className="flex h-full flex-col p-6">
         <TransactionsWidgetContent />
       </CardContent>

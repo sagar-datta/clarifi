@@ -11,12 +11,12 @@ type TransactionListProps = {
 
 export function TransactionList({ transactions, type }: TransactionListProps) {
   return (
-    <ScrollArea className="h-full px-6">
-      <div className="space-y-2 py-2 divide-y divide-border">
+    <ScrollArea className="h-full px-3 sm:px-6">
+      <div className="space-y-3 sm:space-y-2 py-3 sm:py-2 divide-y divide-border">
         {transactions.map((transaction) => (
           <div
             key={transaction.id}
-            className="flex items-center justify-between pt-2 first:pt-0"
+            className="flex flex-col sm:flex-row sm:items-center justify-between pt-3 sm:pt-2 first:pt-0 gap-1 sm:gap-0"
           >
             <div>
               <div className="font-medium text-sm">

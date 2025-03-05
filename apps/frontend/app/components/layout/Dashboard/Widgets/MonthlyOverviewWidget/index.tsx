@@ -18,7 +18,7 @@ export function MonthlyOverviewWidget() {
 
   if (isLoading) {
     return (
-      <Card className="flex h-[400px] flex-col">
+      <Card className="flex h-[600px] sm:h-[400px] flex-col">
         <div className="p-6 space-y-4">
           <div className="flex justify-between items-center">
             <div className="space-y-2">
@@ -53,7 +53,7 @@ export function MonthlyOverviewWidget() {
   } = data;
 
   return (
-    <Card className="flex h-[400px] flex-col">
+    <Card className="flex h-[600px] sm:h-[400px]  flex-col">
       <MonthlyOverviewHeader netIncome={netIncome} />
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         <PercentageChangeIndicator

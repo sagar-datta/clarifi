@@ -10,7 +10,7 @@ export function TabsNavigation({
   expenseCount,
 }: TabsNavigationProps) {
   return (
-    <div className="px-6 pt-3">
+    <div className="px-3 sm:px-6 pt-3">
       <TabsList className="h-9 w-full grid grid-cols-2 p-1">
         <TabsTrigger
           value="income"

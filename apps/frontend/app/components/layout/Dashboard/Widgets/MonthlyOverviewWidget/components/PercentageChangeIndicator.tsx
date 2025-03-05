@@ -11,7 +11,7 @@ export function PercentageChangeIndicator({
   netIncome,
 }: PercentageChangeIndicatorProps) {
   return (
-    <div className="px-6 pb-4 flex items-center gap-2 border-b">
+    <div className="px-6 pb-4 flex items-center justify-center sm:justify-start gap-2 border-b">
       {percentageChange > 0 ? (
         <ArrowUpIcon className="h-4 w-4 text-green-600 dark:text-green-500" />
       ) : (
@@ -19,7 +19,7 @@ export function PercentageChangeIndicator({
       )}
       <p
         className={cn(
-          "text-sm font-medium",
+          "text-sm font-medium text-center sm:text-left",
           percentageChange > 0
             ? "text-green-600 dark:text-green-500"
             : "text-red-500 dark:text-red-500"
