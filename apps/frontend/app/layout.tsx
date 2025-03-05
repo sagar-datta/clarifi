@@ -1,5 +1,3 @@
-"use client";
-
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Shell } from "./components/layout/Shell";
@@ -22,6 +20,16 @@ if (typeof document !== "undefined") {
   metaDesc.content = String(baseMetadata.description);
   document.head.appendChild(metaDesc);
 }
+
+export const metadata = {
+  title: "ClariFi",
+  description: "Your personal finance tracker",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+};
 
 export default function RootLayout({
   children,
