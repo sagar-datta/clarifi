@@ -13,9 +13,12 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <PageLayout>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Dashboard</h2>
+          <p className="text-sm text-muted-foreground">
+            Your financial overview at a glance
+          </p>
         </div>
         <WidgetGrid>
           <Widget>
