@@ -19,6 +19,7 @@ interface DateRangePickerProps {
   dateRange: DateRange;
   onDateRangeChange: (range: DateRange) => void;
   align?: "start" | "center" | "end";
+  className?: string;
 }
 
 const datePresets = [
@@ -31,6 +32,7 @@ export function DateRangePicker({
   dateRange,
   onDateRangeChange,
   align = "end",
+  className,
 }: DateRangePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -41,7 +43,8 @@ export function DateRangePicker({
           variant="outline"
           className={cn(
             "flex h-8 w-full items-center justify-center gap-2 px-3 text-xs font-normal sm:justify-between sm:w-[200px]",
-            !dateRange && "text-muted-foreground"
+            !dateRange && "text-muted-foreground",
+            className
           )}
         >
           <span className="flex items-center gap-2">
@@ -62,14 +65,18 @@ export function DateRangePicker({
           <ChevronDown className="h-3 w-3 opacity-50 hidden sm:block" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align={align}>
-        <div className="space-y-4 p-3">
-          <div className="flex justify-center gap-2">
+      <PopoverContent
+        className="w-[calc(100vw-2rem)] sm:w-auto p-0"
+        align="center"
+        sideOffset={5}
+      >
+        <div className="space-y-4 p-2 sm:p-3">
+          <div className="flex flex-col sm:flex-row sm:justify-center gap-2">
             {datePresets.map((preset) => (
               <Button
                 key={preset.days}
                 variant="outline"
-                className="h-7 text-xs"
+                className="h-8 sm:h-7 text-xs w-full sm:w-auto"
                 onClick={() => {
                   const to = new Date();
                   const from = addDays(to, -preset.days);
@@ -81,20 +88,22 @@ export function DateRangePicker({
               </Button>
             ))}
           </div>
-          <div className="flex gap-2">
-            <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={dateRange?.from}
-              selected={{ from: dateRange?.from, to: dateRange?.to }}
-              onSelect={(range: any) => {
-                onDateRangeChange({
-                  from: range?.from || dateRange.from,
-                  to: range?.to || range?.from || dateRange.to,
-                });
-              }}
-              numberOfMonths={2}
-            />
+          <div className="hidden sm:block">
+            <div className="flex flex-col sm:flex-row gap-2 sm:justify-center pt-2 border-t">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={dateRange?.from}
+                selected={{ from: dateRange?.from, to: dateRange?.to }}
+                onSelect={(range: any) => {
+                  onDateRangeChange({
+                    from: range?.from || dateRange.from,
+                    to: range?.to || range?.from || dateRange.to,
+                  });
+                }}
+                numberOfMonths={2}
+              />
+            </div>
           </div>
         </div>
       </PopoverContent>

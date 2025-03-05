@@ -67,7 +67,7 @@ export function TransactionsWidgetContent() {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 pb-2">
         <div className="space-y-1">
           <h3 className="text-base font-semibold">Recent Transactions</h3>
           <p className="text-xs text-muted-foreground">
@@ -77,6 +77,7 @@ export function TransactionsWidgetContent() {
         <DateRangePicker
           dateRange={dateRange}
           onDateRangeChange={setDateRange}
+          className="w-full sm:w-auto"
         />
       </div>
       <ScrollArea className="h-full">
@@ -125,7 +126,7 @@ export function TransactionsWidgetContent() {
               transactions.length > 0 ? (
                 <Collapsible key={group} defaultOpen className="mb-4 last:mb-0">
                   <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium hover:bg-accent/50 transition-colors dark:hover:bg-accent/40">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                       <h4 className="capitalize text-primary">
                         {group === "older"
                           ? transactions.every(
@@ -143,7 +144,7 @@ export function TransactionsWidgetContent() {
                               : group}
                       </h4>
                       <div className="flex items-center gap-2 text-xs text-primary/60">
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>{transactions.length} items</span>
                       </div>
                     </div>
@@ -154,9 +155,9 @@ export function TransactionsWidgetContent() {
                       {transactions.map((transaction) => (
                         <div
                           key={transaction.id}
-                          className="flex items-center justify-between pt-2 first:pt-0"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 first:pt-0 gap-1 sm:gap-0"
                         >
-                          <div>
+                          <div className="space-y-0.5">
                             <div className="font-medium text-sm text-foreground">
                               {transaction.description}
                             </div>
