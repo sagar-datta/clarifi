@@ -8,10 +8,14 @@ import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import { AddTransactionDialog } from "@/app/components/shared/transactions/add-transaction-dialog";
 import { DatabaseActionsDialog } from "@/app/components/shared/database/DatabaseActionsDialog";
+import { usePathname } from "next/navigation";
 
 export function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
   const { isSignedIn } = useUser();
+  const pathname = usePathname();
+  const isAuthPage =
+    pathname.includes("sign-in") || pathname.includes("sign-up");
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -52,11 +56,13 @@ export function Header({ className }: { className?: string }) {
               <UserButton />
             </>
           ) : (
-            <SignInButton>
-              <Button variant="default" size="sm">
-                Sign in
-              </Button>
-            </SignInButton>
+            !isAuthPage && (
+              <SignInButton>
+                <Button variant="default" size="sm">
+                  Sign in
+                </Button>
+              </SignInButton>
+            )
           )}
         </div>
       </div>

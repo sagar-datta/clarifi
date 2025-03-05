@@ -1,32 +1,35 @@
 "use client";
 
 import { SignUp } from "@clerk/nextjs";
+import { Button } from "@/app/components/ui/button/Button";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function SignUpClient() {
+  const router = useRouter();
+
   return (
-    <div className="fixed inset-0 bg-white/50 backdrop-blur-sm dark:bg-[#1F1F23]/70">
-      <div className="flex h-full w-full items-center justify-center">
-        <SignUp
-          appearance={{
-            elements: {
-              formFieldInput: "dark:bg-[#1F1F23] dark:text-white",
-              formFieldLabel: "dark:text-gray-300",
-              footerActionText: "dark:text-gray-400",
-              footerActionLink: "dark:text-white dark:hover:text-white/90",
-              dividerText: "dark:text-gray-400",
-              formButtonPrimary:
-                "dark:bg-[#1F1F23] dark:text-white dark:hover:bg-[#2D2D32] dark:border-zinc-800",
-            },
-            variables: {
-              colorBackground: "#1F1F23",
-              colorInputBackground: "#1F1F23",
-              colorInputText: "white",
-              colorTextSecondary: "#A1A1AA",
-              colorPrimary: "#27272A",
-            },
-          }}
-        />
-      </div>
+    <div className="flex h-full w-full flex-col items-center gap-3">
+      <Button
+        variant="ghost"
+        onClick={() => router.push("/")}
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft className="h-5 w-5" />
+        <span>Back to home</span>
+      </Button>
+      <SignUp
+        appearance={{
+          elements: {
+            formButtonPrimary:
+              "bg-primary text-primary-foreground hover:bg-primary/90 !border-0",
+            formFieldInput: "rounded-md bg-background border border-input",
+            card: "rounded-lg",
+            headerTitle: "text-foreground",
+            headerSubtitle: "text-muted-foreground",
+          },
+        }}
+      />
     </div>
   );
 }
