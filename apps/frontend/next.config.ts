@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const config: NextConfig = {
+  output: "export",
+  basePath: "/clarifi",
+  images: {
+    unoptimized: true,
+  },
+  // Required for GitHub Pages
+  trailingSlash: true,
 };
 
-export default nextConfig;
+export default config;
