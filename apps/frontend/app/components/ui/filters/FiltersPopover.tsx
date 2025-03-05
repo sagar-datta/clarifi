@@ -9,7 +9,6 @@ import {
 import { Button } from "@/app/components/ui/button/Button";
 import { Input } from "@/app/components/ui/input/Input";
 import { Label } from "@/app/components/ui/label/Label";
-import { Separator } from "@/app/components/ui/separator/Separator";
 import { Tabs, TabsList, TabsTrigger } from "@/app/components/ui/tabs/Tabs";
 import { Badge } from "@/app/components/ui/badge/Badge";
 import {

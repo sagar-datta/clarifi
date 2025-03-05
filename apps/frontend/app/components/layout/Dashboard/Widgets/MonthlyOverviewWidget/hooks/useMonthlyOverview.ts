@@ -5,7 +5,9 @@ import { endOfDay, startOfDay, subDays } from "date-fns";
 import { useMemo } from "react";
 
 export function useMonthlyOverview() {
-  const transactions = useAppSelector(selectTransactions) ?? [];
+  const rawTransactions = useAppSelector(selectTransactions);
+
+  const transactions = useMemo(() => rawTransactions ?? [], [rawTransactions]);
 
   return useMemo(() => {
     const now = new Date();

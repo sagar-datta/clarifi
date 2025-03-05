@@ -1,9 +1,12 @@
 import { formatCurrency } from "@/app/lib/utils";
 import { CategoryGroup } from "../types";
+import { TooltipProps } from "recharts";
+import {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
-type ChartTooltipContentProps = {
-  active?: boolean;
-  payload?: any[];
+type ChartTooltipContentProps = TooltipProps<ValueType, NameType> & {
   chartConfig: Record<CategoryGroup, { color: string; label: string }>;
 };
 

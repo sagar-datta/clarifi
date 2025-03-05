@@ -5,7 +5,7 @@ import { WidgetGrid, Widget } from "./WidgetGrid";
 import { TransactionsWidget } from "@/app/components/layout/Dashboard/Widgets/TransactionsWidget/index";
 import { MonthlyOverviewWidget } from "@/app/components/layout/Dashboard/Widgets/MonthlyOverviewWidget/index";
 import { SpendingByCategoryWidget } from "@/app/components/layout/Dashboard/Widgets/SpendingByCategoryWidget/index";
-import { Card, CardContent } from "@/app/components/ui/card/Card";
+import { Card } from "@/app/components/ui/card/Card";
 import { Plus, Database } from "lucide-react";
 
 export function DashboardWidgets() {

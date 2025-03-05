@@ -28,8 +28,7 @@ export function DatabaseActionsDialog() {
   const [open, setOpen] = React.useState(false);
   const [isPopulating, setIsPopulating] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const { deleteAllTransactions, seedTransactions, isLoading } =
-    useTransactionMutations();
+  const { deleteAllTransactions, seedTransactions } = useTransactionMutations();
   const { toast } = useToast();
 
   // Reset loading states when dialog closes

@@ -12,8 +12,10 @@ import {
 } from "../types";
 
 export function useSpendingChart(selectedTab: "month" | "year") {
-  const transactions = useTransactions() ?? [];
+  const rawTransactions = useTransactions();
   const { theme } = useTheme();
+
+  const transactions = useMemo(() => rawTransactions ?? [], [rawTransactions]);
 
   // Get category groups that have transactions
   const categoryGroups = useMemo(() => {

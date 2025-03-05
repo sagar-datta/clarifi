@@ -18,7 +18,6 @@ interface DateRange {
 interface DateRangePickerProps {
   dateRange: DateRange;
   onDateRangeChange: (range: DateRange) => void;
-  align?: "start" | "center" | "end";
   className?: string;
 }
 
@@ -31,7 +30,6 @@ const datePresets = [
 export function DateRangePicker({
   dateRange,
   onDateRangeChange,
-  align = "end",
   className,
 }: DateRangePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -95,7 +93,7 @@ export function DateRangePicker({
                 mode="range"
                 defaultMonth={dateRange?.from}
                 selected={{ from: dateRange?.from, to: dateRange?.to }}
-                onSelect={(range: any) => {
+                onSelect={(range: { from?: Date; to?: Date } | undefined) => {
                   onDateRangeChange({
                     from: range?.from || dateRange.from,
                     to: range?.to || range?.from || dateRange.to,

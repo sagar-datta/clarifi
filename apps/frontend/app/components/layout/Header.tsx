@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Button } from "../ui/button/Button";
-import { Bell, Plus, Moon, Sun } from "lucide-react";
+import { Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/app/lib/utils";
 import { UserButton, SignInButton, useUser } from "@clerk/nextjs";

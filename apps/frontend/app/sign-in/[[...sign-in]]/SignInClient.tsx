@@ -1,6 +1,6 @@
 "use client";
 
-import { SignIn, useSignIn, useAuth } from "@clerk/nextjs";
+import { SignIn, useSignIn } from "@clerk/nextjs";
 import { Button } from "@/app/components/ui/button/Button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 export function SignInClient() {
   const router = useRouter();
   const { signIn, isLoaded } = useSignIn();
-  const { isSignedIn } = useAuth();
 
   const signInWithDemo = async () => {
     if (!isLoaded) return;

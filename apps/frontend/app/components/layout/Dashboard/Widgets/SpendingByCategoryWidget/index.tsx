@@ -25,8 +25,19 @@ import { ChartTooltipContent } from "./components/ChartTooltipContent";
 import { ChartLegendContent } from "./components/ChartLegendContent";
 import { Skeleton } from "@/app/components/ui/skeleton/Skeleton";
 import { cn } from "@/app/lib/utils";
+import { CategoryGroup, ChartConfigType, ChartDataType } from "./types";
 
-function MobileSpendingList({ chartData, chartConfig, categoryGroups }: any) {
+interface MobileSpendingListProps {
+  chartData: ChartDataType[];
+  chartConfig: ChartConfigType;
+  categoryGroups: CategoryGroup[];
+}
+
+function MobileSpendingList({
+  chartData,
+  chartConfig,
+  categoryGroups,
+}: MobileSpendingListProps) {
   const latestData = chartData[chartData.length - 1];
   const totalSpending = Object.values(latestData)
     .filter((value): value is number => typeof value === "number")
@@ -147,11 +158,7 @@ export function SpendingByCategoryWidget() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" fontSize={11} tickMargin={5} />
                 <YAxis
-                  tickFormatter={(value: any) => {
-                    const numValue =
-                      typeof value === "string" ? parseFloat(value) : value;
-                    return formatCurrency(numValue);
-                  }}
+                  tickFormatter={(value: number) => formatCurrency(value)}
                   fontSize={11}
                   width={40}
                   tickMargin={5}

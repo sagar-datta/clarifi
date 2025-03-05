@@ -4,7 +4,7 @@ import { Input } from "@/app/components/ui/input/Input";
 import { DateRangePicker } from "@/app/components/ui/date-range-picker/DateRangePicker";
 import { FiltersPopover } from "@/app/components/ui/filters/FiltersPopover";
 import { Search } from "lucide-react";
-import { DateRange, TransactionsFiltersProps } from "./types";
+import { DateRange } from "./types";
 import { Filters } from "@/app/components/ui/filters/FiltersPopover";
 
 interface TransactionsFiltersActionsProps {

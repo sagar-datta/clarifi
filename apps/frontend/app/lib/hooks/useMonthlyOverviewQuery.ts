@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTransactionActions } from "../redux/hooks";
-import { Transaction } from "../redux/slices/transactions/types";
 import { endOfDay, startOfDay, subDays } from "date-fns";
 import { getTransactionsFromQuery } from "./useTransactionsQuery";
 

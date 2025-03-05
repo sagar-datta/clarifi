@@ -48,7 +48,7 @@ export function DeleteTransactionDialog({
         description: "The transaction has been successfully deleted",
       });
       setOpen(false);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete the transaction",

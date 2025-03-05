@@ -110,10 +110,6 @@ export function QuickStats({
     { category: "", amount: 0 }
   );
 
-  const categoryPercentage = monthlySpend
-    ? (largestCategory.amount / monthlySpend) * 100
-    : 0;
-
   // Calculate daily average
   const daysInCurrentMonth = currentMonthEnd.getDate();
   const daysInPreviousMonth = previousMonthEnd.getDate();
