@@ -170,15 +170,21 @@ export function MonthlyOverviewWidget() {
             <TabsList className="h-9 w-full grid grid-cols-2 p-1">
               <TabsTrigger
                 value="income"
-                className="data-[state=active]:bg-background text-sm "
+                className="data-[state=active]:bg-background text-sm flex items-center gap-2"
               >
-                Income ({currentIncomeTransactions.length})
+                Income{" "}
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                  {currentIncomeTransactions.length}
+                </span>
               </TabsTrigger>
               <TabsTrigger
                 value="expenses"
-                className="data-[state=active]:bg-background text-sm "
+                className="data-[state=active]:bg-background text-sm flex items-center gap-2"
               >
-                Expenses ({currentExpenseTransactions.length})
+                Expenses{" "}
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                  {currentExpenseTransactions.length}
+                </span>
               </TabsTrigger>
             </TabsList>
           </div>
