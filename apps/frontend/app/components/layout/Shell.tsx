@@ -16,8 +16,6 @@ import { QuickStats } from "./Sidebar/QuickStats";
 import { Collapse } from "./Sidebar/Collapse";
 import { Header } from "./Header";
 import { cn } from "@/app/lib/utils";
-import { AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -29,7 +27,6 @@ interface ShellProps {
 export function Shell({ children }: ShellProps) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = React.useState(false);
-  const pathname = usePathname();
   const { isLoaded, isSignedIn } = useUser();
 
   // Animation values
@@ -108,28 +105,28 @@ export function Shell({ children }: ShellProps) {
       )}
 
       {/* Main content area */}
-      <div
-        style={{
-          paddingLeft: isSignedIn ? `${sidebarWidth}px` : 0,
+      <motion.div
+        layout
+        animate={{
+          paddingLeft: isSignedIn ? sidebarWidth : 0,
         }}
+        transition={animationConfig}
         className={cn("flex-1 flex flex-col bg-background")}
       >
-        <div
-          style={{
+        <motion.div
+          layout
+          animate={{
             width: isSignedIn ? `calc(100% - ${sidebarWidth}px)` : "100%",
           }}
+          transition={animationConfig}
           className={cn("fixed top-0 right-0 z-40 bg-background h-16 border-b")}
         >
           <Header className="h-full" />
-        </div>
+        </motion.div>
         <div className="mt-16 flex-1">
-          <div className="p-4 md:p-8">
-            <AnimatePresence mode="wait" initial={false}>
-              {children}
-            </AnimatePresence>
-          </div>
+          <div className="p-4 md:p-8">{children}</div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
