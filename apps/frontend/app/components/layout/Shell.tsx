@@ -147,15 +147,9 @@ export function Shell({ children }: ShellProps) {
       >
         <motion.div
           layout
-          animate={{
-            width: isSignedIn
-              ? isLargeScreen
-                ? `calc(100% - ${isDesktopCollapsed ? 80 : 240}px)`
-                : "100%"
-              : "100%",
-          }}
-          transition={isLargeScreen ? animationConfig : { duration: 0 }}
-          className={cn("sticky top-0 right-0 z-40 bg-background h-16")}
+          className={cn(
+            "sticky top-0 left-0 right-0 z-40 bg-background h-16 w-full border-b"
+          )}
         >
           <Header className="h-full" />
         </motion.div>
