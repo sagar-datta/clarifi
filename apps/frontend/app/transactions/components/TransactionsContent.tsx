@@ -19,6 +19,7 @@ import { Transaction } from "@/app/lib/redux/slices/transactions/types";
 import { groupTransactions, getGroupDisplayName } from "../utils";
 import { cn } from "@/app/lib/utils";
 import { formatCurrency } from "@/app/lib/utils";
+import { getCategoryDisplayName } from "@/app/lib/utils";
 import { ChevronDown } from "lucide-react";
 import {
   Collapsible,
@@ -262,7 +263,9 @@ export function TransactionsContent() {
                                           variant="secondary"
                                           className="font-normal"
                                         >
-                                          {transaction.category}
+                                          {getCategoryDisplayName(
+                                            transaction.category
+                                          )}
                                         </Badge>
                                       </TableCell>
                                       <TableCell className="text-right tabular-nums">
