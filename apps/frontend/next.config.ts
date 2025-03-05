@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  output: "export",
+  output: "standalone",
   basePath: "/clarifi",
   images: {
     unoptimized: true,

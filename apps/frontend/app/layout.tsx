@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Shell } from "./components/layout/Shell";
@@ -10,48 +9,19 @@ import { ClerkThemeProvider } from "./providers/ClerkThemeProvider";
 import { Toaster } from "@/app/components/ui/toast/toaster";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider";
 import { PrefetchProvider } from "./components/providers/PrefetchProvider";
+import { baseMetadata, viewport } from "./metadata.config";
+import type { ThemeColorDescriptor } from "next/dist/lib/metadata/types/metadata-types";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const viewport: Viewport = {
-  colorScheme: "light dark",
-};
-
-export const metadata: Metadata = {
-  title: "ClariFi - Personal Finance Management",
-  description: "Track your finances and reach financial clarity.",
-  icons: {
-    icon: [
-      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon/favicon.ico", sizes: "48x48" },
-    ],
-    apple: [
-      {
-        url: "/favicon/apple-touch-icon.png",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
-    other: [
-      {
-        rel: "mask-icon",
-        url: "/favicon/safari-pinned-tab.svg",
-      },
-    ],
-  },
-  manifest: "/favicon/site.webmanifest",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "ClariFi",
-  },
-  applicationName: "ClariFi",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1f1915" },
-  ],
-};
+// Add metadata to document head
+if (typeof document !== "undefined") {
+  document.title = String(baseMetadata.title);
+  const metaDesc = document.createElement("meta");
+  metaDesc.name = "description";
+  metaDesc.content = String(baseMetadata.description);
+  document.head.appendChild(metaDesc);
+}
 
 export default function RootLayout({
   children,
@@ -61,7 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="color-scheme" content="light dark" />
+        <meta name="color-scheme" content={String(viewport.colorScheme)} />
+        {Array.isArray(viewport.themeColor) &&
+          viewport.themeColor.map((theme: ThemeColorDescriptor, i: number) => (
+            <meta
+              key={i}
+              name="theme-color"
+              media={theme.media}
+              content={theme.color}
+            />
+          ))}
       </head>
       <body className={`${inter.className} antialiased`}>
         <ReactQueryProvider>

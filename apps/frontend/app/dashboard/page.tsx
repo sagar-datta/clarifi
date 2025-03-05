@@ -1,12 +1,8 @@
-import { Metadata } from "next";
+"use client";
+
 import { PageLayout } from "../components/layout/PageLayout";
 import { DashboardDataPrefetch } from "./DashboardDataPrefetch";
 import { DashboardWidgets } from "../components/layout/Dashboard/DashboardWidgets";
-
-export const metadata: Metadata = {
-  title: "Dashboard | ClariFi",
-  description: "Your financial overview",
-};
 
 export default function DashboardPage() {
   return (
