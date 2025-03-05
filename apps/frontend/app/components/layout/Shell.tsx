@@ -60,7 +60,7 @@ export function Shell({ children }: ShellProps) {
             </SheetTrigger>
             <SheetContent side="left" className="w-72 p-0">
               <SheetHeader className="border-b px-6 py-4">
-                <SheetTitle>ClariFi</SheetTitle>
+                <SheetTitle>🏦 ClariFi</SheetTitle>
               </SheetHeader>
               <MobileSidebar />
             </SheetContent>
@@ -107,28 +107,26 @@ export function Shell({ children }: ShellProps) {
       )}
 
       {/* Main content area */}
-      <motion.div
-        layout
-        animate={{
-          paddingLeft: isSignedIn ? sidebarWidth : 0,
-        }}
-        transition={animationConfig}
-        className={cn("flex-1 flex flex-col bg-background")}
+      <div
+        className={cn(
+          "flex-1 flex flex-col bg-background",
+          isSignedIn ? "lg:pl-[240px] pl-0" : "",
+          isSignedIn && isDesktopCollapsed ? "lg:pl-[80px]" : ""
+        )}
       >
-        <motion.div
-          layout
-          animate={{
-            width: isSignedIn ? `calc(100% - ${sidebarWidth}px)` : "100%",
-          }}
-          transition={animationConfig}
-          className={cn("fixed top-0 right-0 z-40 bg-background h-16")}
+        <div
+          className={cn(
+            "fixed top-0 right-0 z-40 bg-background h-16",
+            isSignedIn ? "lg:w-[calc(100%-240px)] w-full" : "w-full",
+            isSignedIn && isDesktopCollapsed ? "lg:w-[calc(100%-80px)]" : ""
+          )}
         >
           <Header className="h-full" />
-        </motion.div>
-        <div className="mt-8 flex-1">
+        </div>
+        <div className="mt-14 md:mt-8 flex-1">
           <div className="p-4 md:p-8">{children}</div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
