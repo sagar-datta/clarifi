@@ -8,8 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/components/ui/dialog/Dialog";
-import { Button } from "@/app/components/ui/button/Button";
-import { Database, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,35 +19,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/app/components/ui/alert-dialog/AlertDialog";
-import { useTransactionActions } from "@/app/lib/redux/hooks/transactions";
+import { Button } from "@/app/components/ui/button/Button";
+import { Database, Loader2 } from "lucide-react";
+import { useTransactionMutations } from "@/app/lib/hooks/useTransactionMutations";
 import { useToast } from "@/app/components/ui/toast/use-toast";
 
 export function DatabaseActionsDialog() {
   const [open, setOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const { seedDummyData, deleteAll, fetchAll } = useTransactionActions();
+  const [isPopulating, setIsPopulating] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const { deleteAllTransactions, seedTransactions, isLoading } =
+    useTransactionMutations();
   const { toast } = useToast();
+
+  // Reset loading states when dialog closes
+  React.useEffect(() => {
+    if (!open) {
+      setIsPopulating(false);
+      setIsDeleting(false);
+    }
+  }, [open]);
 
   const handlePopulateData = async () => {
     try {
-      setIsLoading(true);
-
-      // Try up to 3 times with a delay between attempts
-      for (let attempt = 0; attempt < 3; attempt++) {
-        try {
-          await seedDummyData();
-          await fetchAll();
-          toast({
-            title: "Success",
-            description: "Sample data has been populated successfully",
-          });
-          setOpen(false);
-          return; // Success, exit the function
-        } catch (error) {
-          if (attempt === 2) throw error; // On last attempt, throw the error
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-        }
-      }
+      setIsPopulating(true);
+      await seedTransactions();
+      toast({
+        title: "Success",
+        description: "Sample data has been populated successfully",
+      });
+      setOpen(false);
     } catch (error) {
       console.error("Failed to populate data:", error);
       toast({
@@ -60,16 +59,14 @@ export function DatabaseActionsDialog() {
             : "Failed to populate data. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
+      setIsPopulating(false);
     }
   };
 
   const handleDeleteAll = async () => {
     try {
-      setIsLoading(true);
-      await deleteAll();
-      await fetchAll();
+      setIsDeleting(true);
+      await deleteAllTransactions();
       toast({
         title: "Success",
         description: "All transactions have been deleted",
@@ -84,8 +81,7 @@ export function DatabaseActionsDialog() {
             : "Failed to delete transactions",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
+      setIsDeleting(false);
     }
   };
 
@@ -103,10 +99,10 @@ export function DatabaseActionsDialog() {
         <div className="flex flex-col gap-4 py-4">
           <Button
             onClick={handlePopulateData}
-            disabled={isLoading}
+            disabled={isPopulating || isDeleting}
             className="w-full"
           >
-            {isLoading ? (
+            {isPopulating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Populating...
@@ -120,9 +116,16 @@ export function DatabaseActionsDialog() {
               <Button
                 variant="destructive"
                 className="w-full"
-                disabled={isLoading}
+                disabled={isPopulating || isDeleting}
               >
-                Delete All Transactions
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete All Transactions"
+                )}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -139,7 +142,7 @@ export function DatabaseActionsDialog() {
                   onClick={handleDeleteAll}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  {isLoading ? (
+                  {isDeleting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Deleting...

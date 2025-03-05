@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EditTransactionDialogProps } from "./types";
 import { formSchema, FormValues } from "./schema";
 import { TransactionForm } from "../add-transaction-dialog/components/TransactionForm";
-import { useTransactionActions } from "@/app/lib/redux/hooks";
+import { useTransactionMutations } from "@/app/lib/hooks/useTransactionMutations";
 import { useToast } from "@/app/components/ui/toast/use-toast";
 
 export function EditTransactionDialog({
@@ -20,8 +20,7 @@ export function EditTransactionDialog({
   open,
   onOpenChange,
 }: EditTransactionDialogProps) {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { update, fetchAll } = useTransactionActions();
+  const { updateTransaction, isLoading } = useTransactionMutations();
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -38,7 +37,6 @@ export function EditTransactionDialog({
   React.useEffect(() => {
     if (!open) {
       form.reset();
-      setIsSubmitting(false);
     }
   }, [open, form]);
 
@@ -54,21 +52,17 @@ export function EditTransactionDialog({
   }, [transaction, form]);
 
   async function onSubmit(data: FormValues) {
-    if (isSubmitting) return;
-
     try {
-      setIsSubmitting(true);
-      await update(transaction.id, {
-        description: data.description,
-        amount: data.amount,
-        category: data.category,
-        type: data.type,
-        date: data.date.toISOString(),
+      await updateTransaction({
+        id: transaction.id,
+        data: {
+          description: data.description,
+          amount: data.amount,
+          category: data.category,
+          type: data.type,
+          date: data.date.toISOString(),
+        },
       });
-
-      // Redux toolkit unwraps the promise and throws if rejected
-      // If we get here, the update was successful
-      await fetchAll(); // Refresh transactions list
 
       toast({
         title: "Success",
@@ -86,8 +80,6 @@ export function EditTransactionDialog({
             : "Failed to update transaction",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
@@ -103,7 +95,7 @@ export function EditTransactionDialog({
           form={form}
           onSubmit={onSubmit}
           onCancel={() => onOpenChange(false)}
-          isSubmitting={isSubmitting}
+          isSubmitting={isLoading}
           submitLabel="Save Changes"
         />
       </DialogContent>

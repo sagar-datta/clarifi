@@ -13,14 +13,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTransactionDialogProps } from "./types";
 import { formSchema, FormValues } from "./schema";
 import { TransactionForm } from "./components/TransactionForm";
-import { useTransactionActions } from "@/app/lib/redux/hooks";
+import { useTransactionMutations } from "@/app/lib/hooks/useTransactionMutations";
 import { useToast } from "@/app/components/ui/toast/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { create } = useTransactionActions();
+  const { createTransaction } = useTransactionMutations();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -36,25 +38,24 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
   React.useEffect(() => {
     if (!open) {
       form.reset();
-      setIsSubmitting(false);
     }
   }, [open, form]);
 
   async function onSubmit(data: FormValues) {
-    if (isSubmitting) return;
-
     try {
       setIsSubmitting(true);
-      await create({
+      await createTransaction({
         ...data,
         date: data.date.toISOString(),
       });
+
+      // Wait for the transactions query to finish refetching
+      await queryClient.refetchQueries({ queryKey: ["transactions"] });
 
       toast({
         title: "Success",
         description: "Transaction added successfully",
       });
-
       setOpen(false);
     } catch (error) {
       toast({
@@ -63,7 +64,6 @@ export function AddTransactionDialog({ children }: AddTransactionDialogProps) {
           error instanceof Error ? error.message : "Failed to add transaction",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   }

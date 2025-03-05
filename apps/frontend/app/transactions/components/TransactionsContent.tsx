@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/app/components/ui/table/Table";
 import { Badge } from "@/app/components/ui/badge/Badge";
+import { DeleteTransactionDialog } from "@/app/components/shared/transactions/delete-transaction-dialog";
 
 export function TransactionsContent() {
   const { data: transactions = [], isLoading } = useTransactionsQuery();
@@ -246,7 +247,7 @@ export function TransactionsContent() {
                                   {transactions.map((transaction) => (
                                     <TableRow
                                       key={transaction.id}
-                                      className="cursor-pointer"
+                                      className="group cursor-pointer hover:bg-muted/50"
                                       onClick={() =>
                                         handleTransactionClick(transaction)
                                       }
@@ -290,7 +291,9 @@ export function TransactionsContent() {
                                           <div
                                             onClick={(e) => e.stopPropagation()}
                                           >
-                                            {/* Add any action buttons here */}
+                                            <DeleteTransactionDialog
+                                              transaction={transaction}
+                                            />
                                           </div>
                                         </div>
                                       </TableCell>
