@@ -42,13 +42,13 @@ export function DateRangePicker({
         <Button
           variant="outline"
           className={cn(
-            "flex h-8 w-full items-center justify-center gap-2 px-3 text-xs font-normal sm:justify-between sm:w-[200px]",
+            "flex h-12 min-h-[48px] w-full items-center justify-center gap-2 px-4 text-sm font-normal sm:h-8 sm:min-h-[32px] sm:px-3 sm:text-xs sm:justify-between sm:w-[200px]",
             !dateRange && "text-muted-foreground",
             className
           )}
         >
           <span className="flex items-center gap-2">
-            <CalendarIcon className="h-3 w-3" />
+            <CalendarIcon className="h-5 w-5 sm:h-3 sm:w-3" />
             {dateRange?.from ? (
               dateRange.to ? (
                 <>
@@ -62,21 +62,21 @@ export function DateRangePicker({
               <span>Pick a date range</span>
             )}
           </span>
-          <ChevronDown className="h-3 w-3 opacity-50 hidden sm:block" />
+          <ChevronDown className="h-5 w-5 opacity-50 sm:h-3 sm:w-3" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[calc(100vw-2rem)] sm:w-auto p-0"
+        className="w-[calc(100vw-2rem)] p-4 sm:w-auto sm:p-0"
         align="center"
-        sideOffset={5}
+        sideOffset={8}
       >
-        <div className="space-y-4 p-2 sm:p-3">
-          <div className="flex flex-col sm:flex-row sm:justify-center gap-2">
+        <div className="space-y-4 sm:p-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-2">
             {datePresets.map((preset) => (
               <Button
                 key={preset.days}
                 variant="outline"
-                className="h-8 sm:h-7 text-xs w-full sm:w-auto"
+                className="h-12 min-h-[48px] text-sm w-full sm:h-7 sm:min-h-[28px] sm:text-xs sm:w-auto"
                 onClick={() => {
                   const to = new Date();
                   const from = addDays(to, -preset.days);
