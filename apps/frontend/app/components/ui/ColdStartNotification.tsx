@@ -60,8 +60,9 @@ export function ColdStartNotification({
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground">
-          This app is hosted on Render's free tier which uses cold starts. Data
-          is loading from the server which may take up to a minute to wake up.
+          This app is hosted on Render&apos;s free tier which uses cold starts.
+          Data is loading from the server which may take up to a minute to wake
+          up.
           {loadingTime > 0 && (
             <span className="font-medium text-foreground">
               {" "}
