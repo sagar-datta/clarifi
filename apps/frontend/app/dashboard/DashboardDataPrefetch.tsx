@@ -20,6 +20,7 @@ export function DashboardDataPrefetch() {
     fetchData();
   }, [prefetchTransactions]);
 
+  // Always return the ColdStartNotification - it will only be visible when loading takes more than 2 seconds
   return (
     <ColdStartNotification
       isLoading={isLoading}

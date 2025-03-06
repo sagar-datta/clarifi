@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransactionsQuery } from "@/app/lib/hooks/useTransactionsQuery";
+import { useTransactionsLoading } from "@/app/lib/redux/hooks/transactions";
 import { WidgetGrid, Widget } from "./WidgetGrid";
 import { TransactionsWidget } from "@/app/components/layout/Dashboard/Widgets/TransactionsWidget/index";
 import { MonthlyOverviewWidget } from "@/app/components/layout/Dashboard/Widgets/MonthlyOverviewWidget/index";
@@ -9,9 +10,16 @@ import { Card } from "@/app/components/ui/card/Card";
 import { Plus, Database } from "lucide-react";
 
 export function DashboardWidgets() {
-  const { data: transactions = [] } = useTransactionsQuery();
+  const { data: transactions = [], isLoading: queryLoading } =
+    useTransactionsQuery();
+  const reduxLoading = useTransactionsLoading();
 
-  if (transactions.length === 0) {
+  // Consider the dashboard loading if either Redux or React Query is loading
+  const isLoading = reduxLoading || queryLoading;
+
+  // Don't show the welcome screen while data is still loading
+  // This ensures we only show it when we've confirmed there are no transactions
+  if (!isLoading && transactions.length === 0) {
     return (
       <Card className="flex min-h-[400px] flex-col items-center justify-center p-8">
         <div className="flex flex-col items-center max-w-[420px] mx-auto space-y-8">
@@ -52,6 +60,7 @@ export function DashboardWidgets() {
     );
   }
 
+  // If loading or has transactions, show the regular dashboard
   return (
     <WidgetGrid>
       <Widget>
