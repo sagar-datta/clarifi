@@ -19,6 +19,7 @@ import { cn } from "@/app/lib/utils";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { GitHubCorner } from "../ui/GitHubCorner";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -60,6 +61,9 @@ export function Shell({ children }: ShellProps) {
 
   return (
     <div className="relative flex min-h-screen">
+      {/* GitHub Corner - always visible */}
+      <GitHubCorner href="https://github.com/sagar-datta/clarifi" />
+
       {isSignedIn && (
         <>
           {/* Mobile Trigger */}

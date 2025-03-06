@@ -25,7 +25,8 @@ export function Header({ className }: { className?: string }) {
     <header className={cn("bg-background px-6 py-3 w-full", className)}>
       <div className="flex items-center justify-between">
         <div /> {/* Spacer for layout balance */}
-        <div className="flex items-center gap-2">
+        {/* Add padding-right to leave space for GitHub corner */}
+        <div className="flex items-center gap-2 pr-16">
           {/* Quick Add Transaction - Only show when signed in */}
           {isSignedIn && (
             <AddTransactionDialog>

@@ -34,6 +34,10 @@
 
     --radius: 0.5rem;
 
+    /* GitHub corner colors */
+    --github-corner-color: hsl(30, 15%, 12%);
+    --github-corner-background: hsl(37, 33%, 91%);
+
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -69,6 +73,10 @@
     --border: 30 15% 17%;
     --input: 30 15% 17%;
     --ring: 35 91.2% 55.8%;
+
+    /* GitHub corner colors for dark mode */
+    --github-corner-color: hsl(37, 33%, 91%);
+    --github-corner-background: hsl(30, 15%, 12%);
 
     --chart-1: 346 77% 49.8%;
     --chart-2: 24 85% 49.8%;
