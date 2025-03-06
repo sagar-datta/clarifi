@@ -1,10 +1,25 @@
-# ClariFi - Personal Finance Management
+# ClariFi - Comprehensive Personal Finance Management
 
-ClariFi is a modern, full-stack personal finance management application built with a focus on clarity and user experience. The project is structured as a monorepo using Turborepo for efficient build and dependency management.
+ClariFi is a sophisticated, full-stack personal finance management application designed to bring clarity to your financial life. Built with modern technologies and best practices, it offers a seamless experience for tracking, categorising, and analysing your financial transactions.
 
 🌐 **Live Demo**: [https://clarifi-finance.vercel.app/](https://clarifi-finance.vercel.app/)
 
-## 🏗 Project Structure
+## 🔍 What ClariFi Does
+
+ClariFi helps you take control of your finances through:
+
+- **Intelligent Transaction Management**: Easily record, categorise, and search through your financial transactions
+- **Automated Categorisation**: Smart algorithms that automatically sort your spending into appropriate categories
+- **Comprehensive Financial Insights**: Visual breakdowns of your spending patterns and financial habits
+- **Budget Tracking**: Set and monitor budgets to help achieve your financial goals
+- **Intuitive Dashboard**: Get a complete overview of your financial health at a glance
+- **Secure Authentication**: Keep your financial data private and secure
+
+The application provides a holistic view of your financial situation, helping you make informed decisions about your money through detailed visualisations and actionable insights.
+
+## 🏗 Project Architecture
+
+ClariFi is structured as a monorepo using Turborepo for efficient build and dependency management:
 
 ```
 clarifi/
@@ -34,7 +49,7 @@ clarifi/
   - Responsive design
   - Modern UI with animations
   - Real-time data updates
-  - Progressive Web App (PWA) ready
+  - Progressive Web App (PWA) capabilities
 
 ### Backend (`apps/backend`)
 
@@ -59,6 +74,35 @@ clarifi/
   - Turborepo (Monorepo Build System)
   - ESLint & Prettier (Code Quality)
   - TypeScript (Type Safety)
+
+## 🌟 Key Features
+
+### Transaction Management
+
+- **Comprehensive Transaction Recording**: Add, edit, and delete financial transactions with ease
+- **Smart Categorisation**: Automatic sorting of transactions into relevant categories
+- **Advanced Filtering**: Search and filter transactions by date, amount, category, and more
+- **Bulk Operations**: Efficiently manage multiple transactions at once
+
+### Financial Insights
+
+- **Spending Breakdown**: Visual representation of spending by category
+- **Monthly Overview**: Track income vs expenses over time
+- **Trend Analysis**: Identify spending patterns and financial trends
+- **Budget Tracking**: Set category-specific budgets and monitor your progress
+
+### User Experience
+
+- **Intuitive Dashboard**: Get a complete overview of your financial situation at a glance
+- **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
+- **Dark/Light Themes**: Choose your preferred visual mode with system preference detection
+- **Real-time Updates**: See your financial data update in real-time as you make changes
+
+### Security
+
+- **Secure Authentication**: Industry-standard authentication with Clerk
+- **Data Protection**: Robust security measures to protect your financial information
+- **Privacy-focused**: Your financial data remains private and secure
 
 ## 🌐 Deployment
 
@@ -140,33 +184,6 @@ The application is deployed and accessible at:
 - `pnpm lint` - Run ESLint
 - `pnpm format` - Format code with Prettier
 - `pnpm clean` - Clean build outputs
-
-## 🌟 Features
-
-- **Secure Authentication**
-
-  - Email/Password login with Clerk
-  - Demo account access
-  - Social login providers (planned)
-
-- **Transaction Management**
-
-  - Add/Edit/Delete transactions
-  - Smart categorisation
-  - Advanced search and filtering
-
-- **Financial Insights**
-
-  - Real-time spending patterns
-  - Category breakdowns
-  - Trend analysis
-  - Budget tracking
-
-- **User Experience**
-  - Responsive design
-  - Dark/Light themes with system preference detection
-  - Intuitive interface with animations
-  - Real-time data updates
 
 ## 📱 Progressive Web App
 
